@@ -1,0 +1,10 @@
+JOY UI: 
+    une lib de components de bases et avancés; 
+    npm install @mui/joy @emotion/react @emotion/styled; version: 5.0.0-beta.7 ;
+    npm install @fontsource/inter; version: 5.0.8 ;
+
+CSVTOJSON:
+    une lib qui convertie des csv en json;
+    npm i csvtojson; version: 2.0.10;
+
+    

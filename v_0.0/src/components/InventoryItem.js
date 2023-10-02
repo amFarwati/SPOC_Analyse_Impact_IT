@@ -5,17 +5,28 @@ import Divider from '@mui/joy/Divider';
 import Button from '@mui/joy/Button';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
-var attribute = null
 
 function InventoryItem(props) {
+  
+  const [quantity,setQuantity] = useState(0)
+  const [itemId,setItemId] = useState(null)
+  const [cost,setCost] = useState([0,0,0])
 
-  attribute = {
-    id:props.id,
-    itemId:null,
-    quantity:null,
-    cost:null,
+  let attribute = {
+                    id:props.id,
+                    itemId:itemId,
+                    quantity:quantity,
+                    cost:cost,
+                  }
+
+  let list = props.list
+
+  function fetchCalculationData(itemId){
+    () => {
+      setItemId(itemId)
+      setCost([2,5,1])
+    }
   }
-  var list = props.list
 
   function handleDelete(){
     list.forEach(element => {

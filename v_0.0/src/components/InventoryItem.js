@@ -1,13 +1,34 @@
 import React from 'react'
+import { useState } from 'react'
 import "../styles/InventoryItem.css";
+import { Popper } from '@mui/base/Popper';
+import { ClickAwayListener } from '@mui/base/ClickAwayListener';
+import { styled } from '@mui/joy/styles';
 import Input from '@mui/joy/Input';
 import Divider from '@mui/joy/Divider';
 import Button from '@mui/joy/Button';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import FormControl from '@mui/joy/FormControl';
+import FormLabel from '@mui/joy/FormLabel';
+import List from '@mui/joy/List';
+import ListItem from '@mui/joy/ListItem';
+import MenuList from '@mui/joy/MenuList';
+import MenuItem from '@mui/joy/MenuItem';
+import Typography from '@mui/joy/Typography';
 
+const Popup = styled(Popper)({
+  zIndex: 1000,
+});
 
 function InventoryItem(props) {
   
+  const buttonRef = React.useRef(null);
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const [quantity,setQuantity] = useState(0)
   const [itemId,setItemId] = useState(null)
   const [cost,setCost] = useState([0,0,0])
@@ -21,17 +42,11 @@ function InventoryItem(props) {
 
   let list = props.list
 
-  function fetchCalculationData(itemId){
-    () => {
-      setItemId(itemId)
-      setCost([2,5,1])
-    }
-  }
-
   function handleDelete(){
-    list.forEach(element => {
-      console.log(element.attribute)
-      if (element.attribute.id === this.attribute.id){
+    list.forEach((element) => {
+      console.log(element)
+      console.log(element[0], attribute.id)
+      if (element[0] === attribute.id){
         let updateList = list.splice(list.indexOf(element),1);
         props.setList(updateList);
       };
@@ -40,13 +55,92 @@ function InventoryItem(props) {
 
   return (
     <div className='item'>
-      Prop :
-      <Input placeholder="Type in here…" variant="soft" />
+      <Button
+        ref={buttonRef}
+        id="composition-button"
+        aria-controls={'composition-menu'}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        variant="solid"
+        color="neutral"
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
+        {itemId===null?'Props':itemId}
+      </Button>
+      <Popup
+        role={undefined}
+        id="composition-menu"
+        open={open}
+        anchorEl={buttonRef.current}
+        disablePortal
+        modifiers={[
+          {
+            name: 'offset',
+            options: {
+              offset: [0, 4],
+            },
+          },
+        ]}
+      >
+        <ClickAwayListener onClickAway={handleClose}>
+        <MenuList
+                component="div"
+                variant="outlined"
+                size="sm"
+                sx={{
+                  boxShadow: 'sm',
+                  flexGrow: 0,
+                  minWidth: 200,
+                  maxHeight: 240,
+                  overflow: 'auto',
+                }}
+        >
+          {Object.entries(props.data).map((element)  => (
+            <List key={element[0]}>
+              <ListItem sticky>
+                <Typography
+                  id={`sticky-list-demo-${element[0]}`}
+                  level="body-xs"
+                  textTransform="uppercase"
+                  fontWeight="lg"
+                >
+                  {element[0]}
+                </Typography>
+              </ListItem>
+              {Object.entries(element[1]).map((element)  => (
+                <MenuItem key={element[0]} onClick={()=>{setCost(element[1]); setItemId(element[0]); console.log(element[0],cost)}}>{element[0]}</MenuItem>
+              ))}
+            </List>
+          ))}
+        </MenuList>
+        </ClickAwayListener>
+      </Popup>
       <Divider orientation="vertical" />
-      Quantity :
-      <Input placeholder="Type in here…" variant="soft" />
-      <Divider orientation="vertical" />
-      <Button startDecorator={<RemoveCircleOutlineIcon />} color="danger" high={20} width={20} onClick={() => handleDelete()} />
+      <FormControl>
+        <FormLabel>Quantity</FormLabel>
+        <Input 
+              type="number"
+              defaultValue={0}
+              slotProps={{
+                input: {
+                  min: 0,
+                  max: 2000,
+                  step: 1,
+                },
+              }}
+              onChange={ event => {setQuantity(event.target.value);console.log(quantity)}}
+              sx={{
+                "--Input-radius": "20px"
+              }}
+              variant="soft" />
+        <Divider orientation="vertical" />
+      </FormControl>
+      <FormControl>
+        <FormLabel>Delete</FormLabel>
+        <Button startDecorator={<RemoveCircleOutlineIcon />} color="danger" high={20} width={20} onClick={() => handleDelete()} />
+      </FormControl>
     </div>
   )
 }

@@ -2,9 +2,12 @@ import React from 'react';
 import "../styles/ImpactScore.css";
 import { BarChart } from '@mui/x-charts/BarChart';
 
-let BD = {xAxis:['production','transport','total'],series:[{data:[5,8,9]},{data:[1,1,1]},{data:[2,0,7]}]};
 
-function ImpactScore() {
+function ImpactScore(props) {
+
+  let cost = props.cost
+  let BD = {xAxis:['GES','EAU','Terres Rares'],series:[{data:cost},{data:cost},{data:cost}]};
+
   return (
     <div className='impactScore'>
       <div className='chart'>

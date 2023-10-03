@@ -5,36 +5,57 @@ import Item from "./InventoryItem";
 import Button from '@mui/joy/Button';
 import Add from '@mui/icons-material/Add';
 
-function Inventory() {
 
-  const [addItem, setAddItem] = useState(0);
-  const [listItem, setListItem] = useState([]);
-  const data = {
-    terminal : {
-      ordinateur_portable:[500,50,5],
-      ordinateur_fixe:[400,40,4],
-      serveur:[1000,100,10],
-    },
-    peripherique:{
-      clavier:[100,10,1],
-      souris:[50,5,0.5],
-      ecran:[300,30,3],
-      imprimante:[300,30,3]
-    }
+function importData(path){
+  /*
+  const data =""
+  const reader = new FileReader();
+  reader.readAsText(path);
+  reader.onload = () => {
+    data=reader.result;
   }
+
+  data = JSON.parse(data);
+  console.log(data)
+  */
+ const data =  {terminal: {
+                  ordinateur_portable: [1500,50,5],
+                  ordinateur_fixe: [400,40,4],
+                  serveur: [1000,100,10]
+                },
+                peripherique: {   
+                  clavier: [100,10,1],
+                  souris: [50,5,0.5],
+                  ecran: [300,30,3],
+                  imprimante: [300,30,3]
+                }
+              }  
+  return data
+}
+
+function Inventory(props) {
+
+  const [addItem, setAddItem] = useState(null);
+  const [listItem, setListItem] = useState([]);
+
+  const data = importData("../../backend/BD.Json")
 
   function handlerUpdateList(list){
     setListItem(list);
   }
 
   useEffect(() => {
-
+    if (addItem===null){
+      return;
+    }
     const scrollingElement = (document.scrollingElement || document.body);
     scrollingElement.scrollTop = scrollingElement.scrollHeight;
-    listItem.push([addItem,<Item list={listItem} setList={handlerUpdateList} id={addItem} data={data}/>])
+    listItem.push([addItem,<Item list={listItem} setList={handlerUpdateList} id={addItem} data={data} cost={props.cost} setCost={props.setCost}/>])
     setListItem(listItem)
     
   }, [addItem]);
+
+
 
   return (
     <div className='inventory'>

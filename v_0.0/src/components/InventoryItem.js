@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import "../styles/InventoryItem.css";
 import { Popper } from '@mui/base/Popper';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
@@ -24,14 +24,27 @@ function InventoryItem(props) {
   
   const buttonRef = React.useRef(null);
   const [open, setOpen] = React.useState(false);
+  const [quantity,setQuantity] = useState(0)
+  const [itemId,setItemId] = useState(null)
+  const [cost,setCost] = useState([0,0,0])
 
   const handleClose = () => {
     setOpen(false);
   };
 
-  const [quantity,setQuantity] = useState(0)
-  const [itemId,setItemId] = useState(null)
-  const [cost,setCost] = useState([0,0,0])
+  let list = props.list
+
+
+  /*useEffect(() => {
+    props.setCost(0)
+    list.map((element) => {  
+    for (let i = 0; i < props.cost.length; i++) {
+      props.setCost(props.cost[i]);
+    }
+
+  });
+    
+  }, [cost,quantity]);*/
 
   let attribute = {
                     id:props.id,
@@ -40,16 +53,15 @@ function InventoryItem(props) {
                     cost:cost,
                   }
 
-  let list = props.list
 
   function handleDelete(){
+    console.log(list)
     list.forEach((element) => {
       console.log(element)
       console.log(element[0], attribute.id)
-      if (element[0] === attribute.id){
-        let updateList = list.splice(list.indexOf(element),1);
-        props.setList(updateList);
-      };
+      let updateList = list.filter((element) => element[0] !== attribute.id);
+      props.setList(updateList);
+      
     });
   }
 

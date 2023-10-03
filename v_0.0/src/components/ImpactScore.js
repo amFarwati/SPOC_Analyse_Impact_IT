@@ -21,7 +21,7 @@ function ImpactScore() {
         />
       </div>
       <div className='texte'>
-      
+                  
       </div>
     </div>
   )

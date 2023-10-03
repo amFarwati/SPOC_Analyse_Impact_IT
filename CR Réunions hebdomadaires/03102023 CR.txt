@@ -1,0 +1,13 @@
+Pas eu de créneau à l'emploi du temps depuis le dernier CR
+
+Maxime : 
+
+- gros tri du fichier excel contenant les informations de la base carbone
+
+Arthur : 
+- Création tableau de bord et items à rajouter
+
+
+Pour la suite : 
+- commencer par gérer notre site avec un petit fichier (csv ou base sql) de quelques valeurs pour plus tard
+- il faudra faire un choix de lien entre les notations entreprise et celles de notre base

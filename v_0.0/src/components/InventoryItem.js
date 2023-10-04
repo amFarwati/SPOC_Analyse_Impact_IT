@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import "../styles/InventoryItem.css";
 import { Popper } from '@mui/base/Popper';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
@@ -7,9 +7,6 @@ import { styled } from '@mui/joy/styles';
 import Input from '@mui/joy/Input';
 import Divider from '@mui/joy/Divider';
 import Button from '@mui/joy/Button';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
-import FormControl from '@mui/joy/FormControl';
-import FormLabel from '@mui/joy/FormLabel';
 import List from '@mui/joy/List';
 import ListItem from '@mui/joy/ListItem';
 import MenuList from '@mui/joy/MenuList';
@@ -22,7 +19,7 @@ const Popup = styled(Popper)({
 
 function InventoryItem(props) {
   
-  const buttonRef = React.useRef(null);
+  const buttonRef = useRef(null);
   const [open, setOpen] = React.useState(false);
   const [quantity,setQuantity] = useState(0)
   const [itemId,setItemId] = useState(null)
@@ -31,9 +28,6 @@ function InventoryItem(props) {
   const handleClose = () => {
     setOpen(false);
   };
-
-  let list = props.list
-
 
   /*useEffect(() => {
     props.setCost(0)
@@ -46,15 +40,15 @@ function InventoryItem(props) {
     
   }, [cost,quantity]);*/
 
-  let attribute = {
-                    id:props.id,
+  let attribute = { 
+                    id: props.id,
                     itemId:itemId,
                     quantity:quantity,
                     cost:cost,
                   }
 
 
-  function handleDelete(){
+  /*function handleDelete(){
     console.log(list)
     list.forEach((element) => {
       console.log(element)
@@ -64,6 +58,7 @@ function InventoryItem(props) {
       
     });
   }
+  */
 
   return (
     <div className='item'>
@@ -130,29 +125,22 @@ function InventoryItem(props) {
         </ClickAwayListener>
       </Popup>
       <Divider orientation="vertical" />
-      <FormControl>
-        <FormLabel>Quantity</FormLabel>
-        <Input 
-              type="number"
-              defaultValue={0}
-              slotProps={{
-                input: {
-                  min: 0,
-                  max: 2000,
-                  step: 1,
-                },
-              }}
-              onChange={ event => {setQuantity(event.target.value);console.log(quantity)}}
-              sx={{
-                "--Input-radius": "20px"
-              }}
-              variant="soft" />
-        <Divider orientation="vertical" />
-      </FormControl>
-      <FormControl>
-        <FormLabel>Delete</FormLabel>
-        <Button startDecorator={<RemoveCircleOutlineIcon />} color="danger" high={20} width={20} onClick={() => handleDelete()} />
-      </FormControl>
+      <Input 
+            type="number"
+            defaultValue={0}
+            slotProps={{
+              input: {
+                min: 0,
+                max: 2000,
+                step: 1,
+              },
+            }}
+            onChange={ event => {setQuantity(event.target.value);console.log("quantity = ",quantity," id = ",attribute.id)}}
+            sx={{
+              "--Input-radius": "20px"
+            }}
+            variant="soft" />
+      <Divider orientation="vertical" />
     </div>
   )
 }

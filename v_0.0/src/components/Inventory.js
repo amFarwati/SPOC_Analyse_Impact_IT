@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import "../styles/Inventory.css";
 import Item from "./InventoryItem";
 import Button from '@mui/joy/Button';
@@ -11,10 +11,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 function Inventory(props) {
 
   const [listItem, setListItem] = useState([]);
-
-  const handlerUpdateList = (list) =>{
-    setListItem(list);
-  };
 
   const importData = (path) => {
     /*
@@ -46,6 +42,7 @@ function Inventory(props) {
   const data = importData("../../backend/BD.Json")
 
   const handlerDeleteItem = (id) => {
+    alert('handlerDeleteItem')
     let tempList = [...listItem];
     tempList = tempList.filter(item => item.id !== id);
     setListItem(tempList);
@@ -66,14 +63,47 @@ function Inventory(props) {
     if (listItem.length===0){itemId=0;}
     else{itemId=(listItem[listItem.length-1].id)+1;};
     tempList.push({   id: itemId,
-                      item :<Item list={listItem} setList={handlerUpdateList} id={itemId} data={data} cost={props.cost} setCost={props.setCost} />
+                      item :<Item id={itemId} data={data} addCost={handlerUpdateItemCost}/>,
+                      cost:[0,0,0]
                   })
     setListItem(tempList);
   };
 
+  //PB avec le handler d'update de coup, quand on le passe en arg dans le component Item => les console.log ne marchent pas et la listItem se reset à vide
+  const handlerUpdateItemCost = (quantity, cost, id) => {
+    alert('handlerUpdateItemCost')
+    /*let tempList = [...listItem];
+    tempList.forEach(item => {
+      if (item.id === id){
+        for (let i = 0; i < cost.length; i++){
+          item.cost[i] = quantity*cost[i];
+        }
+      }
+    });
+    console.log(tempList);
+    //setListItem(tempList);
+    */
+  };
+
+  const handlerUpdateCost = () => {
+    alert('handlerUpdateCost')
+    let tempTotalCost = [0,0,0]
+    listItem.forEach((item) => {
+      for (let i = 0; i <tempTotalCost.length; i++) {
+        tempTotalCost[i] = tempTotalCost[i] + item.cost[i];
+      }
+    });
+    props.setTotalCost(tempTotalCost);
+  };
+
+  useEffect(() => {
+    handlerUpdateCost();
+  }, [listItem]);
+
   return (
     <div className='inventory'>
       {listItem.map((item) => {return <div className='item' key ={item.id} >{item.item} {delButton(item.id)}</div>})}
+      {console.log(listItem)}
       <Button startDecorator={<Add />} 
               color="neutral"
               variant="solid" 

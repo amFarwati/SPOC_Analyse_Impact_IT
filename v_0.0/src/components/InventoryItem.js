@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import "../styles/InventoryItem.css";
 import { Popper } from '@mui/base/Popper';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
@@ -25,40 +25,22 @@ function InventoryItem(props) {
   const [itemId,setItemId] = useState(null)
   const [cost,setCost] = useState([0,0,0])
 
+
+  let attribute = { 
+    id: props.id,
+    itemId:itemId,
+    quantity:quantity,
+    cost:cost,
+  }
+
   const handleClose = () => {
     setOpen(false);
   };
 
-  /*useEffect(() => {
-    props.setCost(0)
-    list.map((element) => {  
-    for (let i = 0; i < props.cost.length; i++) {
-      props.setCost(props.cost[i]);
-    }
-
-  });
-    
-  }, [cost,quantity]);*/
-
-  let attribute = { 
-                    id: props.id,
-                    itemId:itemId,
-                    quantity:quantity,
-                    cost:cost,
-                  }
-
-
-  /*function handleDelete(){
-    console.log(list)
-    list.forEach((element) => {
-      console.log(element)
-      console.log(element[0], attribute.id)
-      let updateList = list.filter((element) => element[0] !== attribute.id);
-      props.setList(updateList);
-      
-    });
-  }
-  */
+  useEffect(() => {
+    console.log('useEffect item',attribute.id);
+    props.addCost(quantity,cost,attribute.id)
+  }, [cost,quantity]);
 
   return (
     <div className='item'>
@@ -117,7 +99,7 @@ function InventoryItem(props) {
                 </Typography>
               </ListItem>
               {Object.entries(element[1]).map((element)  => (
-                <MenuItem key={element[0]} onClick={()=>{setCost(element[1]); setItemId(element[0]); console.log(element[0],cost)}}>{element[0]}</MenuItem>
+                <MenuItem key={element[0]} onClick={()=>{setCost(element[1]); setItemId(element[0]);}}>{element[0]}</MenuItem>
               ))}
             </List>
           ))}
@@ -135,7 +117,7 @@ function InventoryItem(props) {
                 step: 1,
               },
             }}
-            onChange={ event => {setQuantity(event.target.value);console.log("quantity = ",quantity," id = ",attribute.id)}}
+            onChange={ event => {setQuantity(event.target.value)}}
             sx={{
               "--Input-radius": "20px"
             }}

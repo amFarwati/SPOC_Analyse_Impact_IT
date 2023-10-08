@@ -9,11 +9,15 @@ import Divider from '@mui/joy/Divider';
 function Dashboard() {
   const [totalCost, setTotalCost] = useState([0,0,0])
 
+  const handlersetTotalCost = (cost) => {
+    setTotalCost(cost);
+  }
+
   return (
     <div>
-        <ImpactScore cost={totalCost}/>
+        <ImpactScore totalCost={totalCost}/>
         <Divider orientation="horizontal" />
-        <Inventory setCost={setTotalCost} cost={totalCost}/>
+        <Inventory setTotalCost={handlersetTotalCost}/>
     </div>
   )
 }

@@ -117,7 +117,7 @@ function InventoryItem(props) {
                 step: 1,
               },
             }}
-            onChange={ event => {setQuantity(event.target.value)}}
+            onChange={ event => {setQuantity(event.target.value);}}
             sx={{
               "--Input-radius": "20px"
             }}

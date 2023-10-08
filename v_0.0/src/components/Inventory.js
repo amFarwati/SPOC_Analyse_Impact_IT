@@ -53,6 +53,23 @@ function Inventory(props) {
                                       </IconButton>);
                             }
 
+   //PB avec le handler d'update de coup, quand on le passe en arg dans le component Item => la listItem se reset à vide
+  const handlerUpdateItemCost = (quantity, cost, id) => {
+    alert('handlerUpdateItemCost')
+    /*
+    let tempList = [...listItem];
+    console.log('listItem before',listItem);
+    tempList.forEach(item => {
+      if (item.id === id){
+        for (let i = 0; i < cost.length; i++){
+          item.cost[i] = quantity*cost[i];
+        }
+      }
+    });
+    console.log('tempList after',tempList);
+    setListItem(tempList);*/
+  };
+
   const handlerAddItem = () => {
     let tempList = [...listItem];
     let itemId = null
@@ -67,22 +84,6 @@ function Inventory(props) {
                       cost:[0,0,0]
                   })
     setListItem(tempList);
-  };
-
-  //PB avec le handler d'update de coup, quand on le passe en arg dans le component Item => les console.log ne marchent pas et la listItem se reset à vide
-  const handlerUpdateItemCost = (quantity, cost, id) => {
-    alert('handlerUpdateItemCost')
-    /*let tempList = [...listItem];
-    tempList.forEach(item => {
-      if (item.id === id){
-        for (let i = 0; i < cost.length; i++){
-          item.cost[i] = quantity*cost[i];
-        }
-      }
-    });
-    console.log(tempList);
-    //setListItem(tempList);
-    */
   };
 
   const handlerUpdateCost = () => {

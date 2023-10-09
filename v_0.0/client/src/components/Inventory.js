@@ -11,38 +11,22 @@ import DeleteIcon from '@mui/icons-material/Delete';
 function Inventory(props) {
 
   const [listItem, setListItem] = useState([]);
+  const [backendData, setBackendData] = useState([{}]);
 
-  const importData = (path) => {
-    /*
-    const data =""
-    const reader = new FileReader();
-    reader.readAsText(path);
-    reader.onload = () => {
-      data=reader.result;
-    }
-  
-    data = JSON.parse(data);
-    console.log(data)
-    */
-   const data =  {terminal: {
-                    ordinateur_portable: [1500,50,5],
-                    ordinateur_fixe: [400,40,4],
-                    serveur: [1000,100,10]
-                  },
-                  peripherique: {   
-                    clavier: [100,10,1],
-                    souris: [50,5,0.5],
-                    ecran: [300,30,3],
-                    imprimante: [300,30,3]
-                  }
-                }  
-    return data
-  }
+  useEffect(() => {
+    fetch("http://localhost:5000/getCostBd"
+    ).then(
+      response => response.json()
+    ).then(
+      data => {
+        setBackendData(data);
+        console.log("Backend", data);
+      }
+    )
+  },[]);
 
-  const data = importData("../../backend/BD.Json")
 
   const handlerDeleteItem = (id) => {
-    alert('handlerDeleteItem')
     let tempList = [...listItem];
     tempList = tempList.filter(item => item.id !== id);
     setListItem(tempList);
@@ -55,7 +39,6 @@ function Inventory(props) {
 
    //PB avec le handler d'update de coup, quand on le passe en arg dans le component Item => la listItem se reset à vide
   const handlerUpdateItemCost = (quantity, cost, id) => {
-    alert('handlerUpdateItemCost')
     /*
     let tempList = [...listItem];
     console.log('listItem before',listItem);
@@ -80,14 +63,13 @@ function Inventory(props) {
     if (listItem.length===0){itemId=0;}
     else{itemId=(listItem[listItem.length-1].id)+1;};
     tempList.push({   id: itemId,
-                      item :<Item id={itemId} data={data} addCost={handlerUpdateItemCost}/>,
+                      item :<Item id={itemId} data={backendData} addCost={handlerUpdateItemCost}/>,
                       cost:[0,0,0]
                   })
     setListItem(tempList);
   };
 
   const handlerUpdateCost = () => {
-    alert('handlerUpdateCost')
     let tempTotalCost = [0,0,0]
     listItem.forEach((item) => {
       for (let i = 0; i <tempTotalCost.length; i++) {
@@ -115,6 +97,16 @@ function Inventory(props) {
                 fontSize: "20px"
             }}
               size="lg">Add Item</Button>
+      <Button startDecorator={<Add />} 
+              color="neutral"
+              variant="solid" 
+              onClick={()=>{return}}
+              style={{
+                borderRadius: 30,
+                padding: "18px 36px",
+                fontSize: "20px"
+            }}
+              size="lg">Import IT inventory</Button>
     </div>
   )
 }

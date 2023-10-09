@@ -99,7 +99,8 @@ function InventoryItem(props) {
                 </Typography>
               </ListItem>
               {Object.entries(element[1]).map((element)  => (
-                <MenuItem key={element[0]} onClick={()=>{setCost(element[1]); setItemId(element[0]);}}>{element[0]}</MenuItem>
+                <MenuItem key={element[0]} onClick={()=>{setCost(element[1].split(';').map((value) => {return parseInt(value, 10);}
+                  )); setItemId(element[0]); console.log("itemId",itemId,cost)}}>{element[0]}</MenuItem>
               ))}
             </List>
           ))}

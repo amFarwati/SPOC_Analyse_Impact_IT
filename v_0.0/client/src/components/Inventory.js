@@ -20,7 +20,6 @@ function Inventory(props) {
     ).then(
       data => {
         setBackendData(data);
-        console.log("Backend", data);
       }
     )
   },[]);
@@ -37,21 +36,19 @@ function Inventory(props) {
                                       </IconButton>);
                             }
 
-   //PB avec le handler d'update de coup, quand on le passe en arg dans le component Item => la listItem se reset à vide
-  const handlerUpdateItemCost = (quantity, cost, id) => {
-    /*
-    let tempList = [...listItem];
-    console.log('listItem before',listItem);
-    tempList.forEach(item => {
-      if (item.id === id){
-        for (let i = 0; i < cost.length; i++){
-          item.cost[i] = quantity*cost[i];
+  const handlerUpdateItemCost = (id, newCost) => {
+    if (listItem.length > 0) {
+      let tempList = [...listItem]
+      /*tempList.forEach((item) => {
+        if (item.id === id){
+            item.cost = newCost;
         }
-      }
-    });
-    console.log('tempList after',tempList);
-    setListItem(tempList);*/
+      });
+      setListItem(tempList);*/
+      console.log('listItem after cost update', tempList, 'id', id, 'new Cost', newCost);
+    }
   };
+
 
   const handlerAddItem = () => {
     let tempList = [...listItem];
@@ -63,7 +60,7 @@ function Inventory(props) {
     if (listItem.length===0){itemId=0;}
     else{itemId=(listItem[listItem.length-1].id)+1;};
     tempList.push({   id: itemId,
-                      item :<Item id={itemId} data={backendData} addCost={handlerUpdateItemCost}/>,
+                      item :<Item id={itemId} data={backendData} updateListCost={handlerUpdateItemCost}/>,
                       cost:[0,0,0]
                   })
     setListItem(tempList);
@@ -76,17 +73,20 @@ function Inventory(props) {
         tempTotalCost[i] = tempTotalCost[i] + item.cost[i];
       }
     });
+    console.log('send total cost',tempTotalCost);
     props.setTotalCost(tempTotalCost);
   };
 
   useEffect(() => {
-    handlerUpdateCost();
+    if(listItem.length > 0){
+      console.log('list has been updated',listItem)
+      handlerUpdateCost();
+    }
   }, [listItem]);
 
   return (
     <div className='inventory'>
       {listItem.map((item) => {return <div className='item' key ={item.id} >{item.item} {delButton(item.id)}</div>})}
-      {console.log(listItem)}
       <Button startDecorator={<Add />} 
               color="neutral"
               variant="solid" 

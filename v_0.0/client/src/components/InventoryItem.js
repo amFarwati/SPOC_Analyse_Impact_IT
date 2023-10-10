@@ -23,23 +23,27 @@ function InventoryItem(props) {
   const [open, setOpen] = React.useState(false);
   const [quantity,setQuantity] = useState(0)
   const [itemId,setItemId] = useState(null)
-  const [cost,setCost] = useState([0,0,0])
+  const [cost,setCost] = useState(null)
 
-
-  let attribute = { 
-    id: props.id,
-    itemId:itemId,
-    quantity:quantity,
-    cost:cost,
-  }
+  const id = props.id;
 
   const handleClose = () => {
     setOpen(false);
   };
 
+  const handlerUpdateCost = () => {
+    let tempItemTotalCost = [0,0,0];
+    for (let i = 0; i < tempItemTotalCost.length; i++){
+      tempItemTotalCost[i] = quantity*cost[i];
+    }
+    console.log('id',id,'cost change',tempItemTotalCost)
+    props.updateListCost(id,tempItemTotalCost);
+  };
+
   useEffect(() => {
-    console.log('useEffect item',attribute.id);
-    props.addCost(quantity,cost,attribute.id)
+    if (cost !== null){
+      handlerUpdateCost();
+    }
   }, [cost,quantity]);
 
   return (
@@ -100,7 +104,7 @@ function InventoryItem(props) {
               </ListItem>
               {Object.entries(element[1]).map((element)  => (
                 <MenuItem key={element[0]} onClick={()=>{setCost(element[1].split(';').map((value) => {return parseInt(value, 10);}
-                  )); setItemId(element[0]); console.log("itemId",itemId,cost)}}>{element[0]}</MenuItem>
+                  )); setItemId(element[0]);}}>{element[0]}</MenuItem>
               ))}
             </List>
           ))}

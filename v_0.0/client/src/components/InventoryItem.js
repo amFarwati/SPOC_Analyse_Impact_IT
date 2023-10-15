@@ -1,9 +1,10 @@
 import React from 'react'
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useContext } from 'react'
 import "../styles/InventoryItem.css";
 import { Popper } from '@mui/base/Popper';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { styled } from '@mui/joy/styles';
+import { ListItemContext } from './Inventory';
 import Input from '@mui/joy/Input';
 import Divider from '@mui/joy/Divider';
 import Button from '@mui/joy/Button';
@@ -20,11 +21,13 @@ const Popup = styled(Popper)({
 function InventoryItem(props) {
   
   const buttonRef = useRef(null);
+  const [listItem, setListItem] = useContext(ListItemContext)
   const [open, setOpen] = React.useState(false);
   const [quantity,setQuantity] = useState(0)
   const [itemId,setItemId] = useState(null)
   const [cost,setCost] = useState(null)
 
+  console.log (listItem)
   const id = props.id;
 
   const handleClose = () => {
@@ -32,12 +35,40 @@ function InventoryItem(props) {
   };
 
   const handlerUpdateCost = () => {
-    let tempItemTotalCost = [0,0,0];
-    for (let i = 0; i < tempItemTotalCost.length; i++){
-      tempItemTotalCost[i] = quantity*cost[i];
+    let newItemCost = [0,0,0];
+    let tempList =  [...listItem];
+    console.log ("templist",tempList);
+    let find = false;
+    let OOB = tempList.length;
+    let compteur = 0;
+
+    for (let i = 0; i < newItemCost.length; i++){
+      newItemCost[i] = quantity*cost[i];
     }
-    console.log('id',id,'cost change',tempItemTotalCost)
-    props.updateListCost(id,tempItemTotalCost);
+    console.log('newItemCost', newItemCost)
+
+    while(find === false & compteur < OOB){
+      if (tempList[compteur].id ===id){
+        tempList[compteur].cost = newItemCost;
+        find = true;
+        console.log(tempList)
+        setListItem(tempList);
+      }
+      compteur++;
+    }
+
+    if (find === true){
+
+      let newTotalCost = [0,0,0]
+      listItem.forEach((item) => {
+        for (let i = 0; i <newTotalCost.length; i++) {
+          newTotalCost[i] = newTotalCost[i] +item.cost[i];
+        }
+      })
+      props.updateListCost(newTotalCost);
+    }else{
+      alert("ERROR: Out of bounds on list when check for item ",id," in handlerUpdateItemCost")
+    }
   };
 
   useEffect(() => {

@@ -1,11 +1,13 @@
 import React from 'react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, createContext } from 'react'
 import "../styles/Inventory.css";
 import Item from "./InventoryItem";
 import Button from '@mui/joy/Button';
 import Add from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
+
+export const ListItemContext = createContext();
 
 
 function Inventory(props) {
@@ -24,7 +26,6 @@ function Inventory(props) {
     )
   },[]);
 
-
   const handlerDeleteItem = (id) => {
     let tempList = [...listItem];
     tempList = tempList.filter(item => item.id !== id);
@@ -36,19 +37,9 @@ function Inventory(props) {
                                       </IconButton>);
                             }
 
-  const handlerUpdateItemCost = (id, newCost) => {
-    if (listItem.length > 0) {
-      let tempList = [...listItem]
-      /*tempList.forEach((item) => {
-        if (item.id === id){
-            item.cost = newCost;
-        }
-      });
-      setListItem(tempList);*/
-      console.log('listItem after cost update', tempList, 'id', id, 'new Cost', newCost);
-    }
+  const handlerUpdateItemCost = (newCost) => {
+    props.setTotalCost(newCost);
   };
-
 
   const handlerAddItem = () => {
     let tempList = [...listItem];
@@ -59,32 +50,17 @@ function Inventory(props) {
 
     if (listItem.length===0){itemId=0;}
     else{itemId=(listItem[listItem.length-1].id)+1;};
+
     tempList.push({   id: itemId,
-                      item :<Item id={itemId} data={backendData} updateListCost={handlerUpdateItemCost}/>,
-                      cost:[0,0,0]
+                      cost:[0,0,0],
+                      item :<Item id={itemId} data={backendData} updateListCost={handlerUpdateItemCost}/>
                   })
+
     setListItem(tempList);
   };
 
-  const handlerUpdateCost = () => {
-    let tempTotalCost = [0,0,0]
-    listItem.forEach((item) => {
-      for (let i = 0; i <tempTotalCost.length; i++) {
-        tempTotalCost[i] = tempTotalCost[i] + item.cost[i];
-      }
-    });
-    console.log('send total cost',tempTotalCost);
-    props.setTotalCost(tempTotalCost);
-  };
-
-  useEffect(() => {
-    if(listItem.length > 0){
-      console.log('list has been updated',listItem)
-      handlerUpdateCost();
-    }
-  }, [listItem]);
-
   return (
+    <ListItemContext.Provider value={ [listItem, setListItem] }>
     <div className='inventory'>
       {listItem.map((item) => {return <div className='item' key ={item.id} >{item.item} {delButton(item.id)}</div>})}
       <Button startDecorator={<Add />} 
@@ -108,7 +84,8 @@ function Inventory(props) {
             }}
               size="lg">Import IT inventory</Button>
     </div>
+    </ListItemContext.Provider>
   )
 }
-
 export default Inventory
+

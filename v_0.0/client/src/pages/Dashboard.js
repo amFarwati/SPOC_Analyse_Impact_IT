@@ -9,8 +9,10 @@ import Divider from '@mui/joy/Divider';
 function Dashboard() {
   const [totalCost, setTotalCost] = useState([0,0,0])
 
-  const handlersetTotalCost = (cost) => {
-    setTotalCost(cost);
+  const handlersetTotalCost = (newCost) => {
+    console.log('dashboard former totalCost: ',totalCost,'dashboard new cost: ', newCost)
+    setTotalCost(newCost);
+    console.log('cost has been updated :',totalCost)
   }
 
   return (

@@ -23,52 +23,65 @@ function InventoryItem(props) {
   const buttonRef = useRef(null);
   const [listItem, setListItem] = useContext(ListItemContext)
   const [open, setOpen] = React.useState(false);
-  const [quantity,setQuantity] = useState(0)
-  const [itemId,setItemId] = useState(null)
+  const [quantity,setQuantity] = useState(props.quantity)
+  const [itemId,setItemId] = useState(props.itemId)
   const [cost,setCost] = useState(null)
 
   console.log (listItem)
   const id = props.id;
+
+  const computeNewCost = () => {
+    let newItemCost = [0,0,0];
+    for (let i = 0; i < newItemCost.length; i++){
+      newItemCost[i] = quantity*cost[i];
+    }
+    console.log('newItemCost', newItemCost)
+    return newItemCost;
+  }
+
+  const updateItemCostInList = (id, listItem, newItemCost, handlerListChange) =>{
+    let compteur = 0;
+    let find = false;
+    let OOB = listItem.length;
+
+    while(find === false & compteur < OOB){
+      if (listItem[compteur].id ===id){
+        listItem[compteur].cost = newItemCost;
+        find = true;
+        console.log(listItem)
+        handlerListChange(listItem);
+      }
+      compteur++;
+    }
+
+    if (find === true){
+      computeNewTotalCost(listItem)
+    }else{
+      alert("ERROR: Out of bounds on list when check for item ",id," in handlerUpdateItemCost")
+    }
+    
+  }
+
+  const computeNewTotalCost = (listItem) => {
+    let newTotalCost = [0,0,0]
+    listItem.forEach((item) => {
+      for (let i = 0; i <newTotalCost.length; i++) {
+        newTotalCost[i] = newTotalCost[i] +item.cost[i];
+      }
+    })
+    props.updateListCost(newTotalCost);
+  }
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handlerUpdateCost = () => {
-    let newItemCost = [0,0,0];
     let tempList =  [...listItem];
     console.log ("templist",tempList);
-    let find = false;
-    let OOB = tempList.length;
-    let compteur = 0;
-
-    for (let i = 0; i < newItemCost.length; i++){
-      newItemCost[i] = quantity*cost[i];
-    }
-    console.log('newItemCost', newItemCost)
-
-    while(find === false & compteur < OOB){
-      if (tempList[compteur].id ===id){
-        tempList[compteur].cost = newItemCost;
-        find = true;
-        console.log(tempList)
-        setListItem(tempList);
-      }
-      compteur++;
-    }
-
-    if (find === true){
-
-      let newTotalCost = [0,0,0]
-      listItem.forEach((item) => {
-        for (let i = 0; i <newTotalCost.length; i++) {
-          newTotalCost[i] = newTotalCost[i] +item.cost[i];
-        }
-      })
-      props.updateListCost(newTotalCost);
-    }else{
-      alert("ERROR: Out of bounds on list when check for item ",id," in handlerUpdateItemCost")
-    }
+    
+    let newItemCost = computeNewCost();
+    updateItemCostInList(id, tempList, newItemCost, setListItem);
   };
 
   useEffect(() => {
@@ -145,7 +158,7 @@ function InventoryItem(props) {
       <Divider orientation="vertical" />
       <Input 
             type="number"
-            defaultValue={0}
+            defaultValue={quantity}
             slotProps={{
               input: {
                 min: 0,

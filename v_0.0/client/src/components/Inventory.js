@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect, createContext } from 'react'
 import "../styles/Inventory.css";
+import FileUpload from "./InputFileUpload";
 import Item from "./InventoryItem";
 import Button from '@mui/joy/Button';
 import Add from '@mui/icons-material/Add';
@@ -14,6 +15,7 @@ function Inventory(props) {
 
   const [listItem, setListItem] = useState([]);
   const [backendData, setBackendData] = useState([{}]);
+  const [userParc,setUserParc] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:5000/getCostBd"
@@ -48,16 +50,47 @@ function Inventory(props) {
     const scrollingElement = (document.scrollingElement || document.body);
     scrollingElement.scrollTop = scrollingElement.scrollHeight;
 
-    if (listItem.length===0){itemId=0;}
-    else{itemId=(listItem[listItem.length-1].id)+1;};
+    if (tempList.length===0){itemId=0;}
+    else{itemId=(tempList[tempList.length-1].id)+1;};
 
     tempList.push({   id: itemId,
                       cost:[0,0,0],
-                      item :<Item id={itemId} data={backendData} updateListCost={handlerUpdateItemCost}/>
+                      item :<Item id={itemId} itemId={null} quantity={0} data={backendData} updateListCost={handlerUpdateItemCost}/>
                   })
 
     setListItem(tempList);
   };
+
+  const handlerSetUserParc = (parc) => {
+    setUserParc(parc);
+  };
+
+  const handlerAddParcItem = (parc) => {
+    let tempList = [];
+
+    const scrollingElement = (document.scrollingElement || document.body);
+    scrollingElement.scrollTop = scrollingElement.scrollHeight;
+
+    parc.forEach((item) => {
+      let itemId = null;
+
+      if (tempList.length===0){itemId=0;}
+      else{itemId=(tempList[tempList.length-1].id)+1;};
+
+      tempList.push({   id: itemId,
+                        cost:[0,0,0],
+                        item :<Item id={itemId} itemId={item.type} quantity={item.quantity} data={backendData} updateListCost={handlerUpdateItemCost}/>
+                    })
+    });
+
+    setListItem(tempList);
+  }
+
+  useEffect(() => {
+    if(userParc.length > 0){
+      handlerAddParcItem(userParc);
+    }
+  },[userParc]);
 
   return (
     <ListItemContext.Provider value={ [listItem, setListItem] }>
@@ -73,16 +106,7 @@ function Inventory(props) {
                 fontSize: "20px"
             }}
               size="lg">Add Item</Button>
-      <Button startDecorator={<Add />} 
-              color="neutral"
-              variant="solid" 
-              onClick={()=>{return}}
-              style={{
-                borderRadius: 30,
-                padding: "18px 36px",
-                fontSize: "20px"
-            }}
-              size="lg">Import IT inventory</Button>
+      <FileUpload setUserFile={handlerSetUserParc}/>
     </div>
     </ListItemContext.Provider>
   )

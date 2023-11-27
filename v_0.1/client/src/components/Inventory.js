@@ -1,8 +1,10 @@
 import React from 'react'
-import { useState, useEffect, createContext } from 'react'
+import { useState, useEffect, createContext, useContext } from 'react'
+import { UserParc_API_Context } from './Dashboard';
 import "../styles/Inventory.css";
 import FileUpload from "./InputFileUpload";
 import Item from "./InventoryItem";
+
 import Button from '@mui/joy/Button';
 import Add from '@mui/icons-material/Add';
 import IconButton from '@mui/material/IconButton';
@@ -14,33 +16,22 @@ export const ListItemContext = createContext();
 function Inventory(props) {
 
   const [listItem, setListItem] = useState([]);
-  const [backendData, setBackendData] = useState([{}]);
-  const [userParc,setUserParc] = useState([]);
+  const [userParc_API,setUserParc_PI] = useContext(UserParc_API_Context);
 
-  useEffect(() => {
-    fetch("http://localhost:5000/getCostBd"
-    ).then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data);
-      }
-    )
-  },[]);
+  // requete axios pour récupérer list des types pris en charge
+  const backendData = null;
 
-  const handlerDeleteItem = (id) => {
+  const handlerDeleteItem = (id, type, quantity) => {
     let tempList = [...listItem];
+
+    userParc_API.forEach((item)=>{
+      if(type === item.type){
+        item.quantity = item.quantity-quantity;
+      }
+    });
+
     tempList = tempList.filter(item => item.id !== id);
     setListItem(tempList);
-  };
-
-  const delButton = (id) => {return ( <IconButton color="tertiary" onClick={() => handlerDeleteItem(id)}>
-                                          <DeleteIcon />
-                                      </IconButton>);
-                            }
-
-  const handlerUpdateItemCost = (newCost) => {
-    props.setTotalCost(newCost);
   };
 
   const handlerAddItem = () => {
@@ -54,15 +45,10 @@ function Inventory(props) {
     else{itemId=(tempList[tempList.length-1].id)+1;};
 
     tempList.push({   id: itemId,
-                      cost:[0,0,0],
-                      item :<Item id={itemId} itemId={null} quantity={0} data={backendData} updateListCost={handlerUpdateItemCost}/>
+                      item :<Item id={itemId} type={null} quantity={0} data={backendData} handlerDeleteItem={handlerDeleteItem}/>
                   })
 
     setListItem(tempList);
-  };
-
-  const handlerSetUserParc = (parc) => {
-    setUserParc(parc);
   };
 
   const handlerAddParcItem = (parc) => {
@@ -78,7 +64,6 @@ function Inventory(props) {
       else{itemId=(tempList[tempList.length-1].id)+1;};
 
       tempList.push({   id: itemId,
-                        cost:[0,0,0],
                         item :<Item id={itemId} itemId={item.type} quantity={item.quantity} data={backendData} updateListCost={handlerUpdateItemCost}/>
                     })
     });
@@ -95,7 +80,7 @@ function Inventory(props) {
   return (
     <ListItemContext.Provider value={ [listItem, setListItem] }>
     <div className='inventory'>
-      {listItem.map((item) => {return <div className='item' key ={item.id} >{item.item} {delButton(item.id)}</div>})}
+      {listItem.map((item) => {return <div className='item' key ={item.id} >{item.item}</div>})}
       <Button startDecorator={<Add />} 
               color="neutral"
               variant="solid" 
@@ -106,7 +91,7 @@ function Inventory(props) {
                 fontSize: "20px"
             }}
               size="lg">Add Item</Button>
-      <FileUpload setUserFile={handlerSetUserParc}/>
+      <FileUpload />
     </div>
     </ListItemContext.Provider>
   )

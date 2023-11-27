@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react';
+import { UserParc_API_Context } from './Dashboard';
 import Papa from 'papaparse';
 import Button from '@mui/joy/Button';
 import SvgIcon from '@mui/joy/SvgIcon';
@@ -17,17 +18,16 @@ const VisuallyHiddenInput = styled('input')`
   width: 1px;
 `;
 
-export default function InputFileUpload(props) {
+export default function InputFileUpload() {
 
+    const [userParc_API,setUserParc_API] = useContext(UserParc_API_Context);
     const [jsonContent, setJsonContent] = useState([]);
     const [jsonChange,setJsonChange] = useState(false);
     const typeList = useRef([]);
-    const itemList = useRef([]);
 
     useEffect(()=>{
         typeList.current = extractTypeList(jsonContent);
-        itemList.current = extractItemList(jsonContent);
-        props.setUserFile(itemList.current);
+        setUserParc_API(bdFormat_User(jsonContent));
     },[jsonChange,jsonContent]);
 
     const handleFileUpload = (event) => {
@@ -58,13 +58,12 @@ export default function InputFileUpload(props) {
         return typeList;
     };
 
-    const extractItemList = (jsonContent) => {
+    //fonction convertion csv en format JSON supporté par serveur et front [{type: string; quantity: int}, ]
+    const bdFormat_User = (jsonContent) => {
         let itemList = [];
-        
         jsonContent.forEach((item)=>{
             let found = false;
             let counter = 0;
-
             while(found === false & counter<itemList.length){
                 if( itemList.length !== 0 & itemList[counter].type === item.type){
                     itemList[counter].quantity += parseInt(item.quantity);

@@ -1,25 +1,22 @@
 import React from 'react';
 import "../styles/Dashboard.css";
-import { useState } from 'react'
-import ImpactScore from "../components/ImpactScore"
+import { useState, createContext } from 'react'
+import ResultDisplay from "../components/ResultDisplay"
 import Inventory from "../components/Inventory"
 import Divider from '@mui/joy/Divider';
 
+export const UserParc_API_Context = createContext();
 
 function Dashboard() {
-  const [totalCost, setTotalCost] = useState([0,0,0])
-
-  const handlersetTotalCost = (newCost) => {
-    console.log('dashboard former totalCost: ',totalCost,'dashboard new cost: ', newCost)
-    setTotalCost(newCost);
-    console.log('cost has been updated :',totalCost)
-  }
+  const [userParc_API,setUserParc_API] = useState(null);
 
   return (
     <div>
-        <ImpactScore totalCost={totalCost}/>
+      <UserParc_API_Context.Provider value={ [userParc_API,setUserParc_API] }>
+        <ResultDisplay />
         <Divider orientation="horizontal" />
-        <Inventory setTotalCost={handlersetTotalCost}/>
+        <Inventory />
+      </UserParc_API_Context.Provider>
     </div>
   )
 }

@@ -1,10 +1,12 @@
 import React from 'react'
 import { useState, useRef, useEffect, useContext } from 'react'
+import { ListItemContext } from './Inventory';
+import { UserParc_API_Context } from './Dashboard';
 import "../styles/InventoryItem.css";
+
 import { Popper } from '@mui/base/Popper';
 import { ClickAwayListener } from '@mui/base/ClickAwayListener';
 import { styled } from '@mui/joy/styles';
-import { ListItemContext } from './Inventory';
 import Input from '@mui/joy/Input';
 import Divider from '@mui/joy/Divider';
 import Button from '@mui/joy/Button';
@@ -22,73 +24,45 @@ function InventoryItem(props) {
   
   const buttonRef = useRef(null);
   const [listItem, setListItem] = useContext(ListItemContext)
+  const [userParc_API,setUserParc_API] = useContext(UserParc_API_Context);
+
   const [open, setOpen] = React.useState(false);
   const [quantity,setQuantity] = useState(props.quantity)
-  const [itemId,setItemId] = useState(props.itemId)
-  const [cost,setCost] = useState(null)
+  const [formerQuantity,setFormerQuantity] = useState(0)
+  const [type,setType] = useState(props.type)
+  const [formerType,setFormerType] = useState(null)
 
   console.log (listItem)
   const id = props.id;
 
-  const computeNewCost = () => {
-    let newItemCost = [0,0,0];
-    for (let i = 0; i < newItemCost.length; i++){
-      newItemCost[i] = quantity*cost[i];
-    }
-    console.log('newItemCost', newItemCost)
-    return newItemCost;
-  }
 
-  const updateItemCostInList = (id, listItem, newItemCost, handlerListChange) =>{
-    let compteur = 0;
-    let find = false;
-    let OOB = listItem.length;
+  //maj de userParc_API en cas ajout item ou modif
+  useEffect(()=>{
+    if ((type !== null)){
+      typeIn = false;
 
-    while(find === false & compteur < OOB){
-      if (listItem[compteur].id ===id){
-        listItem[compteur].cost = newItemCost;
-        find = true;
-        console.log(listItem)
-        handlerListChange(listItem);
+      userParc_API.forEach((item)=>{
+        if(formerType === item.type){
+          item.quantity = item.quantity-formerQuantity;
+        }
+        if(type === item.type){
+          item.quantity = item.quantity+quantity;
+          typeIn=true;
+        }
+      });
+
+      if(typeIn === false){
+        userParc_API.append({ type: type,
+                              quantity: quantity,
+                            })      
       }
-      compteur++;
-    }
+    }  
+  },[quantity,type]);
 
-    if (find === true){
-      computeNewTotalCost(listItem)
-    }else{
-      alert("ERROR: Out of bounds on list when check for item ",id," in handlerUpdateItemCost")
-    }
-    
-  }
-
-  const computeNewTotalCost = (listItem) => {
-    let newTotalCost = [0,0,0]
-    listItem.forEach((item) => {
-      for (let i = 0; i <newTotalCost.length; i++) {
-        newTotalCost[i] = newTotalCost[i] +item.cost[i];
-      }
-    })
-    props.updateListCost(newTotalCost);
-  }
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const handlerUpdateCost = () => {
-    let tempList =  [...listItem];
-    console.log ("templist",tempList);
-    
-    let newItemCost = computeNewCost();
-    updateItemCostInList(id, tempList, newItemCost, setListItem);
-  };
-
-  useEffect(() => {
-    if (cost !== null){
-      handlerUpdateCost();
-    }
-  }, [cost,quantity]);
+  const delButton = () => {return ( <IconButton color="tertiary" onClick={() => props.handlerDeleteItem(id, type, quantity)}>
+                                          <DeleteIcon />
+                                      </IconButton>);
+                            }
 
   return (
     <div className='item'>
@@ -104,7 +78,7 @@ function InventoryItem(props) {
           setOpen(!open);
         }}
       >
-        {itemId===null?'Props':itemId}
+        {type===null?'Props':type}
       </Button>
       <Popup
         role={undefined}
@@ -147,8 +121,14 @@ function InventoryItem(props) {
                 </Typography>
               </ListItem>
               {Object.entries(element[1]).map((element)  => (
-                <MenuItem key={element[0]} onClick={()=>{setCost(element[1].split(';').map((value) => {return parseInt(value, 10);}
-                  )); setItemId(element[0]);}}>{element[0]}</MenuItem>
+                <MenuItem 
+                    key={element[0]} 
+                    onClick={()=>{
+                      setFormerType(type);
+                      setType(element[0]);
+                    }}>
+                      {element[0]}
+                </MenuItem>
               ))}
             </List>
           ))}
@@ -166,12 +146,16 @@ function InventoryItem(props) {
                 step: 1,
               },
             }}
-            onChange={ event => {setQuantity(event.target.value);}}
+            onChange={(event)=> {
+              setFormerQuantity(quantity);
+              setQuantity(event.target.value);
+            }}
             sx={{
               "--Input-radius": "20px"
             }}
             variant="soft" />
       <Divider orientation="vertical" />
+      {delButton}
     </div>
   )
 }

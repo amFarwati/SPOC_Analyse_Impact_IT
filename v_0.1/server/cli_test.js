@@ -61,6 +61,28 @@ async function convertCsvToJson(csvFilePath) {
     }
 }
 
+function bdFormat_User(jsonContent){
+  let itemList = [];
+  jsonContent.forEach((item)=>{
+      let found = false;
+      let counter = 0;
+      while(found === false & counter<itemList.length){
+          if( itemList.length !== 0 & itemList[counter].type === item.type){
+              itemList[counter].quantity += parseInt(item.quantity);
+              found = true;
+          }
+          counter++;
+      }
+      if (found === false){
+          itemList.push({
+              type:item.type,
+              quantity: parseInt(item.quantity)
+          });
+      }
+  })
+  return itemList;
+}
+
 const baseUrl = `${argv.url}:${argv.port}`
 
 async function handleResponse (request) {
@@ -96,7 +118,7 @@ switch (argv._[0]) {
     
     await convertCsvToJson(argv.inventoryPath)
             .then((msg) => {
-                inventoryAsJson = msg;
+                inventoryAsJson = bdFormat_User(msg);
             })
             .catch((error) => {
                 console.error(`Error converting CSV to JSON: ${error}`);
@@ -117,44 +139,7 @@ switch (argv._[0]) {
         })
     )
     break
-/*
-  case 'keys':
-    info(`Commande keys =>`)
 
-    await handleResponse(got(`${baseUrl}/keys`))
-    break
-  case 'lookup':
-    info(`lookup ${argv.key} =>`)
-
-    await handleResponse(got(`${baseUrl}/lookup/${argv.key}`))
-    break
-
-  case 'add':
-    info(`add ${argv.nodeUrl} =>`)
-
-    await handleResponse(got.post({
-      url: `${baseUrl}/add`,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: argv.nodeUrl })
-    }))
-    break
-
-  case 'join':
-    info(`join ${argv.nodeUrl} =>`)
-
-    await handleResponse(got.post({
-      url: `${baseUrl}/join`,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url: argv.nodeUrl })
-    }))
-    break
-
-  case 'config':
-    info(`config ${argv.key} =>`)
-
-    await handleResponse(got(`${baseUrl}/config/${argv.key}`))
-*/
-    break
   default:
     console.error('Commande inconnue')
 }

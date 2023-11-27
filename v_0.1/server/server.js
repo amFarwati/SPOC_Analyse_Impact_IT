@@ -70,24 +70,10 @@ function stringToArray(inputString) {
 
 //fonction conversion inventaire (format Json) en dictionnaire (key;value (int))
 function bdFormat_User(jsonContent){
-  let itemList = [];
-  jsonContent.forEach((item)=>{
-      let found = false;
-      let counter = 0;
-      while(found === false & counter<itemList.length){
-          if( itemList.length !== 0 & itemList[counter].type === item.type){
-              itemList[counter].quantity += parseInt(item.quantity);
-              found = true;
-          }
-          counter++;
-      }
-      if (found === false){
-          itemList.push({
-              type:item.type,
-              quantity: parseInt(item.quantity)
-          });
-      }
-  })
+  let itemList = jsonContent;
+  itemList.forEach((item)=>{
+    item.quantity = parseInt(item.quantity);
+  });
   return itemList;
 };
 
@@ -114,7 +100,7 @@ function bdRequest(request) {
     setTimeout(() => {
 
       let totalCost = [0,0,0];
-
+      
       db[request].forEach((tuple)=>{
         for (let i = 0; i < totalCost.length; i++){
           totalCost[i] += db_modele[tuple.type][i]*tuple.quantity;
@@ -148,7 +134,7 @@ await convertCsvToJson('./BD.csv')
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-//requête setInventory (fini)
+//requête setInventory (fini) /!\ prend que des json deja traité [{type: string, quantity: string}]
 app.put('/setInventory', (req, res)  => {
         console.log(`setInventory for ${req.body.user}`);
 
@@ -156,7 +142,7 @@ app.put('/setInventory', (req, res)  => {
         res.send(`BD updated with data for ${req.body.user}`);
 })
 
-//requête getInventory (fini)
+//requête getInventory (fini) 
 app.get('/getInventory/:user', (req, res) => {
         console.log(`getInventory for ${req.params.user}`);
 
@@ -169,7 +155,7 @@ app.get('/getInventory/:user', (req, res) => {
         }
 })
 
-//requête getImpact (fini)
+//requête getImpact (fini) /!\ prend que des json deja traité [{type: string, quantity: int},]
 app.get('/getImpact/:user', (req, res) => {
         console.log(`getImpact for ${req.params.user}`);
 

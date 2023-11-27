@@ -139,7 +139,7 @@ async function impactComptute(user) {
 await convertCsvToJson('./BD.csv')
 .then((bd) => {
   db_modele = bdFormat_Model(bd);
-  console.log(`db_modele :`, db_modele);
+  //console.log(`db_modele :`, db_modele);
 })
 .catch((error) => {
     console.error(`Error converting CSV to JSON: ${error}`);
@@ -169,7 +169,7 @@ app.get('/getInventory/:user', (req, res) => {
         }
 })
 
-//requête getImpact (en cours)
+//requête getImpact (fini)
 app.get('/getImpact/:user', (req, res) => {
         console.log(`getImpact for ${req.params.user}`);
 

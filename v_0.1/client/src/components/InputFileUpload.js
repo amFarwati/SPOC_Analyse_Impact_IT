@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect, useRef, useContext } from 'react';
-import { UserParc_API_Context } from './Dashboard';
+import { User_Context } from '../pages/Dashboard';
 import Papa from 'papaparse';
 import Button from '@mui/joy/Button';
 import SvgIcon from '@mui/joy/SvgIcon';
@@ -20,15 +20,15 @@ const VisuallyHiddenInput = styled('input')`
 
 export default function InputFileUpload() {
 
-    const [userParc_API,setUserParc_API] = useContext(UserParc_API_Context);
+    const setUserParc = useContext(User_Context)[1];
     const [jsonContent, setJsonContent] = useState([]);
     const [jsonChange,setJsonChange] = useState(false);
     const typeList = useRef([]);
 
     useEffect(()=>{
         typeList.current = extractTypeList(jsonContent);
-        setUserParc_API(bdFormat_User(jsonContent));
-    },[jsonChange,jsonContent]);
+        setUserParc(bdFormat_User(jsonContent));
+    },[jsonChange,jsonContent,setUserParc]);
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];

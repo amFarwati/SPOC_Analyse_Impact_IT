@@ -71,6 +71,7 @@ function stringToArray(inputString) {
 //fonction conversion inventaire (format Json) en dictionnaire (key;value (int))
 function bdFormat_User(jsonContent){
   let itemList = jsonContent;
+  console.log(itemList);
   itemList.forEach((item)=>{
     item.quantity = parseInt(item.quantity);
   });
@@ -90,38 +91,58 @@ function bdFormat_Model(jsonContent){
 };
 
 //async fonction requêtage BD (interface serveur/BD modéle)
-function bdRequest(request) {
+function bdRequest(request,data) {
   console.log(`starting bd request ${request}`);
 
   return new Promise((resolve) => {
+    switch (request) {
+      case 'user':
+        // à changer quand passage au serv SQL
+        /*---------------------------------------------------------------------------*/
+        setTimeout(() => {
 
-    //fonction à changer quand passage sur requêtage MongoDB
-    /*----------------------------------------------------------------------------------*/
-    setTimeout(() => {
-
-      let totalCost = [0,0,0];
-      
-      db[request].forEach((tuple)=>{
-        for (let i = 0; i < totalCost.length; i++){
-          totalCost[i] += db_modele[tuple.type][i]*tuple.quantity;
-        }
-      });  
-
-      resolve(totalCost);
-      console.log(`bd request ${request} awsered`);
-
-    },
-    /*----------------------------------------------------------------------------------*/
-     1000);
-
+          let totalCost = [0,0,0];
+          
+          db[data].forEach((tuple)=>{
+            for (let i = 0; i < totalCost.length; i++){
+              totalCost[i] += db_modele[tuple.type][i]*tuple.quantity;
+            }
+          }); 
+          
+          resolve(totalCost);
+          console.log(`bd request ${request} ${data} awsered`);
+        },
+        /*----------------------------------------------------------------------------------*/
+        1000);
+        /*---------------------------------------------------------------------------*/
+        break;
+      case 'type':
+        // à changer quand passage au serv SQL
+        /*---------------------------------------------------------------------------*/
+        setTimeout(() => {
+          let typeList = Object.keys(db_modele);
+          resolve(typeList);
+          console.log(`bd request ${request} awsered`);
+        },
+        1000);
+        /*---------------------------------------------------------------------------*/
+        break;
+    }
   });
 }
 
 //async fonction calcul impact pour un User
-async function impactComptute(user) {
-  return await bdRequest(user);
+async function impactUser(user) {
+  return await bdRequest('user', user);
 }
 
+//async fonction retourne la liste de Types de la bd
+async function typeList() {
+  return await bdRequest('type');
+}
+
+// à changer quand passage au serv SQL (sera dans bdRequest)
+/*---------------------------------------------------------------------------*/
 await convertCsvToJson('./BD.csv')
 .then((bd) => {
   db_modele = bdFormat_Model(bd);
@@ -130,6 +151,7 @@ await convertCsvToJson('./BD.csv')
 .catch((error) => {
     console.error(`Error converting CSV to JSON: ${error}`);
 });
+/*---------------------------------------------------------------------------*/
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -156,19 +178,28 @@ app.get('/getInventory/:user', (req, res) => {
 })
 
 //requête getImpact (fini) /!\ prend que des json deja traité [{type: string, quantity: int},]
-app.get('/getImpact/:user', (req, res) => {
+app.get('/getImpact/:user/:data', (req, res) => {
         console.log(`getImpact for ${req.params.user}`);
 
         if(req.params.user===undefined){
           res.send(`ERROR: the user is undefined`);
         }else if (req.params.user in db){
-          impactComptute(req.params.user)
+          impactUser(req.params.user)
           .then((impact)=>{res.json(impact);})
           .catch((error)=>{console.error(`Error computing Impact: ${error}`);
           res.send(`ERROR: the server encounter dificulties during computing impact`)})
         }else{
           res.send(`ERROR: the user ${req.params.user} has not been found in the BD`);
         }
+})
+
+//requête getInventory (fini) 
+app.get('/getTypeList', (req, res) => {
+  console.log(`getTypeList`);
+  typeList()
+  .then((list)=> {res.json(list);})
+  .catch((error)=> {console.error(`Error getting type list: ${error}`);
+  res.send(`ERROR: the server encounter dificulties getting type list`)})
 })
 
 console.log(`Server try run on port ${port}`)

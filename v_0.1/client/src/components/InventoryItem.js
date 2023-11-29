@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useRef, useEffect, useContext } from 'react'
-import { ListItemContext } from './Inventory';
-import { UserParc_API_Context } from './Dashboard';
+import { User_Context } from '../pages/Dashboard';
+import { Type_Context } from './Inventory';
 import "../styles/InventoryItem.css";
 
 import { Popper } from '@mui/base/Popper';
@@ -11,10 +11,10 @@ import Input from '@mui/joy/Input';
 import Divider from '@mui/joy/Divider';
 import Button from '@mui/joy/Button';
 import List from '@mui/joy/List';
-import ListItem from '@mui/joy/ListItem';
 import MenuList from '@mui/joy/MenuList';
 import MenuItem from '@mui/joy/MenuItem';
-import Typography from '@mui/joy/Typography';
+import IconButton from '@mui/material/IconButton';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Popup = styled(Popper)({
   zIndex: 1000,
@@ -23,8 +23,8 @@ const Popup = styled(Popper)({
 function InventoryItem(props) {
   
   const buttonRef = useRef(null);
-  const [listItem, setListItem] = useContext(ListItemContext)
-  const [userParc_API,setUserParc_API] = useContext(UserParc_API_Context);
+  const userParc = useContext(User_Context)[0];
+  const typeList = useContext(Type_Context)[0];
 
   const [open, setOpen] = React.useState(false);
   const [quantity,setQuantity] = useState(props.quantity)
@@ -32,16 +32,15 @@ function InventoryItem(props) {
   const [type,setType] = useState(props.type)
   const [formerType,setFormerType] = useState(null)
 
-  console.log (listItem)
   const id = props.id;
 
 
-  //maj de userParc_API en cas ajout item ou modif
+  //maj de userParc en cas ajout item ou modif
   useEffect(()=>{
     if ((type !== null)){
-      typeIn = false;
+      let typeIn = false;
 
-      userParc_API.forEach((item)=>{
+      userParc.forEach((item)=>{
         if(formerType === item.type){
           item.quantity = item.quantity-formerQuantity;
         }
@@ -52,17 +51,22 @@ function InventoryItem(props) {
       });
 
       if(typeIn === false){
-        userParc_API.append({ type: type,
+        userParc.append({ type: type,
                               quantity: quantity,
                             })      
       }
     }  
-  },[quantity,type]);
+  },[quantity,type,userParc,formerQuantity,formerType]);
 
   const delButton = () => {return ( <IconButton color="tertiary" onClick={() => props.handlerDeleteItem(id, type, quantity)}>
                                           <DeleteIcon />
                                       </IconButton>);
                             }
+  
+const handleClose = () => {
+  setOpen(false);
+};
+  
 
   return (
     <div className='item'>
@@ -107,27 +111,16 @@ function InventoryItem(props) {
                   maxHeight: 240,
                   overflow: 'auto',
                 }}
-        >
-          {Object.entries(props.data).map((element)  => (
-            <List key={element[0]}>
-              <ListItem sticky>
-                <Typography
-                  id={`sticky-list-demo-${element[0]}`}
-                  level="body-xs"
-                  textTransform="uppercase"
-                  fontWeight="lg"
-                >
-                  {element[0]}
-                </Typography>
-              </ListItem>
-              {Object.entries(element[1]).map((element)  => (
+        >{typeList.map((element)  => (
+            <List key={element}>
+              {typeList.map((element)  => (
                 <MenuItem 
-                    key={element[0]} 
+                    key={element} 
                     onClick={()=>{
                       setFormerType(type);
-                      setType(element[0]);
+                      setType(element);
                     }}>
-                      {element[0]}
+                      {element}
                 </MenuItem>
               ))}
             </List>

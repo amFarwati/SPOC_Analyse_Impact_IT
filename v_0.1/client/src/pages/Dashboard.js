@@ -5,18 +5,23 @@ import ResultDisplay from "../components/ResultDisplay"
 import Inventory from "../components/Inventory"
 import Divider from '@mui/joy/Divider';
 
-export const UserParc_API_Context = createContext();
+export const User_Context = createContext();
+export const API_Context = createContext();
 
 function Dashboard() {
-  const [userParc_API,setUserParc_API] = useState(null);
+  const [userParc,setUserParc] = useState([]);
+  const login = 'USER123456789';
+  const baseUrl = `http://localhost:4000`;
 
   return (
     <div>
-      <UserParc_API_Context.Provider value={ [userParc_API,setUserParc_API] }>
+      <User_Context.Provider value={ [userParc,setUserParc,login] }>
+      <API_Context.Provider value={ [baseUrl] }>
         <ResultDisplay />
         <Divider orientation="horizontal" />
         <Inventory />
-      </UserParc_API_Context.Provider>
+      </API_Context.Provider>
+      </User_Context.Provider>
     </div>
   )
 }

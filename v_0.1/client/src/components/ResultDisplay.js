@@ -1,20 +1,43 @@
 import React from 'react';
 import { useContext, useEffect } from 'react';
-import { UserParc_API_Context } from './Dashboard';
+import { User_Context } from '../pages/Dashboard';
+import { API_Context } from '../pages/Dashboard';
 import "../styles/ResultDisplay.css";
 import { BarChart } from '@mui/x-charts/BarChart';
+import got from 'got';
 
 
 function ResultDisplay() {
 
-  const [userParc_API,setUserParc_API] = useContext(UserParc_API_Context);
-  const [ges,eau,terresRares] = null;
+  const userParc = useContext(User_Context)[0];
+  const login = useContext(User_Context)[2];
+  const [baseUrl] = useContext(API_Context);
+  var [ges,eau,terresRares] = [0,0,0];
 
   useEffect(() => {
-    if (userParc_API!==null){
-      //requete axios GET /getImpact <user>
+    if (userParc!==null){
+      /*
+      got.put({
+        url: `${baseUrl}/setInventory`,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            user: `${login}_test`,
+            inventory: userParc
+            })
+      })
+      .then((res)=>{console.log(res);})
+      .catch((error)=>{console.error('ERROR:', error)});
+
+      got(`${baseUrl}/getImpact/${login}_test`)
+      .then((res)=>{
+        console.log(res);
+        res.forEach((stat)=>{stat = parseFloat(stat)});
+        [ges,eau,terresRares]=res;
+      })
+      .catch((error)=>{console.error('ERROR:', error)});
+      */
     }
-  },[userParc_API]);
+  },[userParc]);
 
   /*
   console.log("totalCost ",totalCost);

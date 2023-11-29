@@ -11,6 +11,7 @@ const argv = yargs(hideBin(process.argv)) // Analyse des paramètres
   .command('setInventory <user> <inventoryPath>', 'Set l\'inventaire de <user> dans la BD en exportant le fichier <inventory>.csv')
   .command('getInventory <user>', 'Récupère l\'inventaire de <user> stocké dans la BD')
   .command('getImpact <user>', 'Calcule et récupère l\'impact de <user>')
+  .command('getTypeList', 'Retourne la liste de type disponible dans la BD')
   .option('url', {
     alias: 'u',
     default: 'http://localhost',
@@ -105,10 +106,18 @@ switch (argv._[0]) {
 
   case 'getImpact':
     info(`getImpact ${argv.user} =>`)
-
     await handleResponse(
-        got(`${baseUrl}/getImpact/${argv.user}`)
+      got(`${baseUrl}/getImpact/${argv.user}`)
     )
+  
+    break
+  
+  case 'getTypeList':
+    info(`getTypeList  =>`)
+    await handleResponse(
+      got(`${baseUrl}/getTypeList`)
+    )
+  
     break
 
   case 'setInventory':

@@ -1,30 +1,37 @@
-import React from 'react'
-import { useState, useEffect, createContext, useContext } from 'react'
-import { UserParc_API_Context } from './Dashboard';
+import React from 'react';
+import { useState, useEffect, createContext, useContext } from 'react';
+import { User_Context } from '../pages/Dashboard';
+import { API_Context } from '../pages/Dashboard';
 import "../styles/Inventory.css";
 import FileUpload from "./InputFileUpload";
 import Item from "./InventoryItem";
-
 import Button from '@mui/joy/Button';
 import Add from '@mui/icons-material/Add';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Delete';
 
-export const ListItemContext = createContext();
 
+export const Type_Context = createContext();
 
 function Inventory(props) {
 
   const [listItem, setListItem] = useState([]);
-  const [userParc_API,setUserParc_PI] = useContext(UserParc_API_Context);
+  const [typeList, setTypeList] = useState([]);
+  const userParc = useContext(User_Context)[0];
+  const [baseUrl] = useContext(API_Context);
+  
 
-  // requete axios pour récupérer list des types pris en charge
-  const backendData = null;
+  // requete got pour récupérer list des types pris en charge
+  const handlerGetTypeList = ()=>{
+    /*
+    got(`${baseUrl}/getTypeList`)
+    .then((res)=>{setTypeList(res);})
+    .catch((error)=>{console.error('ERROR:', error)});
+    */
+  }
 
   const handlerDeleteItem = (id, type, quantity) => {
     let tempList = [...listItem];
 
-    userParc_API.forEach((item)=>{
+    userParc.forEach((item)=>{
       if(type === item.type){
         item.quantity = item.quantity-quantity;
       }
@@ -45,7 +52,7 @@ function Inventory(props) {
     else{itemId=(tempList[tempList.length-1].id)+1;};
 
     tempList.push({   id: itemId,
-                      item :<Item id={itemId} type={null} quantity={0} data={backendData} handlerDeleteItem={handlerDeleteItem}/>
+                      item :<Item id={itemId} type={null} quantity={0} handlerDeleteItem={handlerDeleteItem}/>
                   })
 
     setListItem(tempList);
@@ -64,7 +71,7 @@ function Inventory(props) {
       else{itemId=(tempList[tempList.length-1].id)+1;};
 
       tempList.push({   id: itemId,
-                        item :<Item id={itemId} itemId={item.type} quantity={item.quantity} data={backendData} updateListCost={handlerUpdateItemCost}/>
+                        item :<Item id={itemId} itemId={item.type} quantity={item.quantity}/>
                     })
     });
 
@@ -77,8 +84,12 @@ function Inventory(props) {
     }
   },[userParc]);
 
+  useEffect(() => {
+    handlerGetTypeList();
+  },[]);
+
   return (
-    <ListItemContext.Provider value={ [listItem, setListItem] }>
+    <Type_Context.Provider value={ [typeList, setTypeList] }>
     <div className='inventory'>
       {listItem.map((item) => {return <div className='item' key ={item.id} >{item.item}</div>})}
       <Button startDecorator={<Add />} 
@@ -91,9 +102,19 @@ function Inventory(props) {
                 fontSize: "20px"
             }}
               size="lg">Add Item</Button>
+      <Button startDecorator={<Add />} 
+              color="neutral"
+              variant="solid" 
+              onClick={handlerGetTypeList}
+              style={{
+                borderRadius: 30,
+                padding: "18px 36px",
+                fontSize: "20px"
+            }}
+              size="lg">Reload BD</Button>
       <FileUpload />
     </div>
-    </ListItemContext.Provider>
+    </Type_Context.Provider>
   )
 }
 export default Inventory

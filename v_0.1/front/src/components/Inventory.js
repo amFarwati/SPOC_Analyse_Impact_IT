@@ -7,6 +7,7 @@ import FileUpload from "./InputFileUpload";
 import Item from "./InventoryItem";
 import Button from '@mui/joy/Button';
 import Add from '@mui/icons-material/Add';
+import axios from 'redaxios';
 
 
 export const Type_Context = createContext();
@@ -22,12 +23,22 @@ function Inventory(props) {
 
   // requete got pour récupérer list des types pris en charge
   const handlerGetTypeList = ()=>{
-    console.log(`handlerGetTypeList ${baseUrl}`)
-    /*
-    got(`${baseUrl}/getTypeList`)
-    .then((res)=>{setTypeList(res);})
-    .catch((error)=>{console.error('ERROR:', error)});
-    */
+    console.log(`handlerGetTypeList ${baseUrl} =>`)
+
+    axios.get(`${baseUrl}/getTypeList`, { withCredentials: true })
+        .then(res => {
+            // Vérification si la requête a réussi (statut 200-299)
+            if (!res.ok) {
+                throw new Error(`Erreur HTTP! Statut: ${res.status}`);
+            }
+            // Manipulation des données
+            console.log(res.data)
+            setTypeList(res.data)
+        })
+        .catch(error => {
+            // Gestion des erreurs
+            console.error('Erreur de redaxios:', error.message);
+        });
   }
 
   const handlerDeleteItem = (id, type, quantity) => {
@@ -73,7 +84,7 @@ function Inventory(props) {
       else{itemId=(tempList[tempList.length-1].id)+1;};
 
       tempList.push({   id: itemId,
-                        item :<Item id={itemId} itemId={item.type} quantity={item.quantity} deleteRequire={setInvInterface}/>
+                        item :<Item id={itemId} type={item.type} quantity={item.quantity} deleteRequire={setInvInterface}/>
                     })
     });
 

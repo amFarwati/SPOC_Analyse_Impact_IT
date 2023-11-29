@@ -39,6 +39,8 @@ function InventoryItem(props) {
     if ((type !== null)){
       let typeIn = false;
 
+      // à faire comme deleteRequest pour maj userParc
+      /*-----------------------------------------------------------------*/ 
       userParc.forEach((item)=>{
         if(formerType === item.type){
           item.quantity = item.quantity-formerQuantity;
@@ -54,6 +56,7 @@ function InventoryItem(props) {
                               quantity: quantity,
                             })      
       }
+      /*-----------------------------------------------------------------*/ 
     }  
   },[quantity,type,userParc,formerQuantity,formerType]);
   
@@ -105,19 +108,16 @@ const handleClose = () => {
                   maxHeight: 240,
                   overflow: 'auto',
                 }}
-        >{typeList.map((element)  => (
-            <List key={element}>
-              {typeList.map((element)  => (
-                <MenuItem 
-                    key={element} 
-                    onClick={()=>{
-                      setFormerType(type);
-                      setType(element);
-                    }}>
-                      {element}
-                </MenuItem>
-              ))}
-            </List>
+        >
+          {typeList.map((element)  => (
+            <MenuItem 
+                key={element} 
+                onClick={()=>{
+                  setFormerType(type);
+                  setType(element);
+                }}>
+                  {element}
+            </MenuItem>
           ))}
         </MenuList>
         </ClickAwayListener>

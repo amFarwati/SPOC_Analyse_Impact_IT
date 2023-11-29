@@ -1,13 +1,10 @@
 #!/usr/bin/env node
-
 import express from 'express'
 import bodyParser from 'body-parser'
 import Papa from 'papaparse';
 import yargs from 'yargs'
 import { promises as fsPromises } from 'fs';
 import { hideBin } from 'yargs/helpers'
-import got from 'got'
-
 
 const argv = yargs(hideBin(process.argv))
   .options({
@@ -152,6 +149,14 @@ await convertCsvToJson('./BD.csv')
     console.error(`Error converting CSV to JSON: ${error}`);
 });
 /*---------------------------------------------------------------------------*/
+
+// Middleware pour activer CORS
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))

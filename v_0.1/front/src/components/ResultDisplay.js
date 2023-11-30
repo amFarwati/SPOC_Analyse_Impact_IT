@@ -4,7 +4,7 @@ import { User_Context } from '../pages/Dashboard';
 import { API_Context } from '../pages/Dashboard';
 import "../styles/ResultDisplay.css";
 import { BarChart } from '@mui/x-charts/BarChart';
-//import axios from 'redaxios';
+import axios from 'redaxios';
 
 
 function ResultDisplay() {
@@ -15,36 +15,50 @@ function ResultDisplay() {
   var [ges,eau,terresRares] = [0,0,0];
 
   useEffect(() => {
-    if (userParc!==null){
-      /*
-      got.put({
-        url: `${baseUrl}/setInventory`,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            user: `${login}_test`,
-            inventory: userParc
-            })
-      })
-      .then((res)=>{console.log(res);})
-      .catch((error)=>{console.error('ERROR:', error)});
+    if (userParc.length>0){
+      console.log(userParc)
 
-      got(`${baseUrl}/getImpact/${login}_test`)
-      .then((res)=>{
-        console.log(res);
-        res.forEach((stat)=>{stat = parseFloat(stat)});
-        [ges,eau,terresRares]=res;
-      })
-      .catch((error)=>{console.error('ERROR:', error)});
-      */
+      console.log(`/setInventory ${baseUrl} ${login}_test =>`)
+
+      let data = JSON.stringify({ user: `${login}_test`,
+                                  inventory: userParc
+                                  })
+
+      axios.put(`${baseUrl}/setInventory`, data, { withCredentials: true })
+          .then(res => {
+              // Vérification si la requête a réussi (statut 200-299)
+              if (!res.ok) {
+                  throw new Error(`Erreur HTTP! Statut: ${res.status}`);
+              }
+              // Manipulation des données
+              console.log(res.data)
+              [ges,eau,terresRares] = res.data;
+          })
+          .catch(error => {
+              // Gestion des erreurs
+              console.error('Erreur de redaxios:', error.message);
+          });
+
+
+      console.log(`/getImpact ${baseUrl} ${login}_test =>`)
+
+      axios.get(`${baseUrl}/getImpact/${login}_test`, { withCredentials: true })
+          .then(res => {
+              // Vérification si la requête a réussi (statut 200-299)
+              if (!res.ok) {
+                  throw new Error(`Erreur HTTP! Statut: ${res.status}`);
+              }
+              // Manipulation des données
+              console.log(res.data)
+              [ges,eau,terresRares] = res.data;
+          })
+          .catch(error => {
+              // Gestion des erreurs
+              console.error('Erreur de redaxios:', error.message);
+          });
     }
   },[userParc]);
 
-  /*
-  console.log("totalCost ",totalCost);
-  console.log("ges ",ges);
-  console.log("eau ",eau);
-  console.log("terresRares ",terresRares);
-  */
   let BD = {xAxis:['GES','EAU','Terres Rares'],series:[{data:ges},{data:eau},{data:terresRares}]};
 
   return (

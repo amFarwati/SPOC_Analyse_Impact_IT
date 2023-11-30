@@ -16,7 +16,7 @@ function Inventory(props) {
 
   const [listItem, setListItem] = useState([]);
   const [typeList, setTypeList] = useState([]);
-  const [invInterface, setInvInterface] = useState([]);
+  const [interf, setInterf] = useState([]);
   const [userParc,setUserParc] = useContext(User_Context);
   const [baseUrl] = useContext(API_Context);
   
@@ -26,18 +26,21 @@ function Inventory(props) {
     let [type,quantity,formerType,formerQuantity] = argv;
 
       userParcCopy.forEach((item)=>{
-        if((formerType === item.type)&( formerType!== undefined)&(formerQuantity!== 0)){
-          item.quantity = item.quantity-formerQuantity;
+        if((formerType === item.type)&( formerType!== undefined)){
+          
+          item.quantity = parseInt(item.quantity-parseInt(formerQuantity));
+          console.log (item.quantity )
         }
-        if((type === item.type)&(type!== undefined)&(quantity!== 0)){
-          item.quantity = item.quantity+quantity;
+        if((type === item.type)&(type!== undefined)){
+          item.quantity = parseInt(item.quantity+parseInt(quantity));
+          console.log (item.quantity )
           typeIn=true;
         }
       });
 
       if(typeIn === false){
         userParcCopy.push({ type: type,
-                            quantity: quantity,
+                            quantity: parseInt(quantity),
                             })      
       }
 
@@ -70,8 +73,13 @@ function Inventory(props) {
     let [id, type, quantity] = argv;
 
     userParcCopy.forEach((item)=>{
-      if((type === item.type)&(type!== undefined)&(quantity!== 0)){
-        item.quantity = item.quantity+quantity;
+      if((type === item.type)&(type!== undefined)){
+        item.quantity = item.quantity-parseInt(quantity);
+        if(item.quantity === 0){
+          userParcCopy = userParcCopy.filter(item => item.type !== type);
+          console.log('userParcCopy =>')
+          console.log(userParcCopy)
+        }
       }
     });
 
@@ -91,7 +99,7 @@ function Inventory(props) {
     else{itemId=(tempList[tempList.length-1].id)+1;};
 
     tempList.push({   id: itemId,
-                      item :<Item id={itemId} type={null} quantity={0} interface={setInvInterface}/>
+                      item :<Item id={itemId} type={null} quantity={0} interf={setInterf}/>
                   })
 
     setListItem(tempList);
@@ -110,40 +118,38 @@ function Inventory(props) {
       else{itemId=(tempList[tempList.length-1].id)+1;};
 
       tempList.push({   id: itemId,
-                        item :<Item id={itemId} type={item.type} quantity={item.quantity} interface={setInvInterface}/>
+                        item :<Item id={itemId} type={item.type} quantity={item.quantity} interf={setInterf}/>
                     })
     });
 
     setListItem(tempList);
   }
 
-  const handlerInvInterface = ()=>{
-    switch(invInterface[0]){
+  const handlerInterf = ()=>{
+    switch(interf[0]){
       case 'delRequire':
-        console.log(`delRequire => ${invInterface[1]}`);
+        console.log(`delRequire => ${interf[1]}`);
         console.log(userParc);
-        handlerDeleteItem(invInterface[1]);
+        handlerDeleteItem(interf[1]);
         console.log(userParc);
         break;
       case 'majUserParc':
-        console.log(`majUserParc => ${invInterface}`);
+        console.log(`majUserParc => ${interf}`);
         console.log(userParc);
-        majUserParc(invInterface[1]);
+        majUserParc(interf[1]);
         console.log(userParc);
+        break;
+      case 'importInv':
+        console.log(`importInv => ${interf}`);
+        handlerAddParcItem(userParc);
         break;
     }
   };
 
+  //prise en charge interf inventory et inventoryItem
   useEffect(() => {
-    if(userParc.length > 0){
-      handlerAddParcItem(userParc);
-    }
-  },[userParc]);
-
-  //prise en charge interface inventory et inventoryItem
-  useEffect(() => {
-    handlerInvInterface();
-  },[invInterface]);
+    handlerInterf();
+  },[interf]);
 
   useEffect(() => {
     handlerGetTypeList();
@@ -173,7 +179,7 @@ function Inventory(props) {
                 fontSize: "20px"
             }}
               size="lg">Reload BD</Button>
-      <FileUpload />
+      <FileUpload interf={setInterf}/>
     </div>
     </Type_Context.Provider>
   )

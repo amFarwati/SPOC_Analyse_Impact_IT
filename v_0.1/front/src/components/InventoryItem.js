@@ -37,11 +37,9 @@ function InventoryItem(props) {
   //maj de userParc en cas ajout item ou modif
   useEffect(()=>{
     if ((type !== null)){
-      let typeIn = false;
-
-      props.interface(['majUserParc',[type,quantity,formerType,formerQuantity]]) //[type,quantity,formerType,formerQuantity]
+      props.interf(['majUserParc',[type,quantity,formerType,formerQuantity]]) //[type,quantity,formerType,formerQuantity]
     }  
-  },[quantity,type,userParc, ]);
+  },[quantity,type, ]);
   
 const handleClose = () => {
   setOpen(false);
@@ -126,7 +124,7 @@ const handleClose = () => {
             }}
             variant="soft" />
       <Divider orientation="vertical" />
-      <IconButton color="tertiary" onClick={() => props.interface(['delRequire',[id, type, quantity]])}>
+      <IconButton color="tertiary" onClick={() => props.interf(['delRequire',[id, type, quantity]])}>
         <DeleteIcon />
       </IconButton>
       {id}

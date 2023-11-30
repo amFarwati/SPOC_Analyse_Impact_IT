@@ -18,21 +18,14 @@ const VisuallyHiddenInput = styled('input')`
   width: 1px;
 `;
 
-export default function InputFileUpload() {
+export default function InputFileUpload(props) {
 
     const setUserParc = useContext(User_Context)[1];
-    const [jsonContent, setJsonContent] = useState([]);
-    const [jsonChange,setJsonChange] = useState(false);
-    const typeList = useRef([]);
-
-    useEffect(()=>{
-        typeList.current = extractTypeList(jsonContent);
-        setUserParc(bdFormat_User(jsonContent));
-    },[jsonChange,jsonContent,setUserParc]);
+    const [fileChange, setFileChange] = useState(false);
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
-
+        console.log(file)
         if (file) {
         const reader = new FileReader();
 
@@ -42,7 +35,10 @@ export default function InputFileUpload() {
             header: true,
             skipEmptyLines: true,
             });
-            setJsonContent(results.data);
+
+            setUserParc(bdFormat_User(results.data));
+            props.interf(['importInv']);
+            setFileChange(!fileChange);
         };
         reader.readAsText(file);
         }
@@ -85,7 +81,7 @@ export default function InputFileUpload() {
         <Button
             color="neutral"
             variant="solid" 
-            onClick={()=>{setJsonChange(!jsonChange)}}
+
             component="label"
             role={undefined}
             tabIndex={-1}

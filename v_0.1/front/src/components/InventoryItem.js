@@ -39,26 +39,9 @@ function InventoryItem(props) {
     if ((type !== null)){
       let typeIn = false;
 
-      // à faire comme deleteRequest pour maj userParc
-      /*-----------------------------------------------------------------*/ 
-      userParc.forEach((item)=>{
-        if(formerType === item.type){
-          item.quantity = item.quantity-formerQuantity;
-        }
-        if(type === item.type){
-          item.quantity = item.quantity+quantity;
-          typeIn=true;
-        }
-      });
-
-      if(typeIn === false){
-        userParc.push({ type: type,
-                              quantity: quantity,
-                            })      
-      }
-      /*-----------------------------------------------------------------*/ 
+      props.interface(['majUserParc',[type,quantity,formerType,formerQuantity]]) //[type,quantity,formerType,formerQuantity]
     }  
-  },[quantity,type,userParc,formerQuantity,formerType]);
+  },[quantity,type,userParc, ]);
   
 const handleClose = () => {
   setOpen(false);
@@ -135,6 +118,7 @@ const handleClose = () => {
             }}
             onChange={(event)=> {
               setFormerQuantity(quantity);
+              setFormerType(type);
               setQuantity(event.target.value);
             }}
             sx={{
@@ -142,7 +126,7 @@ const handleClose = () => {
             }}
             variant="soft" />
       <Divider orientation="vertical" />
-      <IconButton color="tertiary" onClick={() => props.deleteRequire([id, type, quantity])}>
+      <IconButton color="tertiary" onClick={() => props.interface(['delRequire',[id, type, quantity]])}>
         <DeleteIcon />
       </IconButton>
       {id}

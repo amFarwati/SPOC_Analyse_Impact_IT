@@ -17,11 +17,34 @@ function Inventory(props) {
   const [listItem, setListItem] = useState([]);
   const [typeList, setTypeList] = useState([]);
   const [invInterface, setInvInterface] = useState([]);
-  const userParc = useContext(User_Context)[0];
+  const [userParc,setUserParc] = useContext(User_Context);
   const [baseUrl] = useContext(API_Context);
   
+  const majUserParc = (argv)=>{
+    let typeIn = false;
+    let userParcCopy = userParc;
+    let [type,quantity,formerType,formerQuantity] = argv;
 
-  // requete got pour récupérer list des types pris en charge
+      userParcCopy.forEach((item)=>{
+        if((formerType === item.type)&( formerType!== undefined)&(formerQuantity!== 0)){
+          item.quantity = item.quantity-formerQuantity;
+        }
+        if((type === item.type)&(type!== undefined)&(quantity!== 0)){
+          item.quantity = item.quantity+quantity;
+          typeIn=true;
+        }
+      });
+
+      if(typeIn === false){
+        userParcCopy.push({ type: type,
+                            quantity: quantity,
+                            })      
+      }
+
+      setUserParc(userParcCopy);
+  };
+
+  // requete serveur pour récupérer list des types pris en charge
   const handlerGetTypeList = ()=>{
     console.log(`handlerGetTypeList ${baseUrl} =>`)
 
@@ -39,18 +62,21 @@ function Inventory(props) {
             // Gestion des erreurs
             console.error('Erreur de redaxios:', error.message);
         });
-  }
+  };
 
-  const handlerDeleteItem = (id, type, quantity) => {
+  const handlerDeleteItem = (argv) => {
     let tempList = [...listItem];
+    let userParcCopy = userParc;
+    let [id, type, quantity] = argv;
 
-    userParc.forEach((item)=>{
-      if(type === item.type){
-        item.quantity = item.quantity-quantity;
+    userParcCopy.forEach((item)=>{
+      if((type === item.type)&(type!== undefined)&(quantity!== 0)){
+        item.quantity = item.quantity+quantity;
       }
     });
 
     tempList = tempList.filter(item => item.id !== id);
+    setUserParc(userParcCopy);
     setListItem(tempList);
   };
 
@@ -65,7 +91,7 @@ function Inventory(props) {
     else{itemId=(tempList[tempList.length-1].id)+1;};
 
     tempList.push({   id: itemId,
-                      item :<Item id={itemId} type={null} quantity={0} deleteRequire={setInvInterface}/>
+                      item :<Item id={itemId} type={null} quantity={0} interface={setInvInterface}/>
                   })
 
     setListItem(tempList);
@@ -84,12 +110,29 @@ function Inventory(props) {
       else{itemId=(tempList[tempList.length-1].id)+1;};
 
       tempList.push({   id: itemId,
-                        item :<Item id={itemId} type={item.type} quantity={item.quantity} deleteRequire={setInvInterface}/>
+                        item :<Item id={itemId} type={item.type} quantity={item.quantity} interface={setInvInterface}/>
                     })
     });
 
     setListItem(tempList);
   }
+
+  const handlerInvInterface = ()=>{
+    switch(invInterface[0]){
+      case 'delRequire':
+        console.log(`delRequire => ${invInterface[1]}`);
+        console.log(userParc);
+        handlerDeleteItem(invInterface[1]);
+        console.log(userParc);
+        break;
+      case 'majUserParc':
+        console.log(`majUserParc => ${invInterface}`);
+        console.log(userParc);
+        majUserParc(invInterface[1]);
+        console.log(userParc);
+        break;
+    }
+  };
 
   useEffect(() => {
     if(userParc.length > 0){
@@ -97,9 +140,9 @@ function Inventory(props) {
     }
   },[userParc]);
 
+  //prise en charge interface inventory et inventoryItem
   useEffect(() => {
-    console.log(`del item id ${invInterface[0]}`)
-    handlerDeleteItem(invInterface[0],invInterface[1],invInterface[2]);
+    handlerInvInterface();
   },[invInterface]);
 
   useEffect(() => {

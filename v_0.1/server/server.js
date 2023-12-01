@@ -184,7 +184,7 @@ app.get('/getInventory/:user', (req, res) => {
 })
 
 //requête getImpact (fini) /!\ prend que des json deja traité [{type: string, quantity: int},]
-app.get('/getImpact/:user/:data', (req, res) => {
+app.get('/getImpact/:user', (req, res) => {
         console.log(`getImpact for ${req.params.user}`);
 
         if(req.params.user===undefined){

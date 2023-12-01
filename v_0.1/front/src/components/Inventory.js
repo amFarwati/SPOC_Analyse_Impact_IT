@@ -22,18 +22,18 @@ function Inventory(props) {
   
   const majUserParc = (argv)=>{
     let typeIn = false;
-    let userParcCopy = userParc;
+    let userParcCopy = [...userParc];
     let [type,quantity,formerType,formerQuantity] = argv;
 
       userParcCopy.forEach((item)=>{
         if((formerType === item.type)&( formerType!== undefined)){
           
           item.quantity = parseInt(item.quantity-parseInt(formerQuantity));
-          console.log (item.quantity )
+          //console.log (item.quantity )
         }
         if((type === item.type)&(type!== undefined)){
           item.quantity = parseInt(item.quantity+parseInt(quantity));
-          console.log (item.quantity )
+          //console.log (item.quantity )
           typeIn=true;
         }
       });
@@ -44,6 +44,7 @@ function Inventory(props) {
                             })      
       }
 
+      console.log('majUserParc => userParcCopy =>',userParcCopy);
       setUserParc(userParcCopy);
   };
 
@@ -69,21 +70,23 @@ function Inventory(props) {
 
   const handlerDeleteItem = (argv) => {
     let tempList = [...listItem];
-    let userParcCopy = userParc;
+    let userParcCopy = [...userParc];
     let [id, type, quantity] = argv;
 
     userParcCopy.forEach((item)=>{
       if((type === item.type)&(type!== undefined)){
+        console.log(`${item.quantity}-${quantity}`)
         item.quantity = item.quantity-parseInt(quantity);
+        console.log(item.quantity)
         if(item.quantity === 0){
           userParcCopy = userParcCopy.filter(item => item.type !== type);
-          console.log('userParcCopy =>')
-          console.log(userParcCopy)
         }
       }
     });
 
     tempList = tempList.filter(item => item.id !== id);
+
+    console.log('handlerDeleteItem => userParcCopy =>',userParcCopy);
     setUserParc(userParcCopy);
     setListItem(tempList);
   };
@@ -128,19 +131,15 @@ function Inventory(props) {
   const handlerInterf = ()=>{
     switch(interf[0]){
       case 'delRequire':
-        console.log(`delRequire => ${interf[1]}`);
-        console.log(userParc);
+        console.log(`delRequire => ${interf[1]}`,userParc);
         handlerDeleteItem(interf[1]);
-        console.log(userParc);
         break;
       case 'majUserParc':
-        console.log(`majUserParc => ${interf}`);
-        console.log(userParc);
+        console.log(`majUserParc => ${interf}`,userParc);
         majUserParc(interf[1]);
-        console.log(userParc);
         break;
       case 'importInv':
-        console.log(`importInv => ${interf}`);
+        console.log(`importInv => ${interf}`,userParc);
         handlerAddParcItem(userParc);
         break;
     }

@@ -36,7 +36,7 @@ function InventoryItem(props) {
 
   //maj de userParc en cas ajout item ou modif
   useEffect(()=>{
-    if ((type !== null)){
+    if ((type !== null)&!((type !== formerType)&(quantity !== formerQuantity))){
       props.interf(['majUserParc',[type,quantity,formerType,formerQuantity]]) //[type,quantity,formerType,formerQuantity]
     }  
   },[quantity,type, ]);

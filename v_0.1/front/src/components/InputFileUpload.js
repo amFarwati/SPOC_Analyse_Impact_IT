@@ -25,6 +25,8 @@ export default function InputFileUpload(props) {
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
+        event.target.value = null;
+        
         console.log(file)
         if (file) {
         const reader = new FileReader();
@@ -62,6 +64,7 @@ export default function InputFileUpload(props) {
             let counter = 0;
             while(found === false & counter<itemList.length){
                 if( itemList.length !== 0 & itemList[counter].type === item.type){
+
                     itemList[counter].quantity += parseInt(item.quantity);
                     found = true;
                 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect,useState } from 'react';
 import { User_Context } from '../pages/Dashboard';
 import { API_Context } from '../pages/Dashboard';
 import "../styles/ResultDisplay.css";
@@ -12,54 +12,49 @@ function ResultDisplay() {
   const userParc = useContext(User_Context)[0];
   const login = useContext(User_Context)[2];
   const [baseUrl] = useContext(API_Context);
-  var [ges,eau,terresRares] = [0,0,0];
+  const [impact,setImpact] = useState([0,0,0])
 
   useEffect(() => {
-    if (userParc.length>0){
-      console.log(userParc)
+    console.log(`ResultDisplay =>`,userParc)
 
-      console.log(`/setInventory ${baseUrl} ${login}_test =>`)
+    console.log(`/setInventory ${baseUrl} ${login}_test =>`)
 
-      let data = JSON.stringify({ user: `${login}_test`,
-                                  inventory: userParc
-                                  })
+    let data = { user: `${login}_test`,
+                                inventory: userParc
+                                }
 
-      axios.put(`${baseUrl}/setInventory`, data, { withCredentials: true })
-          .then(res => {
-              // Vérification si la requête a réussi (statut 200-299)
-              if (!res.ok) {
-                  throw new Error(`Erreur HTTP! Statut: ${res.status}`);
-              }
-              // Manipulation des données
-              console.log(res.data)
-              [ges,eau,terresRares] = res.data;
-          })
-          .catch(error => {
-              // Gestion des erreurs
-              console.error('Erreur de redaxios:', error.message);
-          });
+    axios.put(`${baseUrl}/setInventory`, data, { withCredentials: true, 'Content-Type' : 'application/json' })
+        .then(res => {
+            // Vérification si la requête a réussi (statut 200-299)
+            if (!res.ok) {
+                throw new Error(`Erreur HTTP! Statut: ${res.status}`);
+            }
+            // Manipulation des données
+            console.log(`/getImpact ${baseUrl} ${login}_test =>`)
 
-
-      console.log(`/getImpact ${baseUrl} ${login}_test =>`)
-
-      axios.get(`${baseUrl}/getImpact/${login}_test`, { withCredentials: true })
-          .then(res => {
-              // Vérification si la requête a réussi (statut 200-299)
-              if (!res.ok) {
-                  throw new Error(`Erreur HTTP! Statut: ${res.status}`);
-              }
-              // Manipulation des données
-              console.log(res.data)
-              [ges,eau,terresRares] = res.data;
-          })
-          .catch(error => {
-              // Gestion des erreurs
-              console.error('Erreur de redaxios:', error.message);
-          });
-    }
+            axios.get(`${baseUrl}/getImpact/${login}_test`, { withCredentials: true })
+                .then(res => {
+                    // Vérification si la requête a réussi (statut 200-299)
+                    if (!res.ok) {
+                        throw new Error(`Erreur HTTP! Statut: ${res.status}`);
+                    }
+                    // Manipulation des données
+                    console.log(res.data)
+                    setImpact(res.data);
+                })
+                .catch(error => {
+                    // Gestion des erreurs
+                    console.error('Erreur de redaxios:', error.message);
+                });
+        })
+        .catch(error => {
+            // Gestion des erreurs
+            console.error('Erreur de redaxios:', error.message);
+        });
+  
   },[userParc]);
 
-  let BD = {xAxis:['GES','EAU','Terres Rares'],series:[{data:ges},{data:eau},{data:terresRares}]};
+  let BD = {xAxis:['GES','EAU','Terres Rares'],series:[{data:impact[0]},{data:impact[1]},{data:impact[2]}]};
 
   return (
     <div className='impactScore'>
@@ -68,9 +63,9 @@ function ResultDisplay() {
       <div className='camemberts'>
       </div>
       <div className='texts'>
-        <li>GES : {ges}</li>
-        <li>Eau : {eau}</li>
-        <li>Terres rares : {terresRares}</li>      
+        <li>GES : {impact[0]}</li>
+        <li>Eau : {impact[1]}</li>
+        <li>Terres rares : {impact[2]}</li>      
       </div>
     </div>
   )

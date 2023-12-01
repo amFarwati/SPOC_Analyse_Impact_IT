@@ -102,7 +102,7 @@ function Inventory(props) {
     else{itemId=(tempList[tempList.length-1].id)+1;};
 
     tempList.push({   id: itemId,
-                      item :<Item id={itemId} type={null} quantity={0} interf={setInterf}/>
+                      item :<Item id={itemId} initType={null} initQuantity={0} interf={setInterf}/>
                   })
 
     setListItem(tempList);
@@ -121,7 +121,7 @@ function Inventory(props) {
       else{itemId=(tempList[tempList.length-1].id)+1;};
 
       tempList.push({   id: itemId,
-                        item :<Item id={itemId} type={item.type} quantity={item.quantity} interf={setInterf}/>
+                        item :<Item id={itemId} initType={item.type} initQuantity={item.quantity} interf={setInterf}/>
                     })
     });
 

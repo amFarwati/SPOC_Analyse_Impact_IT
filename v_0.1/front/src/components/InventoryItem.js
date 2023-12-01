@@ -27,9 +27,9 @@ function InventoryItem(props) {
   const typeList = useContext(Type_Context)[0];
 
   const [open, setOpen] = React.useState(false);
-  const [quantity,setQuantity] = useState(props.quantity)
+  const [quantity,setQuantity] = useState(props.initQuantity)
   const [formerQuantity,setFormerQuantity] = useState(0)
-  const [type,setType] = useState(props.type)
+  const [type,setType] = useState(props.initType)
   const [formerType,setFormerType] = useState(null)
 
   const id = props.id;
@@ -43,6 +43,16 @@ function InventoryItem(props) {
   
 const handleClose = () => {
   setOpen(false);
+};
+
+const handleQuantityOnChange = (e) =>{
+  setFormerQuantity(quantity);
+  setFormerType(type);
+
+  let nextQuantity = e.target.value.trim() === '' ? 0 : parseInt(e.target.value, 10);
+  setQuantity(isNaN(nextQuantity) ? 0 : nextQuantity)
+  
+  console.log('new quantity', parseInt(e.target.value),typeof parseInt(e.target.value))
 };
   
 
@@ -106,19 +116,14 @@ const handleClose = () => {
       <Divider orientation="vertical" />
       <Input 
             type="number"
-            defaultValue={quantity}
+            defaultValue={props.initQuantity}
             slotProps={{
               input: {
                 min: 0,
-                max: 2000,
                 step: 1,
               },
             }}
-            onChange={(event)=> {
-              setFormerQuantity(quantity);
-              setFormerType(type);
-              setQuantity(event.target.value);
-            }}
+            onChange={(e)=> handleQuantityOnChange(e)}
             sx={{
               "--Input-radius": "20px"
             }}

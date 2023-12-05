@@ -2,7 +2,7 @@ import mysql from 'mysql';
 
 const db = mysql.createConnection({
   host: "localhost",   
-  user: "root",   
+  user: "serveur",   
   password: "spocBDD",
   database: "spoc_analyse_impact_it" 
 });

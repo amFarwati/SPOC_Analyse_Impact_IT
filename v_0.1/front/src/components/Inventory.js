@@ -24,21 +24,22 @@ function Inventory(props) {
     let typeIn = false;
     let userParcCopy = [...userParc];
     let [type,quantity,formerType,formerQuantity] = argv;
+    console.log(argv);
 
       userParcCopy.forEach((item)=>{
         if((formerType === item.type)&( formerType!== undefined)){
-          
+          console.log(formerType,formerQuantity,item.type,item.quantity)
           item.quantity = parseInt(item.quantity-parseInt(formerQuantity));
-          //console.log (item.quantity )
         }
         if((type === item.type)&(type!== undefined)){
+          console.log(formerType,formerQuantity,item.type,item.quantity)
           item.quantity = parseInt(item.quantity+parseInt(quantity));
-          //console.log (item.quantity )
           typeIn=true;
         }
       });
 
       if(typeIn === false){
+        console.log(type,quantity)
         userParcCopy.push({ type: type,
                             quantity: parseInt(quantity),
                             })      
@@ -119,6 +120,7 @@ function Inventory(props) {
 
       if (tempList.length===0){itemId=0;}
       else{itemId=(tempList[tempList.length-1].id)+1;};
+      
 
       tempList.push({   id: itemId,
                         item :<Item id={itemId} initType={item.type} initQuantity={item.quantity} interf={setInterf}/>

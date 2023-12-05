@@ -104,6 +104,7 @@ const handleQuantityOnChange = (e) =>{
             <MenuItem 
                 key={element} 
                 onClick={()=>{
+                  setFormerQuantity(quantity);
                   setFormerType(type);
                   setType(element);
                 }}>

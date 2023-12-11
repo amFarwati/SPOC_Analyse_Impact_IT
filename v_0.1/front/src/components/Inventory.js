@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect, createContext, useContext } from 'react';
-import { User_Context } from '../pages/Dashboard';
-import { API_Context } from '../pages/Dashboard';
+import { User_Context } from './Dashboard';
+import { API_Context } from './Dashboard';
 import "../styles/Inventory.css";
 import FileUpload from "./InputFileUpload";
 import Item from "./InventoryItem";

@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useRef, useEffect, useContext } from 'react'
-import { User_Context } from '../pages/Dashboard';
+import { User_Context } from './Dashboard';
 import { Type_Context } from './Inventory';
 import "../styles/InventoryItem.css";
 

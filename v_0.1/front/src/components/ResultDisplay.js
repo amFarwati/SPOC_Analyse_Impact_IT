@@ -1,7 +1,7 @@
 import React from 'react';
 import { useContext, useEffect,useState } from 'react';
-import { User_Context } from './Dashboard';
-import { API_Context } from './Dashboard';
+import { User_Context } from '../pages/Dashboard';
+import { API_Context } from '../pages/Dashboard';
 import "../styles/ResultDisplay.css";
 import { BarChart } from '@mui/x-charts/BarChart';
 import axios from 'redaxios';

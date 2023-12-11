@@ -1,13 +1,19 @@
-import './styles/App.css';
 import Dashboard from "./pages/Dashboard";
-import Opsian from './pages/Opsian';
-
+import {ColorModeContext,useMode} from "./theme";
+import {CssBaseline,ThemeProvider} from "@mui/material";
+import Topbar from "./scenes/gobal/Topbar";
 
 function App() {
-  return (
-    <div className="App">
-      <Opsian/>
+  const[theme,colorMode]=useMode();
+  return (<ColorModeContext.Provider value={colorMode}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline/>
+    <div className="app">
+      <main className="content"><Topbar/></main>
     </div>
+    </ThemeProvider>
+    </ColorModeContext.Provider>
+
   );
 }
 

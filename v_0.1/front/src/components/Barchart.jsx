@@ -41,14 +41,12 @@ function Barchart({isDashboard=false}) {
             },
         }}
         keys={[
-            'hot dog',
-            'burger',
-            'sandwich',
-            'kebab',
-            'fries',
-            'donut'
+            'Manufacturing',
+            'Transportation',
+            'Using',
+            'End of Life'
         ]}
-        indexBy="country"
+        indexBy="criteres"
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
         padding={0.3}
         valueScale={{ type: 'linear' }}
@@ -103,7 +101,7 @@ function Barchart({isDashboard=false}) {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined :'country',
+            legend: isDashboard ? undefined :'criteres',
             legendPosition: 'middle',
             legendOffset: 32,
             truncateTickAt: 0
@@ -112,7 +110,7 @@ function Barchart({isDashboard=false}) {
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined : 'food',
+            legend: isDashboard ? undefined : 'etapeACV',
             legendPosition: 'middle',
             legendOffset: -40,
             truncateTickAt: 0
@@ -154,7 +152,7 @@ function Barchart({isDashboard=false}) {
         ]}
         role="application"
         ariaLabel="Nivo bar chart demo"
-        barAriaLabel={e=>e.id+": "+e.formattedValue+" in country: "+e.indexValue}
+        barAriaLabel={e=>e.id+": "+e.formattedValue+" in criteres: "+e.indexValue}
     />
     );
   }

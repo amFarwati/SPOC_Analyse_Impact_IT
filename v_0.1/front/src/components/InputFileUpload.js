@@ -1,10 +1,13 @@
 import * as React from 'react';
 import { useState, useEffect, useRef, useContext } from 'react';
 import { User_Context } from '../pages/Dashboard';
+import { Box,Button,IconButton,Typography,useTheme } from "@mui/material";
 import Papa from 'papaparse';
-import Button from '@mui/joy/Button';
 import SvgIcon from '@mui/joy/SvgIcon';
 import { styled } from '@mui/joy';
+import UploadOutlinedIcon from "@mui/icons-material/UploadOutlined"
+import { tokens } from "../theme";
+
 
 const VisuallyHiddenInput = styled('input')`
   clip: rect(0 0 0 0);
@@ -20,8 +23,19 @@ const VisuallyHiddenInput = styled('input')`
 
 export default function InputFileUpload(props) {
 
-    const setUserParc = useContext(User_Context)[1];
+    var setUserParc = useContext(User_Context);
+
+    if (setUserParc) {
+      setUserParc = setUserParc[1];
+      // le reste du code à l'intérieur du bloc if
+    } else {
+      // Gérer le cas où le contexte est indéfini
+      console.error("Le contexte User_Context est indéfini.");
+    }
+
     const [fileChange, setFileChange] = useState(false);
+    const theme = useTheme();
+    const colors = tokens(theme.palette.mode);
 
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
@@ -81,38 +95,19 @@ export default function InputFileUpload(props) {
     };
 
     return (
-        <Button
-            color="neutral"
-            variant="solid" 
-
-            component="label"
-            role={undefined}
-            tabIndex={-1}
-            style={{
-                borderRadius: 30,
-                padding: "18px 36px",
-                fontSize: "20px"
-            }}
-        startDecorator={
-            <SvgIcon>
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-            >
-                <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                />
-            </svg>
-            </SvgIcon>
-        }
+        <Button component="label" sx={{
+            backgroundColor: colors.blueAccent[700],
+            color: colors.grey[100],
+            fontSize: "14px",
+            fontWeight: "bold",
+            padding: "10px 20px",
+          }}
         >
-        Upload a file
-        <VisuallyHiddenInput type="file" onChange={handleFileUpload}/>
-        </Button>
+          <UploadOutlinedIcon sx={{ mr: "10px" }} />
+          Importer un fichier .csv
+          <VisuallyHiddenInput type="file" onChange={handleFileUpload}/>
+                    </Button>
+        
+        
     );
 }

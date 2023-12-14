@@ -9,7 +9,7 @@ import StatBox from "../../components/StatBox";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined"
 import UploadOutlinedIcon from "@mui/icons-material/UploadOutlined"
 import InputFileUpload from "../../components/InputFileUpload"
-import { styled } from '@mui/joy';
+import * as React from 'react';
 
 
 function Dashboard() {
@@ -19,18 +19,7 @@ function Dashboard() {
     return (
       <Box m="20px">
         <Box  display="flex" justifyContent="center" alignItems="center" mb="50px">
-           <Button sx={{
-    backgroundColor: colors.blueAccent[700],
-    color: colors.grey[100],
-    fontSize: "14px",
-    fontWeight: "bold",
-    padding: "10px 20px",
-  }}
->
-  <UploadOutlinedIcon sx={{ mr: "10px" }} />
-  Importer un fichier .csv
-
-            </Button>
+        <InputFileUpload/>
             </Box>
           <Box  display="flex" justifyContent="space-between" alignItems="center">
             <Header title="DASHBOARD" subtitle="Welcome to your Dashboard" />

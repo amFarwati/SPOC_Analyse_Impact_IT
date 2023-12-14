@@ -44,7 +44,7 @@ function Dashboard() {
             <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]}> 
               <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
                 <Box>
-                <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>EtapeACV</Typography>
+                <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Climate change</Typography>
                 </Box>
                 <Box>
                   <IconButton>
@@ -54,6 +54,21 @@ function Dashboard() {
               </Box>
               <Box height = "90%" >
                 <Piechart />
+            </Box>
+            </Box>
+            <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]}> 
+              <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>EtapeACV</Typography>
+                </Box>
+                <Box>
+                  <IconButton>
+                    <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
+                  </IconButton>
+                </Box>
+              </Box>
+              <Box height = "90%" >
+                <Barchart isDashboard={true}/>
             </Box>
             </Box>
             <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]}> 

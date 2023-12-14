@@ -2,7 +2,7 @@ import { tokens } from "../theme";
 
 export const mockBarData = [
   {
-    country: "AD",
+    country: "Climate change",
     "hot dog": 137,
     "hot dogColor": "hsl(229, 70%, 50%)",
     burger: 96,
@@ -13,7 +13,7 @@ export const mockBarData = [
     donutColor: "hsl(340, 70%, 50%)",
   },
   {
-    country: "AE",
+    country: "Particulate matter and respiratory inorganics",
     "hot dog": 55,
     "hot dogColor": "hsl(307, 70%, 50%)",
     burger: 28,
@@ -24,7 +24,7 @@ export const mockBarData = [
     donutColor: "hsl(275, 70%, 50%)",
   },
   {
-    country: "AF",
+    country: "Ionising radiation",
     "hot dog": 109,
     "hot dogColor": "hsl(72, 70%, 50%)",
     burger: 23,
@@ -35,7 +35,7 @@ export const mockBarData = [
     donutColor: "hsl(256, 70%, 50%)",
   },
   {
-    country: "AG",
+    country: "Acidification",
     "hot dog": 133,
     "hot dogColor": "hsl(257, 70%, 50%)",
     burger: 52,
@@ -46,7 +46,7 @@ export const mockBarData = [
     donutColor: "hsl(9, 70%, 50%)",
   },
   {
-    country: "AI",
+    country: "Resource use (minerals and metals)",
     "hot dog": 81,
     "hot dogColor": "hsl(190, 70%, 50%)",
     burger: 80,
@@ -56,28 +56,7 @@ export const mockBarData = [
     donut: 35,
     donutColor: "hsl(285, 70%, 50%)",
   },
-  {
-    country: "AL",
-    "hot dog": 66,
-    "hot dogColor": "hsl(208, 70%, 50%)",
-    burger: 111,
-    burgerColor: "hsl(334, 70%, 50%)",
-    kebab: 167,
-    kebabColor: "hsl(182, 70%, 50%)",
-    donut: 18,
-    donutColor: "hsl(76, 70%, 50%)",
-  },
-  {
-    country: "AM",
-    "hot dog": 80,
-    "hot dogColor": "hsl(87, 70%, 50%)",
-    burger: 47,
-    burgerColor: "hsl(141, 70%, 50%)",
-    kebab: 158,
-    kebabColor: "hsl(224, 70%, 50%)",
-    donut: 49,
-    donutColor: "hsl(274, 70%, 50%)",
-  },
+  
 ];
 
 export const mockPieData = [

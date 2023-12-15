@@ -1,5 +1,5 @@
 import { useState, createContext, useEffect } from 'react'
-import { Box,Button,IconButton,Typography,useTheme } from "@mui/material";
+import { Box,Button,IconButton,Typography,useTheme,FormControl, InputLabel, Select,MenuItem } from "@mui/material";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
 import Linechart from "../../components/Linechart";
@@ -32,8 +32,23 @@ function Dashboard() {
             
             <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]}> 
               <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
-                <Box>
-                <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Climate change</Typography>
+                <Box width="50%">
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Critère</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      // value={age}
+                      label="Critere"
+                      // onChange={handleChange}
+                    >
+                      <MenuItem value={1}>Climate change</MenuItem>
+                      <MenuItem value={2}>Particulate matter and respiratory inorganics</MenuItem>
+                      <MenuItem value={3}>Ionising radiation</MenuItem>
+                      <MenuItem value={4}>Acidification</MenuItem>
+                      <MenuItem value={5}>Resource use (minerals and metals)</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Box>
                 <Box>
                   <IconButton>

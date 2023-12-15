@@ -8,50 +8,65 @@ import Item from "./InventoryItem";
 import Button from '@mui/joy/Button';
 import Add from '@mui/icons-material/Add';
 import axios from 'redaxios';
-
+import dayjs from 'dayjs';
+import 'dayjs/locale/fr';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 export const Type_Context = createContext();
 
-function Inventory(props) {
+dayjs.locale('fr');
+dayjs.extend(customParseFormat)
+
+function Inventory() {
 
   const [listItem, setListItem] = useState([]);
+  const [loadingData, setLoadingData] = useState(true);
   const [typeList, setTypeList] = useState([]);
   const [interf, setInterf] = useState([]);
   const [userParc,setUserParc] = useContext(User_Context);
   const [baseUrl] = useContext(API_Context);
   
+  var isBegining = true;
+
   const majUserParc = (argv)=>{
+
+    setLoadingData(true);
+
     let typeIn = false;
     let userParcCopy = [...userParc];
-    let [type,quantity,formerType,formerQuantity] = argv;
+    let [type,quantity,formerType,formerQuantity,dateDebut,formerDateDebut] = argv;
     console.log(argv);
+    console.log('majUserParc => userParcCopy =>',userParcCopy);
 
-      userParcCopy.forEach((item)=>{
-        if((formerType === item.type)&( formerType!== undefined)){
-          console.log(formerType,formerQuantity,item.type,item.quantity)
-          item.quantity = parseInt(item.quantity-parseInt(formerQuantity));
-        }
-        if((type === item.type)&(type!== undefined)){
-          console.log(formerType,formerQuantity,item.type,item.quantity)
-          item.quantity = parseInt(item.quantity+parseInt(quantity));
-          typeIn=true;
-        }
-      });
-
-      if(typeIn === false){
-        console.log(type,quantity)
-        userParcCopy.push({ type: type,
-                            quantity: parseInt(quantity),
-                            })      
+    userParcCopy.forEach((item)=>{
+      if((formerDateDebut !== null)&( formerType!== undefined)&(formerType === item.type)&(formerDateDebut === item.dateDebut)){
+        console.log(formerType,formerQuantity,item.type,item.quantity,item.dateDebut)
+        item.quantity = parseInt(item.quantity-parseInt(formerQuantity));
       }
+      if((dateDebut !== null)&(type!== undefined)&(type === item.type)&(dateDebut === item.dateDebut)){
+        console.log(formerType,formerQuantity,item.type,item.quantity,item.dateDebut)
+        item.quantity = parseInt(item.quantity+parseInt(quantity));
+        typeIn=true;
+      }
+    });
 
-      console.log('majUserParc => userParcCopy =>',userParcCopy);
-      setUserParc(userParcCopy);
+    if(typeIn === false){
+      console.log(type,quantity)
+      userParcCopy.push({ type: type,
+                          dateDebut: dateDebut,
+                          quantity: parseInt(quantity),
+                          })      
+    }
+
+    console.log('majUserParc => userParcCopy =>',userParcCopy);
+    setUserParc(userParcCopy);
+    setLoadingData(false);
   };
 
   // requete serveur pour récupérer list des types pris en charge
   const handlerGetTypeList = ()=>{
     console.log(`handlerGetTypeList ${baseUrl} =>`)
+    setLoadingData(true)
 
     axios.get(`${baseUrl}/getTypeList`, { withCredentials: true })
         .then(res => {
@@ -62,6 +77,7 @@ function Inventory(props) {
             // Manipulation des données
             console.log(res.data)
             setTypeList(res.data)
+            setLoadingData(false)
         })
         .catch(error => {
             // Gestion des erreurs
@@ -72,10 +88,10 @@ function Inventory(props) {
   const handlerDeleteItem = (argv) => {
     let tempList = [...listItem];
     let userParcCopy = [...userParc];
-    let [id, type, quantity] = argv;
+    let [id, type, quantity, dateDebut] = argv;
 
     userParcCopy.forEach((item)=>{
-      if((type === item.type)&(type!== undefined)){
+      if((dateDebut !== null)&(type!== undefined)&(type === item.type)&(dateDebut === item.dateDebut)){
         console.log(`${item.quantity}-${quantity}`)
         item.quantity = item.quantity-parseInt(quantity);
         console.log(item.quantity)
@@ -103,7 +119,7 @@ function Inventory(props) {
     else{itemId=(tempList[tempList.length-1].id)+1;};
 
     tempList.push({   id: itemId,
-                      item :<Item id={itemId} initType={null} initQuantity={0} interf={setInterf}/>
+                      item :<Item id={itemId} initType={null} initQuantity={0} initDateDebut={null} interf={setInterf}/>
                   })
 
     setListItem(tempList);
@@ -121,9 +137,8 @@ function Inventory(props) {
       if (tempList.length===0){itemId=0;}
       else{itemId=(tempList[tempList.length-1].id)+1;};
       
-
       tempList.push({   id: itemId,
-                        item :<Item id={itemId} initType={item.type} initQuantity={item.quantity} interf={setInterf}/>
+                        item :<Item id={itemId} initType={item.type} initQuantity={item.quantity} initDateDebut={item.dateDebut} interf={setInterf}/>
                     })
     });
 
@@ -144,6 +159,8 @@ function Inventory(props) {
         console.log(`importInv => ${interf}`,userParc);
         handlerAddParcItem(userParc);
         break;
+      default:
+        break;
     }
   };
 
@@ -153,12 +170,15 @@ function Inventory(props) {
   },[interf]);
 
   useEffect(() => {
-    handlerGetTypeList();
-  },[]);
+    if(isBegining===true){
+      handlerGetTypeList();
+      isBegining=false;
+    }
+  },[isBegining]);
 
   return (
     <Type_Context.Provider value={ [typeList, setTypeList] }>
-    <div className='inventory'>
+    {loadingData?<div className='inventory'>Loading Data</div>:<div className='inventory'>
       {listItem.map((item) => {return <div className='item' key ={item.id} >{item.item}</div>})}
       <Button startDecorator={<Add />} 
               color="neutral"
@@ -181,9 +201,8 @@ function Inventory(props) {
             }}
               size="lg">Reload BD</Button>
       <FileUpload interf={setInterf}/>
-    </div>
+    </div>}
     </Type_Context.Provider>
   )
 }
 export default Inventory
-

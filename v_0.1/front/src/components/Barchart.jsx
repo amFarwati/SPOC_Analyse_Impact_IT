@@ -8,57 +8,57 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
     var data = [
         {
           criteres: "Climate change",
-          Manufacturing: fabrication[0],
+          Manufacturing: parseInt(fabrication[0]),
           ManufacturingColor: "hsl(229, 70%, 50%)",
-          Transportation: distribution[0],
+          Transportation: parseInt(distribution[0]),
           TransportationColor: "hsl(296, 70%, 50%)",
-          Using: usage[0],
+          Using: parseInt(usage[0]),
           UsingColor: "hsl(97, 70%, 50%)",
-          "End of Life": 0,
+          "End of Life": parseInt(finDeVie[0]),
           "End of LifeColor": "hsl(340, 70%, 50%)",
         },
         {
           criteres: "Particulate matter and respiratory inorganics",
-          Manufacturing: 0,
+          Manufacturing: parseInt(fabrication[1]*10000000),
           ManufacturingColor: "hsl(307, 70%, 50%)",
-          Transportation: 0,
+          Transportation: parseInt(distribution[1]*10000000),
           TransportationColor: "hsl(111, 70%, 50%)",
-          Using: 0,
+          Using: parseInt(usage[1]*10000000),
           UsingColor: "hsl(273, 70%, 50%)",
-          "End of Life": 0,
+          "End of Life": parseInt(finDeVie[1]*10000000),
           "End of LifeColor": "hsl(275, 70%, 50%)",
         },
         {
           criteres: "Ionising radiation",
-          Manufacturing: 0,
+          Manufacturing: parseInt(fabrication[2]),
           ManufacturingColor: "hsl(72, 70%, 50%)",
-          Transportation: 0,
+          Transportation: parseInt(distribution[2]),
           TransportationColor: "hsl(96, 70%, 50%)",
-          Using: 0,
+          Using: parseInt(usage[2]),
           UsingColor: "hsl(106, 70%, 50%)",
-          "End of Life": 0,
+          "End of Life": parseInt(finDeVie[2]),
           "End of LifeColor": "hsl(256, 70%, 50%)",
         },
         {
           criteres: "Acidification",
-          Manufacturing: 0,
+          Manufacturing: parseInt(fabrication[3]*100),
           ManufacturingColor: "hsl(257, 70%, 50%)",
-          Transportation: 0,
+          Transportation: parseInt(distribution[3]*100),
           TransportationColor: "hsl(326, 70%, 50%)",
-          Using: 0,
+          Using: parseInt(usage[3]*100),
           UsingColor: "hsl(110, 70%, 50%)",
-          "End of Life": 0,
+          "End of Life": parseInt(finDeVie[3]*100),
           "End of LifeColor": "hsl(9, 70%, 50%)",
         },
         {
           criteres: "Resource use (minerals and metals)",
-          Manufacturing: 0,
+          Manufacturing: parseInt(fabrication[4]*10000),
           ManufacturingColor: "hsl(190, 70%, 50%)",
-          Transportation: 0,
+          Transportation: parseInt(distribution[4]*10000),
           TransportationColor: "hsl(325, 70%, 50%)",
-          Using: 0,
+          Using: parseInt(usage[4]*10000),
           UsingColor: "hsl(54, 70%, 50%)",
-          "End of Life": 0,
+          "End of Life": parseInt(finDeVie[4]*10000),
           "End of LifeColor": "hsl(285, 70%, 50%)",
         },
         
@@ -69,6 +69,8 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
     return (
         <ResponsiveBar
         data={data}
+        valueScale={{ type: 'symlog' }}
+        groupMode='grouped'
         theme={{
             axis:{
                 domain:{
@@ -107,8 +109,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
         ]}
         indexBy="criteres"
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-        padding={0.3}
-        valueScale={{ type: 'linear' }}
+        padding={0.1}
         indexScale={{ type: 'band', round: true }}
         colors={{ scheme: 'nivo' }}
         defs={[
@@ -117,7 +118,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
                 type: 'patternDots',
                 background: 'inherit',
                 color: '#38bcb2',
-                size: 4,
+                size: 5,
                 padding: 1,
                 stagger: true
             },

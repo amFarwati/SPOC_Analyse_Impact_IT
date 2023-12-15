@@ -1,10 +1,69 @@
 import { useTheme } from "@mui/material";
 import {ResponsiveBar} from "@nivo/bar";
 import {tokens} from "../theme";
-import {mockBarData as data} from "../data/mockData";
 
 
-function Barchart({isDashboard=false}) {
+function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distribution}) {
+
+    var data = [
+        {
+          criteres: "Climate change",
+          Manufacturing: fabrication[0],
+          ManufacturingColor: "hsl(229, 70%, 50%)",
+          Transportation: distribution[0],
+          TransportationColor: "hsl(296, 70%, 50%)",
+          Using: usage[0],
+          UsingColor: "hsl(97, 70%, 50%)",
+          "End of Life": 0,
+          "End of LifeColor": "hsl(340, 70%, 50%)",
+        },
+        {
+          criteres: "Particulate matter and respiratory inorganics",
+          Manufacturing: 0,
+          ManufacturingColor: "hsl(307, 70%, 50%)",
+          Transportation: 0,
+          TransportationColor: "hsl(111, 70%, 50%)",
+          Using: 0,
+          UsingColor: "hsl(273, 70%, 50%)",
+          "End of Life": 0,
+          "End of LifeColor": "hsl(275, 70%, 50%)",
+        },
+        {
+          criteres: "Ionising radiation",
+          Manufacturing: 0,
+          ManufacturingColor: "hsl(72, 70%, 50%)",
+          Transportation: 0,
+          TransportationColor: "hsl(96, 70%, 50%)",
+          Using: 0,
+          UsingColor: "hsl(106, 70%, 50%)",
+          "End of Life": 0,
+          "End of LifeColor": "hsl(256, 70%, 50%)",
+        },
+        {
+          criteres: "Acidification",
+          Manufacturing: 0,
+          ManufacturingColor: "hsl(257, 70%, 50%)",
+          Transportation: 0,
+          TransportationColor: "hsl(326, 70%, 50%)",
+          Using: 0,
+          UsingColor: "hsl(110, 70%, 50%)",
+          "End of Life": 0,
+          "End of LifeColor": "hsl(9, 70%, 50%)",
+        },
+        {
+          criteres: "Resource use (minerals and metals)",
+          Manufacturing: 0,
+          ManufacturingColor: "hsl(190, 70%, 50%)",
+          Transportation: 0,
+          TransportationColor: "hsl(325, 70%, 50%)",
+          Using: 0,
+          UsingColor: "hsl(54, 70%, 50%)",
+          "End of Life": 0,
+          "End of LifeColor": "hsl(285, 70%, 50%)",
+        },
+        
+      ];
+
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     return (

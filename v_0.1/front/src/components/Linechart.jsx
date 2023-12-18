@@ -8,6 +8,7 @@ import {mockLineData as data} from "../data/mockData";
 function Linechart({isDashboard=false}) {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+
     return (
         <ResponsiveLine
         data={data}

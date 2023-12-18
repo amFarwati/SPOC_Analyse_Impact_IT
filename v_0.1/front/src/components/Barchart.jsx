@@ -111,7 +111,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
         margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
         padding={0.1}
         indexScale={{ type: 'band', round: true }}
-        colors={{ scheme: 'nivo' }}
+        colors={{ scheme: 'paired' }}
         defs={[
             {
                 id: 'dots',

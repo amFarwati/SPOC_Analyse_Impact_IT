@@ -1,13 +1,11 @@
 import { useState, createContext, useEffect } from 'react';
-import { Box,Button,IconButton,Typography,useTheme,FormControl, InputLabel, Select,MenuItem } from "@mui/material";
+import { Box,IconButton,Typography,useTheme,FormControl, InputLabel, Select,MenuItem } from "@mui/material";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
 import Linechart from "../../components/Linechart";
 import Barchart from "../../components/Barchart";
 import Piechart from "../../components/Piechart";
-import StatBox from "../../components/StatBox";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined"
-import UploadOutlinedIcon from "@mui/icons-material/UploadOutlined"
 import CircularProgress from '@mui/material/CircularProgress';
 import InputFileUpload from "../../components/InputFileUpload"
 import axios from 'redaxios';
@@ -25,6 +23,9 @@ function Dashboard() {
     const [distrib,setDistrib] = useState([0,0,0,0,0]);
     const [fin,setFin] = useState([0,0,0,0,0]);
     const [unite,setUnite] = useState([]);
+
+    const [critere,setCritere] = useState(null);
+
     const colors = tokens(theme.palette.mode);
     
     const login = 'USER123456789';
@@ -88,7 +89,7 @@ function Dashboard() {
             });
     
       }
-    },[userParc]);
+    },[userParc,baseUrl,login]);
 
     return (
       <User_Context.Provider value={ [userParc,setUserParc,login] }>
@@ -105,7 +106,7 @@ function Dashboard() {
             <Box  display="grid" gridTemplateColumns="repeat(12,1fr)" gridAutoRows="140px" gap="20px" mt="20px">
               {/*ROW 1*/}
               
-              <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]}> 
+              <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
                   <Box width="50%">
                   <FormControl fullWidth>
@@ -117,11 +118,11 @@ function Dashboard() {
                         label="Critere"
                         // onChange={handleChange}
                       >
-                        <MenuItem value={1}>Climate change</MenuItem>
-                        <MenuItem value={2}>Particulate matter and respiratory inorganics</MenuItem>
-                        <MenuItem value={3}>Ionising radiation</MenuItem>
-                        <MenuItem value={4}>Acidification</MenuItem>
-                        <MenuItem value={5}>Resource use (minerals and metals)</MenuItem>
+                        <MenuItem value={0} onClick={()=>{setCritere(0)}}>Climate change</MenuItem>
+                        <MenuItem value={1} onClick={()=>{setCritere(1)}}>Particulate matter and respiratory inorganics</MenuItem>
+                        <MenuItem value={2} onClick={()=>{setCritere(2)}}>Ionising radiation</MenuItem>
+                        <MenuItem value={3} onClick={()=>{setCritere(3)}}>Acidification</MenuItem>
+                        <MenuItem value={4} onClick={()=>{setCritere(4)}}>Resource use (minerals and metals)</MenuItem>
                       </Select>
                     </FormControl>
                   </Box>
@@ -132,10 +133,10 @@ function Dashboard() {
                   </Box>
                 </Box>
                 <Box height = "90%" >
-                  <Piechart />
+                  <Piechart unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} critere={critere}/>
               </Box>
               </Box>
-              <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]}> 
+              <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
                   <Box>
                   <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>EtapeACV</Typography>
@@ -150,7 +151,7 @@ function Dashboard() {
                   <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib}/>
               </Box>
               </Box>
-              <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]}> 
+              <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
                   <Box>
                   <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Suivi</Typography>

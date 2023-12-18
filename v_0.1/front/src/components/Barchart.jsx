@@ -7,7 +7,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
 
     var data = [
         {
-          criteres: "Climate change",
+          criteres: unite[0] === undefined? 'loading' :`${unite[0]}`,
           Manufacturing: parseInt(fabrication[0]),
           ManufacturingColor: "hsl(229, 70%, 50%)",
           Transportation: parseInt(distribution[0]),
@@ -18,7 +18,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
           "End of LifeColor": "hsl(340, 70%, 50%)",
         },
         {
-          criteres: "Particulate matter and respiratory inorganics",
+          criteres: unite[1] === undefined? 'loading' :`*e10-7 ${unite[1]}`,
           Manufacturing: parseInt(fabrication[1]*10000000),
           ManufacturingColor: "hsl(307, 70%, 50%)",
           Transportation: parseInt(distribution[1]*10000000),
@@ -29,7 +29,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
           "End of LifeColor": "hsl(275, 70%, 50%)",
         },
         {
-          criteres: "Ionising radiation",
+          criteres: unite[2] === undefined? 'loading' :`${unite[2]}`,
           Manufacturing: parseInt(fabrication[2]),
           ManufacturingColor: "hsl(72, 70%, 50%)",
           Transportation: parseInt(distribution[2]),
@@ -40,7 +40,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
           "End of LifeColor": "hsl(256, 70%, 50%)",
         },
         {
-          criteres: "Acidification",
+          criteres: unite[3] === undefined? 'loading' :`*e10-2 ${unite[3]}`,
           Manufacturing: parseInt(fabrication[3]*100),
           ManufacturingColor: "hsl(257, 70%, 50%)",
           Transportation: parseInt(distribution[3]*100),
@@ -51,7 +51,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
           "End of LifeColor": "hsl(9, 70%, 50%)",
         },
         {
-          criteres: "Resource use (minerals and metals)",
+          criteres: unite[4] === undefined? 'loading' : `*e10-7 ${unite[4]}`,
           Manufacturing: parseInt(fabrication[4]*10000),
           ManufacturingColor: "hsl(190, 70%, 50%)",
           Transportation: parseInt(distribution[4]*10000),
@@ -168,6 +168,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
         }}
         axisLeft={{
             tickSize: 5,
+            tickValues: [0, 10, 100, 1000, 10000, 20000, 30000],
             tickPadding: 5,
             tickRotation: 0,
             legend: isDashboard ? undefined : 'etapeACV',

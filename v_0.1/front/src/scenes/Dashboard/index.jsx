@@ -22,13 +22,16 @@ function Dashboard() {
     const [fab,setFab] = useState([0,0,0,0,0]);
     const [distrib,setDistrib] = useState([0,0,0,0,0]);
     const [fin,setFin] = useState([0,0,0,0,0]);
+    const [annualCost,setAnnualCost] = useState(null);
     const [unite,setUnite] = useState([]);
+    const [nbItem,setNbItem]= useState(0);
+    const [nbItemEnService,setNbItemEnService]= useState(0);
 
     const [critere,setCritere] = useState(null);
 
     const colors = tokens(theme.palette.mode);
     
-    const login = 'USER123456789';
+    const login = 'user_1';
     const baseUrl = `http://localhost:4000`;
 
     const formatageCout = (coutJSON)=>{ 
@@ -71,8 +74,14 @@ function Dashboard() {
                         }
                         // Manipulation des données
                         console.log(res.data)
-                        formatageCout(res.data[0]);
-                        setUnite(res.data[1]);
+
+                        let annees = Object.keys(res.data.cost);
+
+                        formatageCout(res.data.cost[annees[annees.length-1]]);
+                        setAnnualCost(res.data.cost);
+                        setUnite(res.data.unite);
+                        setNbItem(res.data.nbItem);
+                        setNbItemEnService(res.data.nbItemEnService);
                         setOnLoad(false);
                     })
                     .catch(error => {
@@ -134,7 +143,7 @@ function Dashboard() {
                 </Box>
                 <Box height = "90%" >
                   <Piechart unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} critere={critere}/>
-              </Box>
+                </Box>
               </Box>
               <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
@@ -149,7 +158,7 @@ function Dashboard() {
                 </Box>
                 <Box height = "90%" >
                   <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib}/>
-              </Box>
+                </Box>
               </Box>
               <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
@@ -163,8 +172,30 @@ function Dashboard() {
                   </Box>
                 </Box>
                 <Box height="90%" ml="-20px">
-                  <Linechart isDashboard={true}/>
+                  <Linechart isDashboard={true} annualCost={annualCost}/>
+                </Box>
               </Box>
+              <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
+                <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+                  <Box>
+                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Descriptif</Typography>
+                  </Box>
+                  <Box>
+                    <IconButton>
+                      <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
+                    </IconButton>
+                  </Box>
+                </Box>
+                <Box height = "90%" mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+                  <Box>
+                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Nombre de matériel IT : </Typography>
+                    <Typography variant="h5" fontWeight="400" color={colors.grey[100]}>{nbItem}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Nombre de matériel IT En Service : </Typography>
+                    <Typography variant="h5" fontWeight="400" color={colors.grey[100]}>{nbItemEnService}</Typography>
+                  </Box>
+                </Box>
               </Box>
             </Box>
             

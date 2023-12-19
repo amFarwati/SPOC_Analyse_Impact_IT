@@ -40,9 +40,11 @@ OPSIAN_db.connect(function(err) {
   console.log("Connecté à la base de données MySQL OPSIAN!"); 
 });
 
-const db = {
-  test: "hello world",
-}
+var dateMin =null;
+var dateMax =null;
+var nbProps = null;
+var nbPropsEnService = null;
+var unite = null;
 
 var db_modele = null;
 
@@ -126,9 +128,9 @@ function bdRequest(request,data) {
           let userInv = null;
           let etapeACV = null;
           let critere = null;
-          let unite = null;
           let impactItem = {};
           let promises = [];
+          
 
           promises.push(new Promise((resolve, reject) => {OPSIAN_db.query(`SELECT MAX(idPush) FROM Push_U WHERE idUser = (SELECT idUser FROM User_U WHERE user = '${user}');`, (err, result) => {       
             if (err) throw err;       
@@ -163,29 +165,99 @@ function bdRequest(request,data) {
               resolve();
             })}));
 
+            promises.push(new Promise((resolve, reject) => {OPSIAN_db.query(`SELECT MAX(YEAR(dateDebut)) FROM Item_U WHERE idPush = ${idPush};;`, (err, result) => {       
+              if (err) throw err;       
+              dateMax = result[0]['MAX(YEAR(dateDebut))'];
+              resolve();
+            })}));
+
+            promises.push(new Promise((resolve, reject) => {OPSIAN_db.query(`SELECT MIN(YEAR(dateDebut)) FROM Item_U WHERE idPush = ${idPush};;`, (err, result) => {       
+              if (err) throw err;       
+              dateMin = result[0]['MIN(YEAR(dateDebut))'];
+              resolve();
+            })}));
+
             Promise.all(promises)
             .then(()=> {
-              userInv.forEach(idItem => {
-                impactItem[idItem]={};
+              
+              promises.push(new Promise((resolve, reject) => { OPSIAN_db.query(`
+              SELECT COUNT(*) AS result
+              FROM Item_U
+              CROSS JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
+              CROSS JOIN Type_M ON Reference_M.idType = Type_M.idType
+              CROSS JOIN Push_U ON Item_U.idPush = Push_U.idPush
+              WHERE Push_U.idPush = ${idPush} AND (YEAR(Push_U.date)-YEAR(Item_U.dateDebut)-Type_M.dureeVie <0);`, (err, result) => {       
+                if (err) throw err;       
+                nbPropsEnService = result[0]['result'];
+                resolve();
+              })}));
 
-                etapeACV.forEach(idEtapeACV => {
-                  impactItem[idItem][idEtapeACV]={};
-                  critere.forEach(idCritere => {
-                    promises.push(new Promise((resolve, reject) => {
-                      OPSIAN_db.query(`SELECT SUM(valeur) FROM Composant_M WHERE idCritere = ${idCritere} AND idEtapeACV = ${idEtapeACV}  AND idType = (SELECT idType From Reference_M WHERE idReference = (SELECT idReference FROM Item_U WHERE idItem = ${idItem}));`, (err, result) => {       
-                        if (err) {
-                          reject(err);
-                        } else {
-                          result.map(row => {
-                            impactItem[idItem][idEtapeACV][idCritere] = {cout: row['SUM(valeur)']};
-                            resolve();
+              promises.push(new Promise((resolve, reject) => { OPSIAN_db.query(`
+              SELECT COUNT(*) AS result
+              FROM Item_U
+              CROSS JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
+              CROSS JOIN Type_M ON Reference_M.idType = Type_M.idType
+              CROSS JOIN Push_U ON Item_U.idPush = Push_U.idPush
+              WHERE Push_U.idPush = ${idPush};`, (err, result) => {       
+                if (err) throw err;       
+                nbProps = result[0]['result'];
+                resolve();
+              })}));
+
+              for(let year = dateMin; year< (dateMax+1); year++){
+                impactItem[year]={};
+                userInv.forEach(idItem => {
+                  impactItem[year][idItem]={};
+                  etapeACV.forEach(idEtapeACV => {
+                    impactItem[year][idItem][idEtapeACV]={};
+                    critere.forEach(idCritere => {                  
+
+                      if (idEtapeACV === 3){
+                        promises.push(new Promise((resolve, reject) => { //query impact instantané pour usage
+                          OPSIAN_db.query(`SELECT
+                          IF(
+                              (
+                                ${year} - YEAR((SELECT dateDebut FROM Item_U WHERE idItem = ${idItem}))
+                                  - (SELECT dureeVie FROM Type_M WHERE idType = (SELECT idType FROM Reference_M WHERE idReference = (SELECT idReference FROM Item_U WHERE idItem = ${idItem} AND YEAR(dateDebut) < ${year+1})))
+                              ) < 0 AND (SELECT YEAR(dateDebut) FROM Item_U WHERE idItem = ${idItem}) < ${year+1},
+                              (SELECT SUM(valeur) FROM Composant_M WHERE idCritere = ${idCritere} AND idEtapeACV = ${idEtapeACV} AND idType = (SELECT idType FROM Reference_M WHERE idReference = (SELECT idReference FROM Item_U WHERE idItem = ${idItem}))),
+                              0
+                          ) AS result;    `
+                          , (err, result) => {       
+                            if (err) {
+                              reject(err);
+                            } else {
+                              result.map(row => {
+                                impactItem[year][idItem][idEtapeACV][idCritere] = {cout: row['result']};
+                                resolve();
+                              });
+                            }
                           });
-                        }
-                      });
-                    }));
+                        }));
+                      }else{
+                        promises.push(new Promise((resolve, reject) => { //query impact cumulé pour fabrication, distribution, fin de vie
+                          OPSIAN_db.query(`SELECT
+                          IF(
+                              (SELECT YEAR(dateDebut) FROM Item_U WHERE idItem = ${idItem}) < ${year+1},(SELECT SUM(valeur) FROM Composant_M WHERE idCritere = ${idCritere} AND idEtapeACV = ${idEtapeACV} AND idType = (SELECT idType From Reference_M WHERE idReference = (SELECT idReference FROM Item_U WHERE idItem = ${idItem} AND YEAR(dateDebut)<${year+1}))),0) AS result;`, (err, result) => {       
+                            if (err) {
+                              reject(err);
+                            } else {
+                              result.map(row => {
+                                impactItem[year][idItem][idEtapeACV][idCritere] = {cout: row['result']};
+                                resolve();
+                              });
+                            }
+                          });
+                        }));
+                      }
+                      
+                    });
                   });
                 });
-              });
+              }
+                
+
+              console.log(dateMin,dateMax)
       
               Promise.all(promises)
               .then(results => {
@@ -214,7 +286,7 @@ function bdRequest(request,data) {
 
           OPSIAN_db.query("SELECT nomReference FROM Reference_M;", (err, result) => {       
             if (err) throw err;       
-            console.log(result);
+            //console.log(result);
             refList = result.map(row => row.nomReference);
             resolve(refList);
           })
@@ -229,7 +301,6 @@ function bdRequest(request,data) {
 
           OPSIAN_db.query("SELECT user FROM User_U;", (err, result) => {       
             if (err) throw err;       
-            console.log(result);
             userList = result.map(row => row.user);
             resolve(userList);
           })
@@ -239,7 +310,7 @@ function bdRequest(request,data) {
         break;
       case 'setUser':// OK
         setTimeout(() => {
-          console.log(data.user)
+          //console.log(data.user)
           OPSIAN_db.query(`INSERT INTO User_U SET user = "${data.user}";`, (err, result) => {       
             if (err) throw err;       
             console.log(`=> SET user = ${data.user} OK`);
@@ -275,7 +346,7 @@ function bdRequest(request,data) {
                 OPSIAN_db.query(`INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference)VALUES ('${dateAchat}',(SELECT idPush FROM Push_U WHERE idUser = (SELECT idUser FROM User_U WHERE user = '${data.user}') AND date = (SELECT MAX(date) FROM Push_U WHERE idUser = (SELECT idUser FROM User_U WHERE user = '${data.user}'))),(SELECT idReference FROM Reference_M WHERE nomReference = '${ref}'),'${ref}');`
                   , (err, result) => {       
                   if (err) throw err;       
-                  console.log(`=> SET userInv = ${data.user}  OK`);
+                  //console.log(`=> SET userInv = ${data.user}  OK`);
                   resolve(true);
                 })
               }
@@ -285,7 +356,7 @@ function bdRequest(request,data) {
                 OPSIAN_db.query(`INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference)VALUES ('${dateAchat}',(SELECT idPush FROM Push_U WHERE idUser = (SELECT idUser FROM User_U WHERE user = '${data.user}') AND date = (SELECT MAX(date) FROM Push_U WHERE idUser = (SELECT idUser FROM User_U WHERE user = '${data.user}'))),(SELECT idReference FROM Reference_M WHERE nomReference = 'default'),'${ref}');`
                   , (err, result) => {       
                   if (err) throw err;       
-                  console.log(`=> SET userInv = ${data.user}  OK`);
+                  //console.log(`=> SET userInv = ${data.user}  OK`);
                   resolve(true);
                 })
               }
@@ -364,28 +435,46 @@ app.get('/getImpact/:user', async (req, res) => {
         }else if (userList.includes(user)){
           bdRequest('getUserImpact', {user : user})
           .then((result)=>{
-            console.log(result)
 
-            let cost = {
-              FABRICATION : [0,0,0,0,0],
-              DISTRIBUTION : [0,0,0,0,0],
-              UTILISATION : [0,0,0,0,0],
-              FIN_DE_VIE : [0,0,0,0,0]
-            }
-            
-            let itemList = Object.keys(result[0]);
-            let etapeACVList = Object.keys(result[0][itemList[0]]);
-            let critereList = Object.keys(result[0][itemList[0]][etapeACVList[0]]);
-            let resEtapeACVList = Object.keys(cost);
+            let annualCost = {};
 
-            itemList.forEach(item => {
-              for (let i = 0; i < etapeACVList.length; i++){
-                for (let j = 0; j < critereList.length; j++){
-                  cost[resEtapeACVList[i]][j] += result[0][item][etapeACVList[i]][critereList[j]].cout; 
-                }
-              }           
+            console.log ('result',result)
+            let annees = Object.keys(result[0]);
+            console.log ('annees',annees)
+            let items = Object.keys(result[0][annees[0]]);
+            console.log ('items',items)
+            let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
+            console.log ('etapeACVList',etapeACVList)
+            let critereList = Object.keys(result[0][annees[0]][items[0]][etapeACVList[0]]);
+            console.log ('critereList',critereList)
+
+            annees.forEach((annee)=>{
+
+              let cost = {
+                FABRICATION : [0,0,0,0,0],
+                DISTRIBUTION : [0,0,0,0,0],
+                UTILISATION : [0,0,0,0,0],
+                FIN_DE_VIE : [0,0,0,0,0]
+              }
+
+              let resEtapeACVList = Object.keys(cost);
+
+              items.forEach(item => {
+                for (let i = 0; i < etapeACVList.length; i++){
+                  for (let j = 0; j < critereList.length; j++){
+                    cost[resEtapeACVList[i]][j] += result[0][annee][item][etapeACVList[i]][critereList[j]].cout; 
+                  }
+                }           
+              })
+
+              annualCost[annee]=cost;
             })
-            res.json([cost,result[1]])
+
+            res.json({cost: annualCost,
+                      unite: unite,
+                      nbItem : nbProps,
+                      nbItemEnService: nbPropsEnService
+                    })
           })
           .catch((error)=>{console.error(`Error computing Impact: ${error}`);
           res.send(`ERROR: the server encountimpactItemer dificulties during computing impact`)})

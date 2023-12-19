@@ -1,13 +1,47 @@
 import { useTheme } from "@mui/material";
 import {ResponsiveLine} from "@nivo/line";
 import {tokens} from "../theme";
-import {mockLineData as data} from "../data/mockData";
 
 
 
-function Linechart({isDashboard=false}) {
+function Linechart({isDashboard=false, annualCost}) {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    
+    console.log(annualCost);
+
+    const handleData = (data) =>{
+        let annees = Object.keys(data);
+        let ids = Object.keys(data[annees[0]]);
+        console.log(ids);
+        let colors = [  tokens("dark").greenAccent[500],
+                        tokens("dark").blueAccent[300],
+                        tokens("dark").redAccent[200],
+                        tokens("dark").redAccent[200],
+                        ];
+        let res = [];
+
+        for(let i = 0; i<ids.length; i++){
+            res.push({  id : ids[i],
+                        color : colors[i],
+                        data : annees.map(annee => {
+                            return {x: annee,
+                                    y: data[annee][ids[i]]
+                                    }
+                        })
+                        }
+                    );
+        };
+
+        return res;
+    }
+
+    var data = (annualCost===null?[{  id : 'loading',
+        color : tokens("dark").greenAccent[500],
+        data :  [{   x: 0,
+                    y: 0
+                }]
+        }]:handleData(annualCost));
 
     return (
         <ResponsiveLine

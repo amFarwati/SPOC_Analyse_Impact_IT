@@ -4,7 +4,7 @@ import {tokens} from "../theme";
 
 
 
-function Linechart({isDashboard=false, annualCost}) {
+function Linechart({isDashboard=false, annualCost, critere}) {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     
@@ -13,7 +13,8 @@ function Linechart({isDashboard=false, annualCost}) {
     const handleData = (data) =>{
         let annees = Object.keys(data);
         let ids = Object.keys(data[annees[0]]);
-        console.log(ids);
+        let criteres = Object.keys(data[annees[0]][ids[0]]);
+
         let colors = [  tokens("dark").greenAccent[500],
                         tokens("dark").blueAccent[300],
                         tokens("dark").redAccent[200],
@@ -21,18 +22,45 @@ function Linechart({isDashboard=false, annualCost}) {
                         ];
         let res = [];
 
-        for(let i = 0; i<ids.length; i++){
-            res.push({  id : ids[i],
-                        color : colors[i],
-                        data : annees.map(annee => {
-                            return {x: annee,
-                                    y: data[annee][ids[i]]
-                                    }
-                        })
-                        }
-                    );
-        };
+        for (let j = 0; j<criteres.length; j++) {
+            let interm = [];
 
+            for(let i = 0; i<ids.length; i++){
+                interm.push({  id : ids[i],
+                            color : colors[i],
+                            data : annees.map(annee => {
+                                let y = 0;
+                                switch (critere){
+                                    case 0:
+                                        y = data[annee][ids[i]][criteres[j]];
+                                    break
+                                    case 1:
+                                        y = data[annee][ids[i]][criteres[j]]*10000;
+                                    break
+                                    case 2:
+                                        y = data[annee][ids[i]][criteres[j]];
+                                    break
+                                    case 3:
+                                        y = data[annee][ids[i]][criteres[j]];
+                                    break
+                                    case 4:
+                                        y = data[annee][ids[i]][criteres[j]]*100;
+                                    break
+                                    default:
+                                        y = 0;
+                                    break;
+                                }
+
+                                return {x: annee,
+                                        y: y
+                                    }
+                            })
+                            }
+                        );
+            };
+            res.push(interm);
+        }
+        console.log(res)
         return res;
     }
 
@@ -45,7 +73,7 @@ function Linechart({isDashboard=false, annualCost}) {
 
     return (
         <ResponsiveLine
-        data={data}
+        data={data.length===1?data:data[critere]}
         theme={{
             axis:{
                 domain:{
@@ -91,7 +119,7 @@ function Linechart({isDashboard=false, annualCost}) {
             reverse: false
         }}
         yFormat=" >-.2f"
-        curve="catmullRom"
+        curve="linear"
         axisTop={null}
         axisRight={null}
         axisBottom={{
@@ -117,7 +145,7 @@ function Linechart({isDashboard=false, annualCost}) {
         pointBorderWidth={2}
         pointBorderColor={{ from: 'serieColor' }}
         pointLabelYOffset={-12}
-        enableArea={true}
+        enableArea={false}
         useMesh={true}
         legends={[
             {

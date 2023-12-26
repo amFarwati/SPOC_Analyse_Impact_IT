@@ -25,6 +25,8 @@ function Linechart({isDashboard=false, annualCost, critere}) {
         for (let j = 0; j<criteres.length; j++) {
             let interm = [];
 
+            console.log(critere);
+
             for(let i = 0; i<ids.length; i++){
                 interm.push({  id : ids[i],
                             color : colors[i],
@@ -35,7 +37,7 @@ function Linechart({isDashboard=false, annualCost, critere}) {
                                         y = data[annee][ids[i]][criteres[j]];
                                     break
                                     case 1:
-                                        y = data[annee][ids[i]][criteres[j]]*10000;
+                                        y = data[annee][ids[i]][criteres[j]]//*10000;
                                     break
                                     case 2:
                                         y = data[annee][ids[i]][criteres[j]];
@@ -44,7 +46,7 @@ function Linechart({isDashboard=false, annualCost, critere}) {
                                         y = data[annee][ids[i]][criteres[j]];
                                     break
                                     case 4:
-                                        y = data[annee][ids[i]][criteres[j]]*100;
+                                        y = data[annee][ids[i]][criteres[j]]//*100;
                                     break
                                     default:
                                         y = 0;

@@ -213,16 +213,17 @@ function bdRequest(request,data) {
                     critere.forEach(idCritere => {                  
 
                       if (idEtapeACV === 3){
+                        console.log("rtapeACV3")
                         promises.push(new Promise((resolve, reject) => { //query impact instantané pour usage
                           OPSIAN_db.query(`SELECT
                           IF(
-                              (
+                              ((
                                 ${year} - YEAR((SELECT dateDebut FROM Item_U WHERE idItem = ${idItem}))
                                   - (SELECT dureeVie FROM Type_M WHERE idType = (SELECT idType FROM Reference_M WHERE idReference = (SELECT idReference FROM Item_U WHERE idItem = ${idItem} AND YEAR(dateDebut) < ${year+1})))
-                              ) < 0 AND (SELECT YEAR(dateDebut) FROM Item_U WHERE idItem = ${idItem}) < ${year+1},
+                              ) < 0) AND ((SELECT YEAR(dateDebut) FROM Item_U WHERE idItem = ${idItem}) < ${year+1}),
                               (SELECT SUM(valeur) FROM Composant_M WHERE idCritere = ${idCritere} AND idEtapeACV = ${idEtapeACV} AND idType = (SELECT idType FROM Reference_M WHERE idReference = (SELECT idReference FROM Item_U WHERE idItem = ${idItem}))),
                               0
-                          ) AS result;    `
+                          ) AS result;`
                           , (err, result) => {       
                             if (err) {
                               reject(err);
@@ -238,7 +239,10 @@ function bdRequest(request,data) {
                         promises.push(new Promise((resolve, reject) => { //query impact cumulé pour fabrication, distribution, fin de vie
                           OPSIAN_db.query(`SELECT
                           IF(
-                              (SELECT YEAR(dateDebut) FROM Item_U WHERE idItem = ${idItem}) < ${year+1},(SELECT SUM(valeur) FROM Composant_M WHERE idCritere = ${idCritere} AND idEtapeACV = ${idEtapeACV} AND idType = (SELECT idType From Reference_M WHERE idReference = (SELECT idReference FROM Item_U WHERE idItem = ${idItem} AND YEAR(dateDebut)<${year+1}))),0) AS result;`, (err, result) => {       
+                              (SELECT YEAR(dateDebut) FROM Item_U WHERE idItem = ${idItem}) < ${year+1},
+                              (SELECT SUM(valeur) FROM Composant_M WHERE idCritere = ${idCritere} AND idEtapeACV = ${idEtapeACV} AND idType = (SELECT idType From Reference_M WHERE idReference = (SELECT idReference FROM Item_U WHERE idItem = ${idItem} AND YEAR(dateDebut)<${year+1})))
+                              ,0) AS result;`, 
+                            (err, result) => {       
                             if (err) {
                               reject(err);
                             } else {

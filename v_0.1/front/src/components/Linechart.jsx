@@ -34,19 +34,19 @@ function Linechart({isDashboard=false, annualCost, critere}) {
                                 let y = 0;
                                 switch (critere){
                                     case 0:
-                                        y = data[annee][ids[i]][criteres[j]];
+                                        y = data[annee][ids[i]][criteres[j]]<0.1?0:data[annee][ids[i]][criteres[j]];
                                     break
                                     case 1:
                                         y = data[annee][ids[i]][criteres[j]]//*10000;
                                     break
                                     case 2:
-                                        y = data[annee][ids[i]][criteres[j]];
+                                        y = data[annee][ids[i]][criteres[j]]<0.1?0:data[annee][ids[i]][criteres[j]];
                                     break
                                     case 3:
-                                        y = data[annee][ids[i]][criteres[j]];
+                                        y = data[annee][ids[i]][criteres[j]]<0.1?0:data[annee][ids[i]][criteres[j]];
                                     break
                                     case 4:
-                                        y = data[annee][ids[i]][criteres[j]]//*100;
+                                        y = data[annee][ids[i]][criteres[j]]<0.1?0:data[annee][ids[i]][criteres[j]]//*100;
                                     break
                                     default:
                                         y = 0;
@@ -76,41 +76,6 @@ function Linechart({isDashboard=false, annualCost, critere}) {
     return (
         <ResponsiveLine
         data={data.length===1?data:data[critere]}
-        theme={{
-            axis:{
-                domain:{
-                    line:{
-                        stroke:colors.grey[100],
-                    },
-                },
-                legend:{
-                    text:{
-                        fill:colors.grey[100],
-                    },
-                
-                },
-                ticks:{
-                    line:{
-                        stroke:colors.grey[100],
-                        strokeWidth:1,
-                    },
-                    text:{
-                        fill:colors.grey[100],
-                    },
-                
-                },
-            },
-            legends:{
-                text:{
-                    fill:colors.grey[100],
-                },
-            },
-            tooltip:{
-                container:{
-                    color:colors.primary[500],
-                }
-            }
-        }}
         margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
         xScale={{ type: 'point' }}
         yScale={{
@@ -121,33 +86,29 @@ function Linechart({isDashboard=false, annualCost, critere}) {
             reverse: false
         }}
         yFormat=" >-.2f"
-        curve="linear"
         axisTop={null}
         axisRight={null}
         axisBottom={{
             tickSize: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined :'transportation',
+            legend: 'transportation',
             legendOffset: 36,
             legendPosition: 'middle'
         }}
         axisLeft={{
             tickSize: 5,
-            tickValues: 5,
             tickPadding: 5,
             tickRotation: 0,
-            legend: isDashboard ? undefined :'count',
+            legend: 'count',
             legendOffset: -40,
             legendPosition: 'middle'
         }}
-        enableGridY={false}
-        pointSize={5}
+        pointSize={10}
         pointColor={{ theme: 'background' }}
         pointBorderWidth={2}
         pointBorderColor={{ from: 'serieColor' }}
-        pointLabelYOffset={-12}
-        enableArea={false}
+        pointLabelYOffset={0}
         useMesh={true}
         legends={[
             {

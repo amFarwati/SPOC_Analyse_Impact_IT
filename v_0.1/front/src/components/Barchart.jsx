@@ -1,3 +1,6 @@
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Popper from '@mui/material/Popper';
 import { useTheme } from "@mui/material";
 import {ResponsiveBar} from "@nivo/bar";
 import {tokens} from "../theme";
@@ -5,9 +8,18 @@ import {tokens} from "../theme";
 
 function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distribution}) {
 
+    const [anchorEl, setAnchorEl] = React.useState(null);
+
+    const handleClick = (event) => {
+      setAnchorEl(anchorEl ? null : event.currentTarget);
+    };
+  
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popper' : undefined;
+
     var data = [
         {
-          criteres: unite[0] === undefined? 'loading' :`${unite[0]}`,
+          criteres: unite[0] === undefined? 'loading' :'     ',
           Manufacturing: parseInt(fabrication[0]),
           ManufacturingColor: "hsl(229, 70%, 50%)",
           Transportation: parseInt(distribution[0]),
@@ -18,7 +30,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
           "End of LifeColor": "hsl(340, 70%, 50%)",
         },
         {
-          criteres: unite[1] === undefined? 'loading' :`*e10-7 ${unite[1]}`,
+          criteres: unite[1] === undefined? 'loading' :`    `,
           Manufacturing: parseInt(fabrication[1]*10000000),
           ManufacturingColor: "hsl(307, 70%, 50%)",
           Transportation: parseInt(distribution[1]*10000000),
@@ -29,7 +41,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
           "End of LifeColor": "hsl(275, 70%, 50%)",
         },
         {
-          criteres: unite[2] === undefined? 'loading' :`${unite[2]}`,
+          criteres: unite[2] === undefined? 'loading' :`   `,
           Manufacturing: parseInt(fabrication[2]),
           ManufacturingColor: "hsl(72, 70%, 50%)",
           Transportation: parseInt(distribution[2]),
@@ -40,7 +52,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
           "End of LifeColor": "hsl(256, 70%, 50%)",
         },
         {
-          criteres: unite[3] === undefined? 'loading' :`*e10-2 ${unite[3]}`,
+          criteres: unite[3] === undefined? 'loading' :`  `,
           Manufacturing: parseInt(fabrication[3]*100),
           ManufacturingColor: "hsl(257, 70%, 50%)",
           Transportation: parseInt(distribution[3]*100),
@@ -51,7 +63,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
           "End of LifeColor": "hsl(9, 70%, 50%)",
         },
         {
-          criteres: unite[4] === undefined? 'loading' : `*e10-7 ${unite[4]}`,
+          criteres: unite[4] === undefined? 'loading' : ` `,
           Manufacturing: parseInt(fabrication[4]*10000),
           ManufacturingColor: "hsl(190, 70%, 50%)",
           Transportation: parseInt(distribution[4]*10000),
@@ -66,6 +78,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
 
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+
     return (
         <ResponsiveBar
         data={data}

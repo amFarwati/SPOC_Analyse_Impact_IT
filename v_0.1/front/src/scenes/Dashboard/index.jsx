@@ -9,6 +9,17 @@ import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined"
 import DownloadingRoundedIcon from '@mui/icons-material/DownloadingRounded';
 import CircularProgress from '@mui/material/CircularProgress';
 import InputFileUpload from "../../components/InputFileUpload"
+
+import InfoButton from "../../components/infoButton";
+import AirIcon from '@mui/icons-material/Air';
+import MasksIcon from '@mui/icons-material/Masks';
+import WifiIcon from '@mui/icons-material/Wifi';
+import WaterIcon from '@mui/icons-material/Water';
+import FactoryIcon from '@mui/icons-material/Factory';
+import Skeleton from '@mui/material/Skeleton';
+import Stack from '@mui/material/Stack';
+
+
 import axios from 'redaxios';
 import * as React from 'react';
 
@@ -18,7 +29,7 @@ export const User_Context = createContext();
 function Dashboard() {
     const theme = useTheme();
     const [userParc,setUserParc] = useState([]);
-    const [onLoad,setOnLoad] = useState(false);
+    const [onLoad,setOnLoad] = useState(null);
     const [use,setUse] = useState([0,0,0,0,0]);
     const [fab,setFab] = useState([0,0,0,0,0]);
     const [distrib,setDistrib] = useState([0,0,0,0,0]);
@@ -133,11 +144,11 @@ function Dashboard() {
       <User_Context.Provider value={ [userParc,setUserParc,login] }>
         <Box m="20px">
             <Box  display="flex" justifyContent="center" alignItems="center" mb="50px">
-              {onLoad?<CircularProgress color="success" />:<InputFileUpload/>}
+              {onLoad?<></>:<InputFileUpload/>}
             </Box>
             <Box  display="flex" justifyContent="center" alignItems="center" mb="50px">
               {onLoad?
-              <CircularProgress color="success" />:        
+              <></>:        
               <Button component="label" variant="contained" onClick={handleImpactRequest} startIcon={<DownloadingRoundedIcon />}>
                  Last Push Impact
               </Button>}
@@ -150,7 +161,7 @@ function Dashboard() {
             <Box  display="grid" gridTemplateColumns="repeat(12,1fr)" gridAutoRows="140px" gap="20px" mt="20px">
               {/*ROW 1*/}
               
-              <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
+              <Box gridColumn="span 4" gridRow="span 4" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
                  
                   <Box>
@@ -159,11 +170,24 @@ function Dashboard() {
                     </IconButton>
                   </Box>
                 </Box>
-                <Box height = "90%" >
-                  <Piechart unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} critere={critere}/>
-                </Box>
+                {onLoad===null?
+                  <Box display="flex" justifyContent="center" height='100%' width='100%'>
+                    <Skeleton variant="circular" width={400} height={400} />
+                  </Box>
+                  :
+                  onLoad?
+                  <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
+                    <CircularProgress fontSize='large' color="success" />
+                  </Box>
+                  : 
+                  <>
+                    <Box height = "90%" >
+                      <Piechart unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} critere={critere}/>
+                    </Box>
+                  </>
+                }
               </Box>
-              <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
+              <Box gridColumn="span 8" gridRow="span 4" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
                   <Box>
                   <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>EtapeACV</Typography>
@@ -174,9 +198,38 @@ function Dashboard() {
                     </IconButton>
                   </Box>
                 </Box>
-                <Box height = "90%" >
-                  <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib}/>
-                </Box>
+                {onLoad===null?
+                    <>
+                    <Box height = "70%" justifyContent="center" display='flex' >
+                      <Skeleton variant="rounded" width='95%' height='100%' />
+                    </Box>
+                    <Box display="flex" justifyContent="space-around" alignItems="center" ml={8} mr={18} mt={2}>
+                      <Skeleton variant="circular" width={90} height={90} />
+                      <Skeleton variant="circular" width={90} height={90} />
+                      <Skeleton variant="circular" width={90} height={90} />
+                      <Skeleton variant="circular" width={90} height={90} />
+                      <Skeleton variant="circular" width={90} height={90} />
+                    </Box>
+                  </>
+                  :
+                  onLoad?
+                  <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
+                    <CircularProgress fontSize='large' color="success" />
+                  </Box>
+                  : 
+                  <>
+                    <Box height = "80%" >
+                      <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib}/>
+                    </Box>
+                    <Box display="flex" justifyContent="space-around" alignItems="center" ml={8} mr={18}>
+                      <InfoButton title={<AirIcon fontSize='large'/>} info={`${unite[0]}`} />
+                      <InfoButton title={<MasksIcon fontSize='large'/>} info={`*e10-7 ${unite[1]}`} />
+                      <InfoButton title={<WifiIcon fontSize='large'/>} info={`${unite[2]}`} />
+                      <InfoButton title={<WaterIcon fontSize='large'/>} info={`*e10-2 ${unite[3]}`} />
+                      <InfoButton title={<FactoryIcon fontSize='large'/>} info={`*e10-7 ${unite[4]}`} />
+                    </Box>
+                  </>
+                }
               </Box>
               <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
@@ -189,9 +242,24 @@ function Dashboard() {
                     </IconButton>
                   </Box>
                 </Box>
-                <Box height="90%" ml="-20px">
-                  <Linechart isDashboard={true} annualCost={annualCost} critere={critere}/>
-                </Box>
+                {onLoad===null?
+                  <>
+                    <Box justifyContent="center" display='flex' m={4}>
+                      <Skeleton variant="rounded" width='100%' height={330}/>
+                    </Box>
+                  </>
+                  :
+                  onLoad?
+                  <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
+                    <CircularProgress fontSize='large' color="success" />
+                  </Box>
+                  : 
+                  <>
+                    <Box height="90%" ml="-20px">
+                      <Linechart isDashboard={true} annualCost={annualCost} critere={critere}/>
+                    </Box>
+                  </>
+                }
               </Box>
               <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
@@ -211,9 +279,7 @@ function Dashboard() {
                         <Select
                           labelId="demo-simple-select-label"
                           id="demo-simple-select"
-                          // value={age}
                           label="Critere"
-                          // onChange={handleChange}
                         >
                           <MenuItem value={0} onClick={()=>{setCritere(0)}}>Climate change</MenuItem>
                           <MenuItem value={1} onClick={()=>{setCritere(1)}}>Particulate matter and respiratory inorganics</MenuItem>

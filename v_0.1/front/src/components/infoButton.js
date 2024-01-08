@@ -1,42 +1,28 @@
 import React from 'react';
-import { useState } from 'react';
 import Box from '@mui/material/Box';
-import Popper from '@mui/material/Popper';
-import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import Fade from '@mui/material/Fade';
-import Paper from '@mui/material/Paper';
+import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 
 
 function InfoButton({ title, info }) {
 
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [open, setOpen] = useState(false);
-
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-        setOpen(!open);
-    };
+    const infos = info.split('\n');
 
     return (
-        <Box sx={{ width: 500 }}>
-        <Popper
-          sx={{ zIndex: 1200 }}
-          open={open}
-          anchorEl={anchorEl}
-          transition
-        >
-          {({ TransitionProps }) => (
-            <Fade {...TransitionProps} timeout={350}>
-              <Paper>
-                <Typography sx={{ p: 2 }}>{info}</Typography>
-              </Paper>
-            </Fade>
-          )}
-        </Popper>
-
-        <IconButton onClick={(event)=>handleClick(event)}>{title}</IconButton>
-      </Box>
+        <Box >
+            <Tooltip 
+                title={
+                    <Box display="flex" flexDirection='column' justifyContent="center" alignItems="center">
+                        {infos.map(e=>{return <Typography variant="h5" fontWeight="600" >{e}</Typography>})}
+                    </Box>
+                } 
+                enterDelay={500} 
+                leaveDelay={200} 
+                >
+                <IconButton >{title}</IconButton>
+            </Tooltip>
+        </Box>
     )
 }
 

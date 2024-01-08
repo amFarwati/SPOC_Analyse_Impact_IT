@@ -222,11 +222,11 @@ function Dashboard() {
                       <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib}/>
                     </Box>
                     <Box display="flex" justifyContent="space-around" alignItems="center" ml={8} mr={18}>
-                      <InfoButton title={<AirIcon fontSize='large'/>} info={`${unite[0]}`} />
-                      <InfoButton title={<MasksIcon fontSize='large'/>} info={`*e10-7 ${unite[1]}`} />
-                      <InfoButton title={<WifiIcon fontSize='large'/>} info={`${unite[2]}`} />
-                      <InfoButton title={<WaterIcon fontSize='large'/>} info={`*e10-2 ${unite[3]}`} />
-                      <InfoButton title={<FactoryIcon fontSize='large'/>} info={`*e10-7 ${unite[4]}`} />
+                      <InfoButton title={<AirIcon fontSize='large'/>} info={`Changement Climatique\n${unite[0]}`} />
+                      <InfoButton title={<MasksIcon fontSize='large'/>} info={`Particules fines\n*e10-7 ${unite[1]}`} />
+                      <InfoButton title={<WifiIcon fontSize='large'/>} info={`Radiations ionisantes\n${unite[2]}`} />
+                      <InfoButton title={<WaterIcon fontSize='large'/>} info={`Acidification\n*e10-2 ${unite[3]}`} />
+                      <InfoButton title={<FactoryIcon fontSize='large'/>} info={`Usage des ressources\n(mineraux et metaux)\n*e10-7 ${unite[4]}`} />
                     </Box>
                   </>
                 }

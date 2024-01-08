@@ -1,8 +1,10 @@
 import * as React from 'react';
-import { Box, Button, IconButton, Typography, useTheme, Select, MenuItem } from "@mui/material";
+import { Box, Button, IconButton, Typography, useTheme, Select, MenuItem, TextField } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../theme";
 import DeleteIcon from '@mui/icons-material/Delete';
+import AddIcon from '@mui/icons-material/Add';
+
 
 function MaListe() {
   const [boxes, setBoxes] = React.useState([]);
@@ -10,7 +12,7 @@ function MaListe() {
   const colors = tokens(theme.palette.mode);
 
   const ajouterBox = () => {
-    const nouvelElement = { id: Date.now(), contenu: 'New Item', dropdown1: 'Option 1', dropdown2: 'Option A' };
+    const nouvelElement = { id: Date.now(), contenu: 'New Item', dropdown1: 'Option 1', dropdown2: 'Option A', date: '' };
     setBoxes([...boxes, nouvelElement]);
   };
 
@@ -39,11 +41,24 @@ function MaListe() {
     setBoxes(updatedBoxes);
   };
 
+  const handleDateChange = (id, enteredDate) => {
+    const updatedBoxes = boxes.map((box) => {
+      if (box.id === id) {
+        return { ...box, date: enteredDate };
+      }
+      return box;
+    });
+    setBoxes(updatedBoxes);
+  };
+
   return (
     <Box>
-      <Button onClick={ajouterBox} variant="contained" color="primary">
-        Add Item
-      </Button>
+      <Box textAlign="center" marginBottom="16px">
+        <Button onClick={ajouterBox} variant="contained" color="primary" size="large" sx={{backgroundColor:colors.blueAccent[700]}}>
+        <AddIcon sx={{mr:"10px"}}/>
+          Add Item
+        </Button>
+      </Box>
       <Box
         display="flex"
         flexDirection="column"
@@ -79,6 +94,12 @@ function MaListe() {
               <MenuItem value="Option B">Option B</MenuItem>
               {/* Add more options as needed */}
             </Select>
+            <TextField
+              label="Date (JJ/DD/AAAA)"
+              variant="outlined"
+              value={box.date}
+              onChange={(e) => handleDateChange(box.id, e.target.value)}
+            />
             <IconButton onClick={() => supprimerBox(box.id)} color="secondary">
               <DeleteIcon />
             </IconButton>

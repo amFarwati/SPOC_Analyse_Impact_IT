@@ -8,16 +8,13 @@ import Piechart from "../../components/Piechart";
 import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined"
 import DownloadingRoundedIcon from '@mui/icons-material/DownloadingRounded';
 import CircularProgress from '@mui/material/CircularProgress';
-import InputFileUpload from "../../components/InputFileUpload"
-
-import InfoButton from "../../components/infoButton";
 import AirIcon from '@mui/icons-material/Air';
 import MasksIcon from '@mui/icons-material/Masks';
 import WifiIcon from '@mui/icons-material/Wifi';
 import WaterIcon from '@mui/icons-material/Water';
 import FactoryIcon from '@mui/icons-material/Factory';
+import InputFileUpload from "../../components/InputFileUpload"
 import Skeleton from '@mui/material/Skeleton';
-import Stack from '@mui/material/Stack';
 
 
 import axios from 'redaxios';
@@ -38,10 +35,14 @@ function Dashboard() {
     const [unite,setUnite] = useState([]);
     const [nbItem,setNbItem]= useState(0);
     const [nbItemEnService,setNbItemEnService]= useState(0);
+    const [annee,setAnnee] = useState(-1);
 
     const [critere,setCritere] = useState(0);
+    const [etape,setEtape] = useState(0);
 
     const colors = tokens(theme.palette.mode);
+
+    const chartColor = 'set2';
     
     const login = 'user_1';
     const baseUrl = `http://localhost:4000`;
@@ -118,6 +119,7 @@ function Dashboard() {
                         let annees = Object.keys(res.data.cost);
 
                         formatageCout(res.data.cost[annees[annees.length-1]]);
+                        setAnnee(annees[annees.length-1]);
                         setAnnualCost(res.data.cost);
                         setUnite(res.data.unite);
                         setNbItem(res.data.nbItem);
@@ -139,6 +141,10 @@ function Dashboard() {
     
       }
     },[userParc,baseUrl,login]);
+
+    useEffect(()=>{
+      if(annee !== -1){formatageCout(annualCost[annee]);}
+    },[annee])
 
     return (
       <User_Context.Provider value={ [userParc,setUserParc,login] }>
@@ -181,9 +187,7 @@ function Dashboard() {
                   </Box>
                   : 
                   <>
-                    <Box height = "90%" >
-                      <Piechart unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} critere={critere}/>
-                    </Box>
+                    <Piechart unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} critere={critere} color={chartColor}/>
                   </>
                 }
               </Box>
@@ -218,18 +222,80 @@ function Dashboard() {
                   </Box>
                   : 
                   <>
-                    <Box height = "80%" >
-                      <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib}/>
-                    </Box>
-                    <Box display="flex" justifyContent="space-around" alignItems="center" ml={8} mr={18}>
-                      <InfoButton title={<AirIcon fontSize='large'/>} info={`Changement Climatique\n${unite[0]}`} />
-                      <InfoButton title={<MasksIcon fontSize='large'/>} info={`Particules fines\n*e10-7 ${unite[1]}`} />
-                      <InfoButton title={<WifiIcon fontSize='large'/>} info={`Radiations ionisantes\n${unite[2]}`} />
-                      <InfoButton title={<WaterIcon fontSize='large'/>} info={`Acidification\n*e10-2 ${unite[3]}`} />
-                      <InfoButton title={<FactoryIcon fontSize='large'/>} info={`Usage des ressources\n(mineraux et metaux)\n*e10-7 ${unite[4]}`} />
-                    </Box>
+                    <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} color={chartColor}/>
                   </>
                 }
+              </Box>
+              <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
+                <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+                  <Box>
+                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Descriptif</Typography>
+                  </Box>
+                  <Box>
+                    <IconButton>
+                      <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
+                    </IconButton>
+                  </Box>
+                </Box>
+                <Box height = "90%" mt="25px" p="0 30px" >
+                  <Box width="50%">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Critère</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Critere"
+                        defaultValue="Changement climatique"
+                      >
+                        <MenuItem value={0} onClick={()=>{setCritere(0)}}><AirIcon/> Changement climatique </MenuItem>
+                        <MenuItem value={1} onClick={()=>{setCritere(1)}}><MasksIcon/> Particules fines</MenuItem>
+                        <MenuItem value={2} onClick={()=>{setCritere(2)}}><WifiIcon/> Radiation ionisante</MenuItem>
+                        <MenuItem value={3} onClick={()=>{setCritere(3)}}><WaterIcon/> Acidification</MenuItem>
+                        <MenuItem value={4} onClick={()=>{setCritere(4)}}><FactoryIcon/> Usage des ressources (mineraux et metaux)</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box width="50%">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Etape ACV</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Etape_ACV"
+                        defaultValue="Fabrication"
+                      >
+                        <MenuItem value={0} onClick={()=>{setEtape(0)}}> Fabrication </MenuItem>
+                        <MenuItem value={1} onClick={()=>{setEtape(1)}}> Distribution</MenuItem>
+                        <MenuItem value={2} onClick={()=>{setEtape(2)}}> Usage</MenuItem>
+                        <MenuItem value={3} onClick={()=>{setEtape(3)}}> Fin de vie</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box width="50%">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">Année</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Année"
+                        defaultValue="Annee"
+                      >
+                        {Object.keys(annualCost).map((an)=>{
+                          return <MenuItem value={an} onClick={()=>{setAnnee(an)}}> {an} </MenuItem>;
+                        })
+                        }
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box>
+                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Nombre de matériel IT : </Typography>
+                    <Typography variant="h5" fontWeight="400" color={colors.grey[100]}>{nbItem}</Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Nombre de matériel IT En Service : </Typography>
+                    <Typography variant="h5" fontWeight="400" color={colors.grey[100]}>{nbItemEnService}</Typography>
+                  </Box>
+                </Box>
               </Box>
               <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
                 <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
@@ -255,49 +321,9 @@ function Dashboard() {
                   </Box>
                   : 
                   <>
-                    <Box height="90%" ml="-20px">
-                      <Linechart isDashboard={true} annualCost={annualCost} critere={critere}/>
-                    </Box>
+                    <Linechart isDashboard={true} annualCost={annualCost} critere={critere} etapeACV={etape} color={chartColor}/>
                   </>
                 }
-              </Box>
-              <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
-                <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
-                  <Box>
-                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Descriptif</Typography>
-                  </Box>
-                  <Box>
-                    <IconButton>
-                      <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
-                    </IconButton>
-                  </Box>
-                </Box>
-                <Box height = "90%" mt="25px" p="0 30px" >
-                  <Box width="50%">
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Critère</InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Critere"
-                        >
-                          <MenuItem value={0} onClick={()=>{setCritere(0)}}>Climate change</MenuItem>
-                          <MenuItem value={1} onClick={()=>{setCritere(1)}}>Particulate matter and respiratory inorganics</MenuItem>
-                          <MenuItem value={2} onClick={()=>{setCritere(2)}}>Ionising radiation</MenuItem>
-                          <MenuItem value={3} onClick={()=>{setCritere(3)}}>Acidification</MenuItem>
-                          <MenuItem value={4} onClick={()=>{setCritere(4)}}>Resource use (minerals and metals)</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  <Box>
-                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Nombre de matériel IT : </Typography>
-                    <Typography variant="h5" fontWeight="400" color={colors.grey[100]}>{nbItem}</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Nombre de matériel IT En Service : </Typography>
-                    <Typography variant="h5" fontWeight="400" color={colors.grey[100]}>{nbItemEnService}</Typography>
-                  </Box>
-                </Box>
               </Box>
             </Box>
             

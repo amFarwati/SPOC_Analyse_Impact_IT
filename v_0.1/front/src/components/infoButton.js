@@ -16,8 +16,7 @@ function InfoButton({ title, info }) {
                     <Box display="flex" flexDirection='column' justifyContent="center" alignItems="center">
                         {infos.map(e=>{return <Typography variant="h5" fontWeight="600" >{e}</Typography>})}
                     </Box>
-                } 
-                enterDelay={500} 
+                }  
                 leaveDelay={200} 
                 >
                 <IconButton >{title}</IconButton>

@@ -31,7 +31,7 @@ function Dashboard() {
     const [fab,setFab] = useState([0,0,0,0,0]);
     const [distrib,setDistrib] = useState([0,0,0,0,0]);
     const [fin,setFin] = useState([0,0,0,0,0]);
-    const [annualCost,setAnnualCost] = useState(null);
+    const [annualCost,setAnnualCost] = useState([]);
     const [unite,setUnite] = useState([]);
     const [nbItem,setNbItem]= useState(0);
     const [nbItemEnService,setNbItemEnService]= useState(0);

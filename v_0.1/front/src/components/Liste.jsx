@@ -1,18 +1,47 @@
 import * as React from 'react';
-import { Box, Button, IconButton, Typography, useTheme, Select, MenuItem, TextField } from "@mui/material";
-import { useContext } from "react";
-import { ColorModeContext, tokens } from "../theme";
+import { Box, Button, IconButton, useTheme, MenuItem, TextField } from "@mui/material";
+import {  useEffect } from "react";
+import {  tokens } from "../theme";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 
-
 function MaListe() {
-  const [boxes, setBoxes] = React.useState([]);
+  const [boxes, setBoxes] = React.useState(() => {
+    // Load saved data from local storage or use a default value
+    const savedData = JSON.parse(localStorage.getItem('boxes')) || [];
+    return savedData;
+  });
+
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const items = ["Écran",
+  "Auto-Enregistrement",
+  "Périphérique de Mobilité",
+  "Traceur",
+  "Terminal de Facturation",
+  "Traceur",
+  "Imprimante",
+  "Équipement Réseau",
+  "Ordinateur Personnel",
+  "Système d'Encaissement",
+  "Dispositif d'Enregistrement des Espèces",
+  "Smartphone",
+  "Serveur",
+  "Dispositif de Communication",
+  "Routeur IP",
+  "Commutateur IP",
+  "Répartiteur de Charge Réseau",
+  "Consommable"
+  
+  ];
+
+  useEffect(() => {
+    // Save data to local storage whenever boxes change
+    localStorage.setItem('boxes', JSON.stringify(boxes));
+  }, [boxes]);
 
   const ajouterBox = () => {
-    const nouvelElement = { id: Date.now(), contenu: 'New Item', dropdown1: 'Option 1', dropdown2: 'Option A', date: '' };
+    const nouvelElement = { id: Date.now(), date: '',quantity: '' };
     setBoxes([...boxes, nouvelElement]);
   };
 
@@ -21,42 +50,40 @@ function MaListe() {
     setBoxes(nouvellesBoxes);
   };
 
-  const handleDropdown1Change = (id, selectedOption) => {
-    const updatedBoxes = boxes.map((box) => {
-      if (box.id === id) {
-        return { ...box, dropdown1: selectedOption };
-      }
-      return box;
-    });
-    setBoxes(updatedBoxes);
-  };
-
-  const handleDropdown2Change = (id, selectedOption) => {
-    const updatedBoxes = boxes.map((box) => {
-      if (box.id === id) {
-        return { ...box, dropdown2: selectedOption };
-      }
-      return box;
-    });
-    setBoxes(updatedBoxes);
-  };
-
   const handleDateChange = (id, enteredDate) => {
-    const updatedBoxes = boxes.map((box) => {
-      if (box.id === id) {
-        return { ...box, date: enteredDate };
-      }
-      return box;
-    });
-    setBoxes(updatedBoxes);
+    const isValidInput = /^[0-9\/]*$/.test(enteredDate);
+  
+    if (isValidInput) {
+      const updatedBoxes = boxes.map((box) => {
+        if (box.id === id) {
+          return { ...box, date: enteredDate };
+        }
+        return box;
+      });
+      setBoxes(updatedBoxes);
+    }
   };
+
+  const handleQuantityChange = (id, enteredQuantity) => {
+    if (!isNaN(enteredQuantity)) {
+      const updatedBoxes = boxes.map((box) => {
+        if (box.id === id) {
+          return { ...box, quantity: enteredQuantity };
+        }
+        return box;
+      });
+      setBoxes(updatedBoxes);
+    }
+  };
+  
+  
 
   return (
     <Box>
       <Box textAlign="center" marginBottom="16px">
         <Button onClick={ajouterBox} variant="contained" color="primary" size="large" sx={{backgroundColor:colors.blueAccent[700]}}>
         <AddIcon sx={{mr:"10px"}}/>
-          Add Item
+          Ajout Item
         </Button>
       </Box>
       <Box
@@ -77,27 +104,31 @@ function MaListe() {
             alignItems="center"
             justifyContent="space-between"
           >
-            <Typography>{box.contenu}</Typography>
-            <Select
-              value={box.dropdown1}
-              onChange={(e) => handleDropdown1Change(box.id, e.target.value)}
-            >
-              <MenuItem value="Option 1">Option 1</MenuItem>
-              <MenuItem value="Option 2">Option 2</MenuItem>
-              {/* Add more options as needed */}
-            </Select>
-            <Select
-              value={box.dropdown2}
-              onChange={(e) => handleDropdown2Change(box.id, e.target.value)}
-            >
-              <MenuItem value="Option A">Option A</MenuItem>
-              <MenuItem value="Option B">Option B</MenuItem>
-              {/* Add more options as needed */}
-            </Select>
             <TextField
-              label="Date (JJ/DD/AAAA)"
-              variant="outlined"
+          id="filled-select-currency"
+          select
+          label="Item"
+          helperText="Sélectionnez votre item"
+          variant="filled"
+        >
+          {items.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </TextField>
+            <TextField
+              label="Quantité"
+              variant="filled"
+              value={box.quantity}
+              helperText="Seulement des chiffres"
+              onChange={(e) => handleQuantityChange(box.id, e.target.value)}
+            />
+            <TextField
+              label="Date (JJ/MM/AAAA)"
+              variant="filled"
               value={box.date}
+              helperText="Seulement des chiffres ou des '/'"
               onChange={(e) => handleDateChange(box.id, e.target.value)}
             />
             <IconButton onClick={() => supprimerBox(box.id)} color="secondary">

@@ -59,7 +59,7 @@ function Topbar() {
           <AutoAwesomeMotionIcon />
         </ListItemIcon>
         <ListItemText >
-          <Typography variant="h3" fontWeight="600" color={colors.grey[100]} >Choose page</Typography>
+          <Typography variant="h3" fontWeight="600" color={colors.grey[100]} >Aller à</Typography>
         </ListItemText>
 
         {open ? <ExpandLess /> : <ExpandMore />}

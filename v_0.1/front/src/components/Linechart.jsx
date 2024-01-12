@@ -1,4 +1,5 @@
-import { useTheme } from "@mui/material";
+import { useTheme,Typography } from "@mui/material";
+import { useState } from 'react';
 import {ResponsiveLine} from "@nivo/line";
 import {tokens} from "../theme";
 import InfoButton from "./infoButton";
@@ -14,29 +15,21 @@ import FactoryIcon from '@mui/icons-material/Factory';
 function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
-    
-    console.log('annualCost',annualCost);
+    const iconSize = '40px';
 
     const handleData = (data) =>{
         let annees = Object.keys(data);
         let acv = Object.keys(data[annees[0]]);
         let criteres = Object.keys(data[annees[0]][acv[0]]);
-
-        let colors = [  tokens("dark").greenAccent[500],
-                        tokens("dark").blueAccent[300],
-                        tokens("dark").redAccent[200],
-                        tokens("dark").redAccent[200],
-                        ];
         let res = [];
 
-       for (let j = 0; j<criteres.length; j++) {
+        for (let j = 0; j<criteres.length; j++) {
             let interm = [];
 
 //           console.log(critere);
 
             for(let i = 0; i<acv.length; i++){
                 interm.push({  id : acv[i],
-                            color : '#38bcb2'/*colors[i]*/,
                             data : annees.map(annee => {
                                 return {x: annee,
                                         y: data[annee][acv[i]][criteres[j]]
@@ -44,7 +37,7 @@ function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
                             })
                             }
                         );
-              };
+                };
             res.push(interm);
         }
         console.log(res)
@@ -52,41 +45,66 @@ function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
     }
 
     var data = (annualCost===null?[{  id : 'loading',
-        color : tokens("dark").greenAccent[500],
-        data :  [{   x: 0,
-                    y: 0
-                }]
-        }]:handleData(annualCost));
+    data :  [{   x: 0,
+                y: 0
+            }]
+    }]:handleData(annualCost));
 
     const infoCritere = () => {
         let res = null; 
         
         switch (critere){
             case 0:
-                res=<InfoButton title={<AirIcon fontSize='large'/>} info={`Changement Climatique`} />
+                res=<InfoButton title={<AirIcon style={{fontSize: iconSize}}/>} info={`Changement Climatique`} />
             break
             case 1:
-                res=<InfoButton title={<MasksIcon fontSize='large'/>} info={`Particules fines`} />
+                res=<InfoButton title={<MasksIcon style={{fontSize: iconSize}}/>} info={`Particules fines`} />
             break
             case 2:
-                res=<InfoButton title={<WifiIcon fontSize='large'/>} info={`Radiations ionisantes`} />
+                res=<InfoButton title={<WifiIcon style={{fontSize: iconSize}}/>} info={`Radiations ionisantes`} />
             break
             case 3:
-                res=<InfoButton title={<WaterIcon fontSize='large'/>} info={`Acidification`} />
+                res=<InfoButton title={<WaterIcon style={{fontSize: iconSize}}/>} info={`Acidification`} />
             break
             case 4:
-                res=<InfoButton title={<FactoryIcon fontSize='large'/>} info={`Usage des ressources\n(mineraux et metaux)`} />
+                res=<InfoButton title={<FactoryIcon style={{fontSize: iconSize}}/>} info={`Usage des ressources\n(mineraux et metaux)`} />
             break
             default:
-                res=<InfoButton title={<AirIcon fontSize='large'/>} info={`Changement Climatique`} />
+                res=<InfoButton title={<AirIcon style={{fontSize: iconSize}}/>} info={`Changement Climatique`} />
+            break;
+        };
+        return res;
+    }; 
+
+    const infoACV = () => {
+        let res = null; 
+        
+        switch (etapeACV){
+            case 0:
+                res='Fabrication';
+            break
+            case 1:
+                res='Distribution';
+            break
+            case 2:
+                res='Usage';
+            break
+            case 3:
+                res='Fin de vie';
+            break
+            default:
+                res='';
             break;
         };
         return res;
     }; 
 
     return (
-        <Box Box height="90%" >
-            {infoCritere()}
+        <Box Box height="90%" width="100%" mr={4}>
+            <Box display='flex' ml={4} alignItems="center">
+                {infoCritere()}
+                <Typography variant='h5'>{infoACV()}</Typography>
+            </Box>
             <ResponsiveLine
             data={data.length===1?data:[data[critere][etapeACV]]}
             margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
@@ -99,6 +117,7 @@ function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
                 reverse: false
             }}
             yFormat=" >-.2f"
+            colors={color[etapeACV]}
             curve="monotoneX"
             axisTop={null}
             axisRight={null}

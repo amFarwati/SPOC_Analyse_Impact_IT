@@ -1,4 +1,4 @@
-import { useTheme } from "@mui/material";
+import { Typography,useTheme } from "@mui/material";
 import {ResponsivePie} from "@nivo/pie";
 import {tokens} from "../theme";
 import InfoButton from "./infoButton";
@@ -10,9 +10,10 @@ import WaterIcon from '@mui/icons-material/Water';
 import FactoryIcon from '@mui/icons-material/Factory';
 
 
-function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, color}) {
+function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, annee, color}) {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
+    const iconSize = '40px';
 
     var total = fabrication[critere]+distribution[critere]+usage[critere]+finDeVie[critere]
 
@@ -49,30 +50,34 @@ function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, c
         
         switch (critere){
             case 0:
-                res=<InfoButton title={<AirIcon fontSize='large'/>} info={`Changement Climatique`} />
+                res=<InfoButton title={<AirIcon style={{fontSize: iconSize}}/>} info={`Changement Climatique`} />
             break
             case 1:
-                res=<InfoButton title={<MasksIcon fontSize='large'/>} info={`Particules fines`} />
+                res=<InfoButton title={<MasksIcon style={{fontSize: iconSize}}/>} info={`Particules fines`} />
             break
             case 2:
-                res=<InfoButton title={<WifiIcon fontSize='large'/>} info={`Radiations ionisantes`} />
+                res=<InfoButton title={<WifiIcon style={{fontSize: iconSize}}/>} info={`Radiations ionisantes`} />
             break
             case 3:
-                res=<InfoButton title={<WaterIcon fontSize='large'/>} info={`Acidification`} />
+                res=<InfoButton title={<WaterIcon style={{fontSize: iconSize}}/>} info={`Acidification`} />
             break
             case 4:
-                res=<InfoButton title={<FactoryIcon fontSize='large'/>} info={`Usage des ressources\n(mineraux et metaux)`} />
+                res=<InfoButton title={<FactoryIcon style={{fontSize: iconSize}}/>} info={`Usage des ressources\n(mineraux et metaux)`} />
             break
             default:
-                res=<InfoButton title={<AirIcon fontSize='large'/>} info={`Changement Climatique`} />
+                res=<InfoButton title={<AirIcon style={{fontSize: iconSize}}/>} info={`Changement Climatique`} />
             break;
         };
         return res;
     }; 
 
     return(
-        <Box height = "90%" >
+    <Box height='100%' width='100%' diplay='flex' flexDirection='column'>
+        <Box display='flex' ml={4} alignItems="center">
             {infoCritere()}
+            <Typography variant="h5">{annee}</Typography>
+        </Box>
+        <Box height = "90%" >
             <ResponsivePie
             data={data}
             theme={{
@@ -110,7 +115,7 @@ function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, c
             padAngle={1}
             cornerRadius={6}
             activeOuterRadiusOffset={8}
-            colors={{scheme: color}}
+            colors={color}
             borderWidth={1}
             borderColor={{
                 from: 'color',
@@ -138,7 +143,8 @@ function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, c
             }}
             legends={[]}
             />
-        </Box>
+      </Box>
+    </Box>
     );
   }
   

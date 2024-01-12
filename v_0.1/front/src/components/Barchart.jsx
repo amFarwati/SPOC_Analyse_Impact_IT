@@ -1,12 +1,13 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { useTheme } from "@mui/material";
+import { Typography, useTheme } from "@mui/material";
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import {ResponsiveBar} from "@nivo/bar";
 import {tokens} from "../theme";
+import Stack from '@mui/material/Stack';
 
 import InfoButton from "./infoButton";
 import AirIcon from '@mui/icons-material/Air';
@@ -16,7 +17,7 @@ import WaterIcon from '@mui/icons-material/Water';
 import FactoryIcon from '@mui/icons-material/Factory';
 
 
-function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distribution, color}) {
+function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distribution, annee, color}) {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [graph_Type, setGraphType] = React.useState('symlog');
@@ -91,40 +92,25 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
     const colors = tokens(theme.palette.mode);
 
     return (
-        <Box height='100%' width='100%' >
-            <FormControl>
-                <RadioGroup
-                    row
-                    name="config_choice"
-                    defaultValue="symlog"
-                >
-                    <FormControlLabel value="symlog" onChange={()=>{setGraphType('symlog')}} control={<Radio />} label="symlog" />
-                    <FormControlLabel value="lineaire" onChange={()=>{setGraphType('linear')}} control={<Radio />} label="lineaire" />
-                </RadioGroup>
-            </FormControl>
-            <Box height = "80%" >
+        <Box height='100%' width='100%' diplay='flex' flexDirection='column'>
+            <Box display='flex' ml={4} alignItems="center">
+                <FormControl>
+                    <RadioGroup
+                        row
+                        name="config_choice"
+                        defaultValue="symlog"
+                    >
+                        <FormControlLabel value="symlog" onChange={()=>{setGraphType('symlog')}} control={<Radio />} label="symlog" />
+                        <FormControlLabel value="lineaire" onChange={()=>{setGraphType('linear')}} control={<Radio />} label="lineaire" />
+                    </RadioGroup>
+                </FormControl>
+                <Typography variant="h5">{annee}</Typography>
+            </Box>
+            <Box height="80%" >
                 <ResponsiveBar
                 data={data}
                 valueScale={{ type: graph_Type }}
                 groupMode='grouped'
-   /*             tooltip={(tooltip) => {
-                    return (
-                      <div
-                        style={{
-                          background: colors.grey[800], // Changer cette couleur en fonction de vos besoins
-                          padding: '9px',
-                          borderRadius: '3px',
-                          boxShadow: '0 2px 5px rgba(0, 0, 0, 0.15)',
-                        }}
-                      >
-                        <strong style={{ color: colors.grey[200] }}>{tooltip.data.Fabrication}</strong>
-                        <br />
-                        <span style={{ color: tooltip.color }}>
-                          {tooltip.color}
-                        </span>
-                      </div>
-                    );
-                  }}*/
                 theme={{
                     axis:{
                         domain:{
@@ -165,7 +151,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
                 margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
                 padding={0.1}
                 indexScale={{ type: 'band', round: true }}
-                colors={{ scheme: color }}
+                colors={color}
                 defs={[
                     {
                         id: 'dots',
@@ -271,11 +257,11 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
             />
         </Box>
         <Box display="flex" justifyContent="space-around" alignItems="center" ml={8} mr={18}>
-            <InfoButton title={<AirIcon fontSize='large'/>} info={`Changement Climatique\n${unite[0]}`} />
-            <InfoButton title={<MasksIcon fontSize='large'/>} info={`Particules fines\n*e10-7 ${unite[1]}`} />
-            <InfoButton title={<WifiIcon fontSize='large'/>} info={`Radiations ionisantes\n${unite[2]}`} />
-            <InfoButton title={<WaterIcon fontSize='large'/>} info={`Acidification\n*e10-2 ${unite[3]}`} />
-            <InfoButton title={<FactoryIcon fontSize='large'/>} info={`Usage des ressources\n(mineraux et metaux)\n*e10-7 ${unite[4]}`} />
+            <InfoButton title={<AirIcon style={{fontSize: '58px'}}/>} info={`Changement Climatique\n${unite[0]}`} />
+            <InfoButton title={<MasksIcon style={{fontSize: '58px'}}/>} info={`Particules fines\n*e10-7 ${unite[1]}`} />
+            <InfoButton title={<WifiIcon style={{fontSize: '58px'}}/>} info={`Radiations ionisantes\n${unite[2]}`} />
+            <InfoButton title={<WaterIcon style={{fontSize: '58px'}}/>} info={`Acidification\n*e10-2 ${unite[3]}`} />
+            <InfoButton title={<FactoryIcon style={{fontSize: '58px'}}/>} info={`Usage des ressources\n(mineraux et metaux)\n*e10-7 ${unite[4]}`} />
         </Box>  
     </Box>
     );

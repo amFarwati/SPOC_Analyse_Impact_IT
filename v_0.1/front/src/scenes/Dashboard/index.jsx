@@ -1,11 +1,10 @@
 import { useState, createContext, useEffect } from 'react';
-import { Box,IconButton,Button,Typography,useTheme,FormControl, InputLabel, Select,MenuItem } from "@mui/material";
+import { Box,Button,Typography,useTheme,FormControl, InputLabel, Select,MenuItem } from "@mui/material";
 import Header from "../../components/Header";
 import { tokens } from "../../theme";
 import Linechart from "../../components/Linechart";
 import Barchart from "../../components/Barchart";
 import Piechart from "../../components/Piechart";
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined"
 import DownloadingRoundedIcon from '@mui/icons-material/DownloadingRounded';
 import CircularProgress from '@mui/material/CircularProgress';
 import AirIcon from '@mui/icons-material/Air';
@@ -15,6 +14,7 @@ import WaterIcon from '@mui/icons-material/Water';
 import FactoryIcon from '@mui/icons-material/Factory';
 import InputFileUpload from "../../components/InputFileUpload"
 import Skeleton from '@mui/material/Skeleton';
+import Stack from '@mui/material/Stack';
 
 
 import axios from 'redaxios';
@@ -42,7 +42,10 @@ function Dashboard() {
 
     const colors = tokens(theme.palette.mode);
 
-    const chartColor = 'set2';
+    const chartColor = ['#329D9C',
+                        '#56C596',
+                        '#7BE495',
+                        colors.lightLimeAccent[400]];
     
     const login = 'user_1';
     const baseUrl = `http://localhost:4000`;
@@ -62,6 +65,7 @@ function Dashboard() {
 
     const handleImpactRequest = () => {
       setOnLoad(true);
+      setAnnee(-1);
       console.log(`/getImpact ${baseUrl} ${login}_test =>`)
       axios.get(`${baseUrl}/getImpact/${login}_test`, { withCredentials: true })
           .then(res => {
@@ -149,95 +153,181 @@ function Dashboard() {
     return (
       <User_Context.Provider value={ [userParc,setUserParc,login] }>
         <Box m="20px">
-            <Box  display="flex" justifyContent="center" alignItems="center" mb="50px">
-              {onLoad?<></>:<InputFileUpload/>}
+          {onLoad?<></>:
+            <Box  display="flex" justifyContent="center" alignItems="center">  
+              <Box  display="flex" justifyContent="space-between" alignItems="center" width={600}>
+                <InputFileUpload/>
+                <Button 
+                component="label" 
+                sx={{
+                  backgroundColor: colors.blueAccent[700],
+                  color: colors.grey[100],
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  padding: "10px 20px",
+                }} 
+                onClick={handleImpactRequest} 
+                startIcon={<DownloadingRoundedIcon sx={{ mr: "10px" }}/>}
+                >
+                    Charger le dernier inventaire
+                </Button>
+              </Box>
             </Box>
-            <Box  display="flex" justifyContent="center" alignItems="center" mb="50px">
-              {onLoad?
-              <></>:        
-              <Button component="label" variant="contained" onClick={handleImpactRequest} startIcon={<DownloadingRoundedIcon />}>
-                 Last Push Impact
-              </Button>}
-            </Box>
-            <Box  display="flex" justifyContent="space-between" alignItems="center">
-              <Header title="DASHBOARD" subtitle="Welcome to your Dashboard" />
-            </Box>
+          }
+          <Box  display="flex" justifyContent="space-between" alignItems="center">
+            <Header title="DASHBOARD" subtitle="Welcome to your Dashboard" />
+          </Box>
 
-            {/*GRID and charts*/}
-            <Box  display="grid" gridTemplateColumns="repeat(12,1fr)" gridAutoRows="140px" gap="20px" mt="20px">
+          {/*GRID and charts*/}
+          <Box  display="grid" gridTemplateColumns="repeat(12,1fr)" gridAutoRows="140px" gap="20px" mt="20px">
               {/*ROW 1*/}
-              
-              <Box gridColumn="span 4" gridRow="span 4" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
-                <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
-                 
-                  <Box>
-                    <IconButton>
-                      <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
-                    </IconButton>
-                  </Box>
+            <Box gridColumn="span 4" gridRow="span 4" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
+              <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Répartition</Typography>
                 </Box>
-                {onLoad===null?
-                  <Box display="flex" justifyContent="center" height='100%' width='100%'>
-                    <Skeleton variant="circular" width={400} height={400} />
-                  </Box>
-                  :
-                  onLoad?
-                  <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
-                    <CircularProgress fontSize='large' color="success" />
-                  </Box>
-                  : 
-                  <>
-                    <Piechart unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} critere={critere} color={chartColor}/>
-                  </>
-                }
+                {/*<Box>
+                  <IconButton>
+                    <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
+                  </IconButton>
+                </Box>*/}
               </Box>
-              <Box gridColumn="span 8" gridRow="span 4" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
-                <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
-                  <Box>
+              {onLoad===null?
+                <Box display="flex" justifyContent="center" height='100%' width='100%'>
+                  <Skeleton variant="circular" width={400} height={400} />
+                </Box>
+                :
+                onLoad?
+                <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
+                  <CircularProgress fontSize='large' color="success" />
+                </Box>
+                : 
+                <>
+                  <Piechart unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} critere={critere} annee={annee===-1?Object.keys(annualCost)[Object.keys(annualCost).length-1]:annee} color={chartColor}/>
+                </>
+              }
+            </Box>
+            <Box gridColumn="span 8" gridRow="span 4" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
+              <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
                   <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>EtapeACV</Typography>
-                  </Box>
-                  <Box>
-                    <IconButton>
-                      <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
-                    </IconButton>
-                  </Box>
                 </Box>
-                {onLoad===null?
-                    <>
-                    <Box height = "70%" justifyContent="center" display='flex' >
-                      <Skeleton variant="rounded" width='95%' height='100%' />
-                    </Box>
-                    <Box display="flex" justifyContent="space-around" alignItems="center" ml={8} mr={18} mt={2}>
-                      <Skeleton variant="circular" width={90} height={90} />
-                      <Skeleton variant="circular" width={90} height={90} />
-                      <Skeleton variant="circular" width={90} height={90} />
-                      <Skeleton variant="circular" width={90} height={90} />
-                      <Skeleton variant="circular" width={90} height={90} />
-                    </Box>
-                  </>
-                  :
-                  onLoad?
-                  <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
-                    <CircularProgress fontSize='large' color="success" />
-                  </Box>
-                  : 
-                  <>
-                    <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} color={chartColor}/>
-                  </>
-                }
+                {/*<Box>
+                  <IconButton>
+                    <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
+                  </IconButton>
+                </Box>*/}
               </Box>
-              <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
-                <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
-                  <Box>
-                    <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Descriptif</Typography>
+              {onLoad===null?
+                  <>
+                  <Box height = "70%" justifyContent="center" display='flex' >
+                    <Skeleton variant="rounded" width='95%' height='100%' />
                   </Box>
-                  <Box>
-                    <IconButton>
-                      <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
-                    </IconButton>
+                  <Box display="flex" justifyContent="space-around" alignItems="center" ml={8} mr={18} mt={2}>
+                    <Skeleton variant="circular" width={90} height={90} />
+                    <Skeleton variant="circular" width={90} height={90} />
+                    <Skeleton variant="circular" width={90} height={90} />
+                    <Skeleton variant="circular" width={90} height={90} />
+                    <Skeleton variant="circular" width={90} height={90} />
                   </Box>
+                </>
+                :
+                onLoad?
+                <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
+                  <CircularProgress fontSize='large' color="success" />
                 </Box>
-                <Box height = "90%" mt="25px" p="0 30px" >
+                : 
+                <Box height='90%'>
+                  <Barchart isDashboard={true} unite={unite} finDeVie={fin} usage={use} fabrication={fab} distribution={distrib} annee={annee===-1?Object.keys(annualCost)[Object.keys(annualCost).length-1]:annee} color={chartColor}/>
+                </Box>
+              }
+            </Box>
+            <Box gridColumn="span 4" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
+              <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                  <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Descriptif</Typography>
+                </Box>
+                {/*<Box>
+                  <IconButton>
+                    <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
+                  </IconButton>
+                </Box>*/}
+              </Box>
+              {onLoad===null?
+              <>
+                <Box display='flex' flexDirection='column' m={4}>
+                  <Stack spacing={1}>
+                    <Box>
+                      <Stack spacing={1}>
+                        <Skeleton variant="rounded">
+                          <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Critère</InputLabel>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              label="Critere"
+                              defaultValue={0}
+                            >
+                              <MenuItem value={0} onClick={()=>{setCritere(0)}}><AirIcon/> Changement climatique </MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Skeleton>
+                        <Skeleton variant="rounded">
+                          <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Critère</InputLabel>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              label="Critere"
+                              defaultValue={0}
+                            >
+                              <MenuItem value={0} onClick={()=>{setCritere(0)}}><AirIcon/> Changement climatique </MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Skeleton>
+                        <Skeleton variant="rounded">
+                          <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Critère</InputLabel>
+                            <Select
+                              labelId="demo-simple-select-label"
+                              id="demo-simple-select"
+                              label="Critere"
+                              defaultValue={0}
+                            >
+                              <MenuItem value={0} onClick={()=>{setCritere(0)}}><AirIcon/> Changement climatique </MenuItem>
+                            </Select>
+                          </FormControl>
+                        </Skeleton>
+                      </Stack>
+                    </Box>
+                    <Box>
+                      <Stack spacing={1} width='100%'>
+                        <Skeleton variant="rounded" width="100%">
+                          <Typography>.</Typography>
+                        </Skeleton>
+                        <Skeleton variant="rounded" width="100%">
+                          <Typography>.</Typography>
+                        </Skeleton>
+                        <Skeleton variant="rounded" width="100%">
+                          <Typography>.</Typography>
+                        </Skeleton>
+                        <Skeleton variant="rounded" width="100%">
+                          <Typography>.</Typography>
+                        </Skeleton>
+                      </Stack>
+                    </Box>
+                  </Stack>
+                </Box>
+              </>
+              :
+              onLoad?
+              <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
+                <CircularProgress fontSize='large' color="success" />
+              </Box>
+              : 
+              <>
+              <Box height = "90%" mt="25px" p="0 30px" >
+                <Stack spacing={1}>
                   <Box width="50%">
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-label">Critère</InputLabel>
@@ -245,7 +335,7 @@ function Dashboard() {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         label="Critere"
-                        defaultValue="Changement climatique"
+                        defaultValue={0}
                       >
                         <MenuItem value={0} onClick={()=>{setCritere(0)}}><AirIcon/> Changement climatique </MenuItem>
                         <MenuItem value={1} onClick={()=>{setCritere(1)}}><MasksIcon/> Particules fines</MenuItem>
@@ -262,7 +352,7 @@ function Dashboard() {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         label="Etape_ACV"
-                        defaultValue="Fabrication"
+                        defaultValue={0}
                       >
                         <MenuItem value={0} onClick={()=>{setEtape(0)}}> Fabrication </MenuItem>
                         <MenuItem value={1} onClick={()=>{setEtape(1)}}> Distribution</MenuItem>
@@ -278,10 +368,10 @@ function Dashboard() {
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
                         label="Année"
-                        defaultValue="Annee"
+                        defaultValue={Object.keys(annualCost).length-1}
                       >
                         {Object.keys(annualCost).map((an)=>{
-                          return <MenuItem value={an} onClick={()=>{setAnnee(an)}}> {an} </MenuItem>;
+                          return <MenuItem value={Object.keys(annualCost).indexOf(an)} onClick={()=>{setAnnee(an)}}> {an} </MenuItem>;
                         })
                         }
                       </Select>
@@ -295,39 +385,40 @@ function Dashboard() {
                     <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Nombre de matériel IT En Service : </Typography>
                     <Typography variant="h5" fontWeight="400" color={colors.grey[100]}>{nbItemEnService}</Typography>
                   </Box>
-                </Box>
+                </Stack>
               </Box>
-              <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
-                <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
-                  <Box>
-                  <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Suivi</Typography>
-                  </Box>
-                  <Box>
-                    <IconButton>
-                      <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
-                    </IconButton>
-                  </Box>
-                </Box>
-                {onLoad===null?
-                  <>
-                    <Box justifyContent="center" display='flex' m={4}>
-                      <Skeleton variant="rounded" width='100%' height={330}/>
-                    </Box>
-                  </>
-                  :
-                  onLoad?
-                  <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
-                    <CircularProgress fontSize='large' color="success" />
-                  </Box>
-                  : 
-                  <>
-                    <Linechart isDashboard={true} annualCost={annualCost} critere={critere} etapeACV={etape} color={chartColor}/>
-                  </>
-                }
-              </Box>
+              </>
+            }
             </Box>
-            
-            
+            <Box gridColumn="span 8" gridRow="span 3" backgroundColor={colors.primary[400]} borderRadius = "20px"> 
+              <Box mt="25px" p="0 30px" display="flex" justifyContent="space-between" alignItems="center">
+                <Box>
+                <Typography variant="h5" fontWeight="600" color={colors.grey[100]}>Suivi</Typography>
+                </Box>
+              {/*  <Box>
+                  <IconButton>
+                    <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
+                  </IconButton>
+          </Box>*/}
+              </Box>
+              {onLoad===null?
+                <>
+                  <Box justifyContent="center" display='flex' m={4}>
+                    <Skeleton variant="rounded" width='100%' height={330}/>
+                  </Box>
+                </>
+                :
+                onLoad?
+                <Box display="flex" justifyContent="center" alignItems="center" height='100%'>
+                  <CircularProgress fontSize='large' color="success" />
+                </Box>
+                : 
+                <Box height='90%'>
+                  <Linechart isDashboard={true} annualCost={annualCost} critere={critere} etapeACV={etape} color={chartColor}/>
+                </Box>
+              }
+            </Box>
+          </Box>
         </Box>
       </User_Context.Provider>
     );

@@ -427,7 +427,7 @@ app.get('/getInventory/:user', (req, res) => {
         }
 })
 
-//requête getImpact (fini) (fini)
+//requête getImpact (fini) 
 app.get('/getImpact/:user', async (req, res) => {
         let user = req.params.user;
         console.log(`getImpact for ${user}`);

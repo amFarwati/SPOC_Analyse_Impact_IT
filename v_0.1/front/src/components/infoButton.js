@@ -5,7 +5,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 
-function InfoButton({ title, info }) {
+function InfoButton({ title, info, onChange }) {
 
     const infos = info.split('\n');
 
@@ -19,7 +19,7 @@ function InfoButton({ title, info }) {
                 }  
                 leaveDelay={200} 
                 >
-                <IconButton >{title}</IconButton>
+                <IconButton onChange={onChange}>{title}</IconButton>
             </Tooltip>
         </Box>
     )

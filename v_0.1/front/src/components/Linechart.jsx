@@ -100,7 +100,7 @@ function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
     }; 
 
     return (
-        <Box Box height="90%" width="100%" mr={4}>
+        <Box Box height="90%" width="100%" ml={4} mb={4}>
             <Box display='flex' ml={4} alignItems="center">
                 {infoCritere()}
                 <Typography variant='h5'>{infoACV()}</Typography>
@@ -158,6 +158,10 @@ function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
             pointLabelYOffset={0}
             useMesh={true}
             theme={{
+                text:{
+                    fill:colors.grey[100],
+                    fontSize:'14px',
+                },
                 axis:{
                     domain:{
                         line:{
@@ -171,8 +175,15 @@ function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
                         },
                         text:{
                             fill:colors.grey[100],
+                            fontSize:'15px',
                         },
                     
+                    },
+                },
+                legends:{
+                    text:{
+                        fill:colors.grey[100],
+                        fontSize:'18px'
                     },
                 },
             }}
@@ -181,8 +192,8 @@ function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
                     anchor: 'bottom-right',
                     direction: 'column',
                     justify: false,
-                    translateX: 100,
-                    translateY: 0,
+                    translateX: -60,
+                    translateY: -300,
                     itemsSpacing: 0,
                     itemDirection: 'left-to-right',
                     itemWidth: 80,

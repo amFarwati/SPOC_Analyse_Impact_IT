@@ -17,7 +17,7 @@ import WaterIcon from '@mui/icons-material/Water';
 import FactoryIcon from '@mui/icons-material/Factory';
 
 
-function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distribution, annee, color}) {
+function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distribution, annee, setCritere, color}) {
 
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [graph_Type, setGraphType] = React.useState('symlog');
@@ -112,6 +112,10 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
                 valueScale={{ type: graph_Type }}
                 groupMode='grouped'
                 theme={{
+                    text:{
+                        fill:colors.grey[100],
+                        fontSize:'14px',
+                    },
                     axis:{
                         domain:{
                             line:{
@@ -131,6 +135,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
                             },
                             text:{
                                 fill:colors.grey[100],
+                                fontSize:'15px',
                             },
                         
                         },
@@ -138,6 +143,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
                     legends:{
                         text:{
                             fill:colors.grey[100],
+                            fontSize:'18px'
                         },
                     },
                 }}
@@ -228,14 +234,14 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
                     ]
                 }}
                 legends={[
-                    {
+                    {   
                         dataFrom: 'keys',
                         anchor: 'bottom-right',
-                        direction: 'column',
+                        direction: 'row',
                         justify: false,
-                        translateX: 120,
-                        translateY: 0,
-                        itemsSpacing: 2,
+                        translateX: 100,
+                        translateY: 40,
+                        itemsSpacing: 30,
                         itemWidth: 100,
                         itemHeight: 20,
                         itemDirection: 'left-to-right',
@@ -257,11 +263,11 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
             />
         </Box>
         <Box display="flex" justifyContent="space-around" alignItems="center" ml={8} mr={18}>
-            <InfoButton title={<AirIcon style={{fontSize: '58px'}}/>} info={`Changement Climatique\n${unite[0]}`} />
-            <InfoButton title={<MasksIcon style={{fontSize: '58px'}}/>} info={`Particules fines\n*e10-7 ${unite[1]}`} />
-            <InfoButton title={<WifiIcon style={{fontSize: '58px'}}/>} info={`Radiations ionisantes\n${unite[2]}`} />
-            <InfoButton title={<WaterIcon style={{fontSize: '58px'}}/>} info={`Acidification\n*e10-2 ${unite[3]}`} />
-            <InfoButton title={<FactoryIcon style={{fontSize: '58px'}}/>} info={`Usage des ressources\n(mineraux et metaux)\n*e10-7 ${unite[4]}`} />
+            <InfoButton onChange={()=>setCritere(0)} title={<AirIcon style={{fontSize: '58px'}}/>} info={`Changement Climatique\n${unite[0]}`} />
+            <InfoButton onChange={()=>setCritere(1)} title={<MasksIcon style={{fontSize: '58px'}}/>} info={`Particules fines\n*e10-7 ${unite[1]}`} />
+            <InfoButton onChange={()=>setCritere(2)} title={<WifiIcon style={{fontSize: '58px'}}/>} info={`Radiations ionisantes\n${unite[2]}`} />
+            <InfoButton onChange={()=>setCritere(3)} title={<WaterIcon style={{fontSize: '58px'}}/>} info={`Acidification\n*e10-2 ${unite[3]}`} />
+            <InfoButton onChange={()=>setCritere(4)} title={<FactoryIcon style={{fontSize: '58px'}}/>} info={`Usage des ressources\n(mineraux et metaux)\n*e10-7 ${unite[4]}`} />
         </Box>  
     </Box>
     );

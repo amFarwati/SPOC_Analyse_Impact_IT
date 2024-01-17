@@ -30,7 +30,7 @@ function Topbar() {
       >
         <Box >   
           <Typography variant="h1" color={colors.grey[100]} fontWeight="bold" sx={{mb:"5px"}}> OPSIAN</Typography>
-          <Typography variant="h5" color={colors.greenAccent[100]}>OpenSource Impact ANalazyer </Typography>
+          <Typography variant="h5" color={colors.greenAccent[400]}>OpenSource Impact ANalazyer </Typography>
         </Box>
       </Box>
 

@@ -25,7 +25,7 @@ const Item = ({ title, to, icon, selected, setSelected }) =>{
 }
 
 
-function Sidebar() {
+function Sidebar({user, serveur}) {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [isCollapsed,setIsCollapsed] = useState(false);
@@ -91,8 +91,8 @@ function Sidebar() {
                     <Skeleton variant="circular" height={100} width={100}/>
                   </Box>
                   <Box textAlign='center'>
-                    <Typography variant="h2" color={colors.grey[100]} fontWeight='bold' sx={{ m: "10px 0 0 0"}}>NAME</Typography>
-                    <Typography variant="h5" color={colors.greenAccent[500]} fontWeight='bold' sx={{ m: "10px 0 0 0"}}>INFO</Typography>
+                    <Typography variant="h2" color={colors.grey[100]} fontWeight='bold' sx={{ m: "10px 0 0 0"}}>{user}</Typography>
+                    <Typography variant="h5" color={colors.greenAccent[400]} fontWeight='bold' sx={{ m: "10px 0 0 0"}}>{serveur}</Typography>
                   </Box>
                 </Box>
               )}

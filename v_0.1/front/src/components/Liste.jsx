@@ -1,47 +1,31 @@
-import * as React from 'react';
-import { Box, Button, IconButton, useTheme, MenuItem, TextField } from "@mui/material";
-import {  useEffect } from "react";
-import {  tokens } from "../theme";
-import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
+import * as React from "react";
+import {
+  Box,
+  Button,
+  IconButton,
+  useTheme,
+  MenuItem,
+  TextField,
+} from "@mui/material";
+import { useEffect } from "react";
+import { tokens } from "../theme";
+import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
+import dayjs from "dayjs";
+import "dayjs/locale/fr";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-function MaListe() {
-  const [boxes, setBoxes] = React.useState(() => {
-    // Load saved data from local storage or use a default value
-    const savedData = JSON.parse(localStorage.getItem('boxes')) || [];
-    return savedData;
-  });
+function MaListe({ typeEquipement,boxes,setBoxes }) {
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const items = ["Écran",
-  "Auto-Enregistrement",
-  "Périphérique de Mobilité",
-  "Traceur",
-  "Terminal de Facturation",
-  "Traceur",
-  "Imprimante",
-  "Équipement Réseau",
-  "Ordinateur Personnel",
-  "Système d'Encaissement",
-  "Dispositif d'Enregistrement des Espèces",
-  "Smartphone",
-  "Serveur",
-  "Dispositif de Communication",
-  "Routeur IP",
-  "Commutateur IP",
-  "Répartiteur de Charge Réseau",
-  "Consommable"
-  
-  ];
 
-  useEffect(() => {
-    // Save data to local storage whenever boxes change
-    localStorage.setItem('boxes', JSON.stringify(boxes));
-  }, [boxes]);
+  var items = typeEquipement === -1 ? [] : typeEquipement;
 
   const ajouterBox = () => {
-    const nouvelElement = { id: Date.now(), date: '',quantity: '' };
+    const nouvelElement = { id: Date.now(), date: "", quantity: "", type: "" };
     setBoxes([...boxes, nouvelElement]);
   };
 
@@ -51,8 +35,9 @@ function MaListe() {
   };
 
   const handleDateChange = (id, enteredDate) => {
-    const isValidInput = /^[0-9\/]*$/.test(enteredDate);
-  
+    const isValidInput = /^[0-9\-]*$/.test(enteredDate);
+    console.log(isValidInput, enteredDate);
+
     if (isValidInput) {
       const updatedBoxes = boxes.map((box) => {
         if (box.id === id) {
@@ -75,14 +60,34 @@ function MaListe() {
       setBoxes(updatedBoxes);
     }
   };
-  
-  
+
+  const handleTypeChange = (id, enteredType) => {
+    const updatedBoxes = boxes.map((box) => {
+      if (box.id === id) {
+        return { ...box, type: enteredType };
+      }
+      return box;
+    });
+    setBoxes(updatedBoxes);
+  };
+
+  useEffect(() => {
+    // Save data to local storage whenever boxes change
+    localStorage.setItem("boxes", JSON.stringify(boxes));
+    console.log(boxes);
+  }, [boxes]);
 
   return (
     <Box>
       <Box textAlign="center" marginBottom="16px">
-        <Button onClick={ajouterBox} variant="contained" color="primary" size="large" sx={{backgroundColor:colors.blueAccent[700]}}>
-        <AddIcon sx={{mr:"10px"}}/>
+        <Button
+          onClick={ajouterBox}
+          variant="contained"
+          color="primary"
+          size="large"
+          sx={{ backgroundColor: colors.blueAccent[700] }}
+        >
+          <AddIcon sx={{ mr: "10px" }} />
           Ajout Item
         </Button>
       </Box>
@@ -105,18 +110,23 @@ function MaListe() {
             justifyContent="space-between"
           >
             <TextField
-          id="filled-select-currency"
-          select
-          label="Item"
-          helperText="Sélectionnez votre item"
-          variant="filled"
-        >
-          {items.map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </TextField>
+              id="filled-select-currency"
+              select
+              label="Item"
+              helperText="Sélectionnez votre item"
+              variant="filled"
+              value={box.type.slice(1)}
+              onChange={(e) => handleTypeChange(box.id, `/${e.target.value}`)}
+            >
+              {items.map((option) => (
+                <MenuItem
+                  key={option}
+                  value={option}
+                >
+                  {option}
+                </MenuItem>
+              ))}
+            </TextField>
             <TextField
               label="Quantité"
               variant="filled"
@@ -124,13 +134,17 @@ function MaListe() {
               helperText="Seulement des chiffres"
               onChange={(e) => handleQuantityChange(box.id, e.target.value)}
             />
-            <TextField
-              label="Date (JJ/MM/AAAA)"
-              variant="filled"
-              value={box.date}
-              helperText="Seulement des chiffres ou des '/'"
-              onChange={(e) => handleDateChange(box.id, e.target.value)}
-            />
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              adapterLocale={"fr"}
+            >
+              <DatePicker
+                label="Explotation start"
+                format="DD/MM/YYYY"
+                value={dayjs(box.date)}
+                onChange={(date) => handleDateChange(box.id, dayjs(date).format('YYYY-MM-DD'))}
+              />
+            </LocalizationProvider>
             <IconButton onClick={() => supprimerBox(box.id)} color="secondary">
               <DeleteIcon />
             </IconButton>

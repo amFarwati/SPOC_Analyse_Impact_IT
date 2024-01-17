@@ -81,6 +81,10 @@ function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, a
             <ResponsivePie
             data={data}
             theme={{
+                text:{
+                    fill:colors.grey[100],
+                    fontSize:'20px',
+                },
                 axis:{
                     domain:{
                         line:{
@@ -100,6 +104,7 @@ function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, a
                         },
                         text:{
                             fill:colors.grey[100],
+                            fontSize:'15px',
                         },
                     
                     },
@@ -107,6 +112,7 @@ function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, a
                 legends:{
                     text:{
                         fill:colors.grey[100],
+                        fontSize:'12px'
                     },
                 },
             }}
@@ -126,12 +132,13 @@ function Piechart({unite, finDeVie, usage, fabrication, distribution, critere, a
                     ]
                 ]
             }}
-            arcLinkLabelsSkipAngle={1}
+            arcLinkLabelsSkipAngle={5}
             arcLinkLabelsTextColor= {colors.grey[100]}
             arcLinkLabelsThickness={2}
             arcLinkLabelsColor={{ from: 'color' }}
             arcLabelsSkipAngle={1}
             arcLinkLabelsTextOffset={30}
+            arcLinkLabelsDiagonalLength={25}
             arcLabelsTextColor={{
                 from: 'color',
                 modifiers: [

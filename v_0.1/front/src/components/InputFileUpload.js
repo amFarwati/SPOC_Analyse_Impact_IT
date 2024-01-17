@@ -27,7 +27,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
   });
 
-export default function InputFileUpload() {
+export default function InputFileUpload({setIsUpload}) {
 
     const setUserParc = useContext(User_Context)[1];
     const [fileChange, setFileChange] = useState(false);
@@ -56,6 +56,7 @@ export default function InputFileUpload() {
             setFileChange(!fileChange);
         };
         reader.readAsText(file);
+        setIsUpload(true);
         }
     };
 

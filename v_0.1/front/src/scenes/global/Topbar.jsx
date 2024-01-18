@@ -22,7 +22,7 @@ function Topbar() {
   };
 
   return (
-    <Box display="flex" justifyContent="space-between" p={2} mb="100px">
+    <Box display="flex" justifyContent="space-between" p={2} mb="18px">
       {/* Search Bar */}
       <Box
         display="flex"

@@ -36,7 +36,7 @@ function App() {
           <main className="content">
             <Box display="flex" height="100%">
               <SideBar user={login} serveur={baseUrl} />
-              <Box display="flex" flexDirection="column" width="100%">
+              <Box display="flex" flexDirection="column" width="100%" height='100%'>
                 <Topbar />
                 <Routes>
                   <Route

@@ -96,11 +96,14 @@ function MaListe({ typeEquipement,boxes,setBoxes }) {
         flexDirection="column"
         alignItems="center"
         width="100%"
+        height={850}
+        sx={{ overflowY: 'auto',
+            }} 
       >
         {boxes.map((box) => (
           <Box
             key={box.id}
-            width="100%"
+            width="95%"
             margin="8px"
             padding="16px"
             border="1px solid #ddd"

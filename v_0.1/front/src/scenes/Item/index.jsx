@@ -221,7 +221,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
   }, []);
 
   return (
-    <Box margin=' 0 20px 20px 20px'>
+    <Box margin=" 0 20px 20px 20px">
       <Box
         display="grid"
         gridTemplateColumns="repeat(12,1fr)"
@@ -330,7 +330,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
               <CircularProgress fontSize="large" color="success" />
             </Box>
           ) : (
-            <Box height="90%">
+            <Box height="70%">
               <Barchart
                 isDashboard={true}
                 unite={unite}
@@ -352,66 +352,66 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
           )}
         </Box>
         <Box
-            gridColumn="span 4"
-            gridRow="span 3"
-            backgroundColor={colors.primary[400]}
-            borderRadius="20px"
+          gridColumn="span 4"
+          gridRow="span 3"
+          backgroundColor={colors.primary[400]}
+          borderRadius="20px"
+        >
+          <Box
+            mt="25px"
+            p="0 30px"
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            <Box
-              mt="25px"
-              p="0 30px"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="600"
-                  color={colors.grey[100]}
-                >
-                  Répartition
-                </Typography>
-              </Box>
+            <Box>
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                color={colors.grey[100]}
+              >
+                Répartition
+              </Typography>
             </Box>
-            {onLoad === null ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                height="100%"
-                width="100%"
-              >
-                <Skeleton variant="circular" width={400} height={400} />
-              </Box>
-            ) : onLoad ? (
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="100%"
-              >
-                <CircularProgress fontSize="large" color="success" />
-              </Box>
-            ) : (
-              <>
-                <Piechart
-                  unite={unite}
-                  finDeVie={fin}
-                  usage={use}
-                  fabrication={fab}
-                  distribution={distrib}
-                  critere={critere}
-                  annee={
-                    annee === -1
-                      ? Object.keys(annualCost)[
-                          Object.keys(annualCost).length - 1
-                        ]
-                      : annee
-                  }
-                  color={chartColor}
-                />
-              </>
-            )}
+          </Box>
+          {onLoad === null ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              height="89%"
+              width="100%"
+            >
+              <Skeleton variant="circular" width={400} height={400} />
+            </Box>
+          ) : onLoad ? (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="89%"
+            >
+              <CircularProgress fontSize="large" color="success" />
+            </Box>
+          ) : (
+            <Box height="85%">
+              <Piechart
+                unite={unite}
+                finDeVie={fin}
+                usage={use}
+                fabrication={fab}
+                distribution={distrib}
+                critere={critere}
+                annee={
+                  annee === -1
+                    ? Object.keys(annualCost)[
+                        Object.keys(annualCost).length - 1
+                      ]
+                    : annee
+                }
+                color={chartColor}
+              />
+            </Box>
+          )}
         </Box>
         <Box
           gridColumn="span 4"
@@ -443,7 +443,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
           </Box>
           {onLoad === null ? (
             <>
-              <Box display="flex" flexDirection="column" m={4}>
+              <Box display="flex" flexDirection="column" m={4} height="80%">
                 <Stack spacing={1}>
                   <Box>
                     <Stack spacing={1}>
@@ -522,127 +522,123 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
               <CircularProgress fontSize="large" color="success" />
             </Box>
           ) : (
-            <>
-              <Box height="90%" mt="25px" p="0 30px">
-                <Stack spacing={1}>
-                  <Box width="50%">
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        Critère
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Critere"
-                        defaultValue={0}
-                        value={critere}
+            <Box height="80%" mt="25px" p="0 30px">
+              <Stack spacing={1}>
+                <Box width="50%">
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">
+                      Critère
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Critere"
+                      defaultValue={0}
+                      value={critere}
+                    >
+                      <MenuItem
+                        value={0}
+                        onClick={() => {
+                          setCritere(0);
+                        }}
                       >
-                        <MenuItem
-                          value={0}
-                          onClick={() => {
-                            setCritere(0);
-                          }}
-                        >
-                          <AirIcon /> Changement climatique{" "}
-                        </MenuItem>
-                        <MenuItem
-                          value={1}
-                          onClick={() => {
-                            setCritere(1);
-                          }}
-                        >
-                          <MasksIcon /> Particules fines
-                        </MenuItem>
-                        <MenuItem
-                          value={2}
-                          onClick={() => {
-                            setCritere(2);
-                          }}
-                        >
-                          <WifiIcon /> Radiation ionisante
-                        </MenuItem>
-                        <MenuItem
-                          value={3}
-                          onClick={() => {
-                            setCritere(3);
-                          }}
-                        >
-                          <WaterIcon /> Acidification
-                        </MenuItem>
-                        <MenuItem
-                          value={4}
-                          onClick={() => {
-                            setCritere(4);
-                          }}
-                        >
-                          <FactoryIcon /> Usage des ressources (mineraux et
-                          metaux)
-                        </MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  <Box width="50%">
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label">
-                        Année
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        label="Année"
-                        defaultValue={Object.keys(annualCost).length - 1}
+                        <AirIcon /> Changement climatique{" "}
+                      </MenuItem>
+                      <MenuItem
+                        value={1}
+                        onClick={() => {
+                          setCritere(1);
+                        }}
                       >
-                        {Object.keys(annualCost).map((an) => {
-                          return (
-                            <MenuItem
-                              value={Object.keys(annualCost).indexOf(an)}
-                              onClick={() => {
-                                setAnnee(an);
-                              }}
-                            >
-                              {" "}
-                              {an}{" "}
-                            </MenuItem>
-                          );
-                        })}
-                      </Select>
-                    </FormControl>
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="h5"
-                      fontWeight="600"
-                      color={colors.grey[100]}
+                        <MasksIcon /> Particules fines
+                      </MenuItem>
+                      <MenuItem
+                        value={2}
+                        onClick={() => {
+                          setCritere(2);
+                        }}
+                      >
+                        <WifiIcon /> Radiation ionisante
+                      </MenuItem>
+                      <MenuItem
+                        value={3}
+                        onClick={() => {
+                          setCritere(3);
+                        }}
+                      >
+                        <WaterIcon /> Acidification
+                      </MenuItem>
+                      <MenuItem
+                        value={4}
+                        onClick={() => {
+                          setCritere(4);
+                        }}
+                      >
+                        <FactoryIcon /> Usage des ressources (mineraux et
+                        metaux)
+                      </MenuItem>
+                    </Select>
+                  </FormControl>
+                </Box>
+                <Box width="50%">
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Année</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Année"
+                      defaultValue={Object.keys(annualCost).length - 1}
                     >
-                      Nombre de matériel IT :{" "}
-                    </Typography>
-                    <Typography
-                      variant="h5"
-                      fontWeight="400"
-                      color={colors.grey[100]}
-                    >
-                      {nbItem}
-                    </Typography>
-                  </Box>
-                  <Box>
-                    <Typography
-                      variant="h5"
-                      fontWeight="600"
-                      color={colors.grey[100]}
-                    >
-                      Nombre de matériel IT En Service :{" "}
-                    </Typography>
-                    <Typography
-                      variant="h5"
-                      fontWeight="400"
-                      color={colors.grey[100]}
-                    >
-                      {nbItemEnService}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Box>
-            </>
+                      {Object.keys(annualCost).map((an) => {
+                        return (
+                          <MenuItem
+                            value={Object.keys(annualCost).indexOf(an)}
+                            onClick={() => {
+                              setAnnee(an);
+                            }}
+                          >
+                            {" "}
+                            {an}{" "}
+                          </MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                </Box>
+                <Box>
+                  <Typography
+                    variant="h5"
+                    fontWeight="600"
+                    color={colors.grey[100]}
+                  >
+                    Nombre de matériel IT :{" "}
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    fontWeight="400"
+                    color={colors.grey[100]}
+                  >
+                    {nbItem}
+                  </Typography>
+                </Box>
+                <Box>
+                  <Typography
+                    variant="h5"
+                    fontWeight="600"
+                    color={colors.grey[100]}
+                  >
+                    Nombre de matériel IT En Service :{" "}
+                  </Typography>
+                  <Typography
+                    variant="h5"
+                    fontWeight="400"
+                    color={colors.grey[100]}
+                  >
+                    {nbItemEnService}
+                  </Typography>
+                </Box>
+              </Stack>
+            </Box>
           )}
         </Box>
       </Box>

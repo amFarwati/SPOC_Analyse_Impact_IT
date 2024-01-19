@@ -106,7 +106,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
                 </FormControl>
                 <Typography variant="h5">{annee}</Typography>
             </Box>
-            <Box height="80%" >
+            <Box height="100%" >
                 <ResponsiveBar
                 data={data}
                 valueScale={{ type: graph_Type }}

@@ -185,7 +185,7 @@ function Dashboard({
 
   return (
     <User_Context.Provider value={[userParc, setUserParc, login]}>
-      <Box m="20px">
+      <Box ml={2} mr={2} height="auto">
         {onLoad ? (
           <></>
         ) : (
@@ -222,7 +222,7 @@ function Dashboard({
         <Box
           display="grid"
           gridTemplateColumns="repeat(12,1fr)"
-          gridAutoRows="140px"
+          gridAutoRows="100px"
           gap="20px"
           mt="20px"
         >
@@ -254,7 +254,7 @@ function Dashboard({
               <Box
                 display="flex"
                 justifyContent="center"
-                height="100%"
+                height="89%"
                 width="100%"
               >
                 <Skeleton variant="circular" width={400} height={400} />
@@ -264,12 +264,12 @@ function Dashboard({
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
-                height="100%"
+                height="89%"
               >
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <>
+              <Box height="89%">
                 <Piechart
                   unite={unite}
                   finDeVie={fin}
@@ -286,12 +286,12 @@ function Dashboard({
                   }
                   color={chartColor}
                 />
-              </>
+              </Box>
             )}
           </Box>
           <Box
             gridColumn="span 8"
-            gridRow="span 4"
+            gridRow="span 5"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
@@ -318,7 +318,7 @@ function Dashboard({
                 </Box>*/}
             </Box>
             {onLoad === null ? (
-              <>
+              <Box height="70%">
                 <Box height="70%" justifyContent="center" display="flex">
                   <Skeleton variant="rounded" width="95%" height="100%" />
                 </Box>
@@ -336,7 +336,7 @@ function Dashboard({
                   <Skeleton variant="circular" width={90} height={90} />
                   <Skeleton variant="circular" width={90} height={90} />
                 </Box>
-              </>
+              </Box>
             ) : onLoad ? (
               <Box
                 display="flex"
@@ -347,7 +347,7 @@ function Dashboard({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <Box height="90%">
+              <Box height="70%">
                 <Barchart
                   isDashboard={true}
                   unite={unite}
@@ -370,7 +370,7 @@ function Dashboard({
           </Box>
           <Box
             gridColumn="span 4"
-            gridRow="span 3"
+            gridRow="span 4"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
@@ -500,7 +500,7 @@ function Dashboard({
               </Box>
             ) : (
               <>
-                <Box height="90%" mt="25px" p="0 30px">
+                <Box height="80%" mt="25px" p="0 30px">
                   <Stack spacing={1}>
                     <Box width="50%">
                       <FormControl fullWidth>
@@ -717,7 +717,7 @@ function Dashboard({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <Box height="90%">
+              <Box height="80%" width="98%">
                 <Linechart
                   isDashboard={true}
                   annualCost={annualCost}

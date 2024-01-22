@@ -26,7 +26,7 @@ function App() {
   const [typeEquipement, setTypeEquipement] = useState(-1);
 
   const login = "user_1";
-  const baseUrl = `http://localhost:4000`;
+  const baseUrl = `http://insa-numimpact-01.insa-lyon.fr/:4000`;
 
   return (
     <ColorModeContext.Provider value={colorMode}>

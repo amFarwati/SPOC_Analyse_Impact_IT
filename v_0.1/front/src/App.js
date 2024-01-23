@@ -26,11 +26,7 @@ function App() {
   const [typeEquipement, setTypeEquipement] = useState(-1);
 
   const login = "user_1";
-<<<<<<< Updated upstream
-  const baseUrl = `http://insa-numimpact-01.insa-lyon.fr/server`;
-=======
   const baseUrl = `http://localhost:4000`;
->>>>>>> Stashed changes
 
   return (
     <ColorModeContext.Provider value={colorMode}>

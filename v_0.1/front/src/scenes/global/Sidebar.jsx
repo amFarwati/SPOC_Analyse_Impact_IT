@@ -11,6 +11,7 @@ import MenuOutlinedIcon from '@mui/icons-material/MenuOutlined';
 import Skeleton from '@mui/material/Skeleton';
 import IsoOutlinedIcon from '@mui/icons-material/IsoOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import insaLyon from './insaLyon.png';
 
 
 const Item = ({ title, to, icon, selected, setSelected }) =>{
@@ -81,18 +82,17 @@ function Sidebar({user, serveur}) {
               {!isCollapsed && (
                 <Box mb="25px">
                   <Box display="flex" justifyContent="center" alignContent="center">
-                    {/*<img 
-                      alt="profile-user"
-                      width="100px"
-                      heigth="100px"
-                      src={}
-                      style={{cursor:'pointer', borderRadius:"50px"}}
-                    />*/}
-                    <Skeleton variant="circular" height={100} width={100}/>
+                  <img 
+                    alt="profile-user"
+                    width="220px"
+                    height="100px"
+                    src={insaLyon}
+                    style={{cursor:'pointer', borderRadius:"20px"}}
+                  />
                   </Box>
                   <Box textAlign='center'>
-                    <Typography variant="h2" color={colors.grey[100]} fontWeight='bold' sx={{ m: "10px 0 0 0"}}>{user}</Typography>
-                    <Typography variant="h5" color={colors.greenAccent[400]} fontWeight='bold' sx={{ m: "10px 0 0 0"}}>{serveur}</Typography>
+                    <Typography variant="h2" color={colors.grey[100]} fontWeight='bold' sx={{ m: "10px 0 0 0"}}>INSA Lyon</Typography>
+                    <Typography variant="h5" color={colors.greenAccent[400]} fontWeight='bold' sx={{ m: "10px 0 0 0"}}>DSI</Typography>
                   </Box>
                 </Box>
               )}

@@ -87,6 +87,7 @@ function Dashboard({
   const handleImpactRequest = () => {
     setOnLoad(true);
     setAnnee(-1);
+    console.log(`UserParc =>`, userParc);
     console.log(`/getImpact ${baseUrl} ${login}_test =>`);
     axios
       .get(`${baseUrl}/getImpact/${login}_test`, { withCredentials: true })
@@ -118,7 +119,7 @@ function Dashboard({
     if (userParc.length !== 0 && isUpload) {
       setIsUpload(false);
       setOnLoad(true);
-      console.log(`ResultDisplay =>`, userParc);
+      console.log(`UserParc =>`, userParc);
       console.log(`/setInventory ${baseUrl} ${login}_test =>`);
 
       let data = { user: `${login}_test`, inventory: userParc };

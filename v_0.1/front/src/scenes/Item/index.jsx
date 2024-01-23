@@ -187,11 +187,11 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
 
   // requete serveur pour récupérer list des types pris en charge
   const handlerGetTypeList = () => {
-    console.log(`handlerGetTypeList ${baseUrl} =>`);
+    console.log(`handlerGetRefList ${baseUrl} =>`);
     setIsLoading(true);
 
     axios
-      .get(`${baseUrl}/getTypeList`, { withCredentials: true })
+      .get(`${baseUrl}/getRefList`, { withCredentials: true })
       .then((res) => {
         // Vérification si la requête a réussi (statut 200-299)
         if (!res.ok) {
@@ -207,6 +207,10 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
         console.error("Erreur de redaxios:", error.message);
       });
   };
+
+  useEffect(()=>{
+    setUserParc(formatageUpData(boxes))
+  },[boxes]);
 
   useEffect(() => {
     if (annee !== -1) {

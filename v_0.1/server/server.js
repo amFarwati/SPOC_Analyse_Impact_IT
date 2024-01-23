@@ -30,10 +30,17 @@ const port = argv.port;
 var liste_reference = null;
 
 const OPSIAN_db = mysql.createConnection({
+<<<<<<< Updated upstream
   host: "localhost",
   user: "numuser",
   password: "spocBDD",
   database: "SPOC_Analyse_Impact_IT",
+=======
+  host: `localhost`,
+  user: "root",
+  password: "spocBDD",
+  database: "opsian",
+>>>>>>> Stashed changes
 });
 
 OPSIAN_db.connect(function (err) {
@@ -357,7 +364,7 @@ function bdRequest(request, data) {
         }, 1000);
 
         break;
-      case "getType": // OK
+      case "getRef": // OK
         setTimeout(() => {
           let refList = [];
 
@@ -487,7 +494,7 @@ app.put("/setInventory", async (req, res) => {
       user: user,
       date: toMySQLDateFormat(dayjs()),
     });
-    liste_reference = await bdRequest("getType");
+    liste_reference = await bdRequest("getRef");
     await bdRequest("setUserInv", { user: user, inv: inv });
 
     res.send(`BD updated with data for ${req.body.user}`);
@@ -578,11 +585,11 @@ app.get("/getImpact/:user", async (req, res) => {
   }
 });
 
-//requête getTypeList (fini)
-app.get("/getTypeList", async (req, res) => {
+//requête getRefList (fini)
+app.get("/getRefList", async (req, res) => {
   try {
-    console.log("getTypeList");
-    liste_reference = await bdRequest("getType");
+    console.log("getRefList");
+    liste_reference = await bdRequest("getRef");
     console.log(liste_reference);
     res.json(liste_reference);
   } catch (error) {

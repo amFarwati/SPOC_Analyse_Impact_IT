@@ -214,7 +214,7 @@ function Barchart({isDashboard=false, unite, finDeVie, usage, fabrication, distr
                 }}
                 axisLeft={{
                     tickSize: 5,
-                    tickValues: [0, 10, 100, 1000, 10000, 20000, 30000],
+                    tickValues: [0, 10, 100, 1000, 10000, 20000, 40000,100000],
                     tickPadding: 5,
                     tickRotation: 0,
                     legend: isDashboard ? undefined : 'etapeACV',

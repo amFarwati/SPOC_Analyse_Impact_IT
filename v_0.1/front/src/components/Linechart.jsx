@@ -100,18 +100,18 @@ function Linechart({isDashboard=false, annualCost, critere, etapeACV, color}) {
     }; 
 
     return (
-        <Box Box height="90%" width="100%" ml={4} mb={4}>
+        <Box Box height="100%" width="100%" ml={4} mb={4}>
             <Box display='flex' ml={4} alignItems="center">
                 {infoCritere()}
                 <Typography variant='h5'>{infoACV()}</Typography>
             </Box>
             <ResponsiveLine
             data={data.length===1?data:[data[critere][etapeACV]]}
-            margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
+            margin={{ top: 0, right: 90, bottom: 80, left: 60 }}
             xScale={{ type: 'point' }}
             yScale={{
                 type: 'linear',
-                min: 'auto',
+                min: '0',
                 max: 'auto',
                 stacked: true,
                 reverse: false

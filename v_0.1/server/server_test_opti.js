@@ -10,7 +10,7 @@ import "dayjs/locale/fr.js";
 import { promises as fsPromises } from "fs";
 import { hideBin } from "yargs/helpers";
 
-console.log("server test opti")
+console.log("server test opti");
 
 const argv = yargs(hideBin(process.argv))
   .options({
@@ -121,7 +121,7 @@ function bdRequest(request, data) {
     let timer = Date.now();
 
     switch (request) {
-      case "getUserImpact": // à verif
+      case "getUserImpact": // à modif
         setTimeout(() => {
           let idPush = null;
           let user = data.user;
@@ -131,7 +131,7 @@ function bdRequest(request, data) {
           let impactItem = {};
           let promises = [];
 
-          promises.push(
+          promises.push( // collecte id dernier push utilisateur
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT MAX(idPush) 
@@ -148,21 +148,22 @@ function bdRequest(request, data) {
             })
           );
 
-          promises.push(
+          promises.push( // collecte les unités
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT unite 
                 FROM Critere_M
-                ;`
-                , (err, result) => {
-                if (err) throw err;
-                unite = result.map((row) => row.unite);
-                resolve();
-              });
+                ;`,
+                (err, result) => {
+                  if (err) throw err;
+                  unite = result.map((row) => row.unite);
+                  resolve();
+                }
+              );
             })
           );
 
-          promises.push(
+          promises.push( // collecte les critéres
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT idCritere 
@@ -177,7 +178,7 @@ function bdRequest(request, data) {
             })
           );
 
-          promises.push(
+          promises.push( // collecte les étapes ACV
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT idEtapeACV 
@@ -195,7 +196,7 @@ function bdRequest(request, data) {
           Promise.all(promises)
             .then(() => {
               promises = [];
-              promises.push(
+              promises.push( // collecte la liste des items de l'inventaire utilisateur
                 new Promise((resolve, reject) => {
                   OPSIAN_db.query(
                     `SELECT idItem 
@@ -210,7 +211,7 @@ function bdRequest(request, data) {
                 })
               );
 
-              promises.push(
+              promises.push( // collecte la date min et max
                 new Promise((resolve, reject) => {
                   OPSIAN_db.query(
                     `SELECT MAX(YEAR(dateDebut)),MIN(YEAR(dateDebut))
@@ -227,8 +228,9 @@ function bdRequest(request, data) {
               );
 
               Promise.all(promises).then(() => {
-                promises.push(
-                  new Promise((resolve, reject) => {
+                promises = [];
+                promises.push( // compte le nombre d'item encore en services
+                  new Promise((resolve, reject) => { 
                     OPSIAN_db.query(
                       `
                       SELECT COUNT(*) AS result
@@ -246,7 +248,7 @@ function bdRequest(request, data) {
                   })
                 );
 
-                promises.push(
+                promises.push( // compte le nombre total d'item dans l'inventaire
                   new Promise((resolve, reject) => {
                     OPSIAN_db.query(
                       `
@@ -264,60 +266,63 @@ function bdRequest(request, data) {
                     );
                   })
                 );
-                
+
                 let requestEff = Date.now();
+                let nb_promises = 0;
+                let num_promise = 1;
                 for (let year = dateMin; year < dateMax + 1; year++) {
                   impactItem[year] = {};
+
                   userInv.forEach((idItem) => {
                     impactItem[year][idItem] = {};
+
                     etapeACV.forEach((idEtapeACV) => {
-                      impactItem[year][idItem][idEtapeACV] = {};
                       critere.forEach((idCritere) => {
+                        impactItem[year][idItem][idEtapeACV] = {};
+                        nb_promises = nb_promises + 1;
                         if (idEtapeACV === 3) {
                           promises.push(
                             new Promise((resolve, reject) => {
                               //query impact instantané pour usage
                               OPSIAN_db.query(
-                                `SELECT
-                                IF(
-                                  (
-                                    (
-                                      ${year}
-                                      - YEAR(
-                                        (SELECT dateDebut 
-                                         FROM Item_U 
-                                         WHERE idItem = ${idItem})
-                                      )
-                                      - (
-                                        SELECT type.dureeVie 
-                                        FROM Type_M type
-                                        JOIN Reference_M ON type.idType = Reference_M.idType
-                                        JOIN Item_U ON Item_U.idReference = Reference_M.idReference
-                                        WHERE idItem = ${idItem} 
-                                        AND YEAR(dateDebut) < ${year + 1}
-                                      )
-                                    ) < 0
-                                  ) 
-                                  AND (
-                                    (SELECT YEAR(dateDebut) 
-                                     FROM Item_U 
-                                     WHERE idItem = ${idItem}) < ${year + 1}
-                                  ),
-                                  (
-                                    SELECT COALESCE(SUM(comp.valeur), 0)  
-                                    FROM Composant_M comp
-                                    JOIN Reference_M ON comp.idType = Reference_M.idType
-                                    JOIN Item_U ON Item_U.idReference = Reference_M.idReference
-                                    WHERE comp.idCritere = ${idCritere}
-                                    AND comp.idEtapeACV = ${idEtapeACV} 
-                                    AND idItem = ${idItem}
-                                  ),
-                                  0
-                                ) AS result;`,
-                                (err, result) => {
+                                `SELECT COALESCE(SUM(comp.valeur) * Item_U.quantité ,0) AS result
+                                FROM Composant_M comp
+                                JOIN Reference_M ON comp.idType = Reference_M.idType
+                                JOIN Type_M  ON comp.idType = Type_M.idType
+                                JOIN Item_U ON Item_U.idReference = Reference_M.idReference
+                                WHERE comp.idEtapeACV = ${idEtapeACV} 
+                                AND idItem = ${idItem}
+                                AND YEAR(Item_U.dateDebut) < ${year + 1}
+                                AND ${year} - YEAR(Item_U.dateDebut) - Type_M.dureeVie < 0
+                                AND comp.idCritere = ${idCritere};`,
+                                /*
+                              `SELECT COALESCE(SUM(comp.valeur) * Item_U.quantité ,0) AS result
+                                FROM Composant_M comp
+                                JOIN Reference_M ON comp.idType = Reference_M.idType
+                                JOIN Type_M  ON comp.idType = Type_M.idType
+                                JOIN Item_U ON Item_U.idReference = Reference_M.idReference
+                                WHERE comp.idEtapeACV = ${idEtapeACV} 
+                                AND idItem = ${idItem}
+                                AND YEAR(Item_U.dateDebut) < ${year + 1}
+                                AND ${year} - YEAR(Item_U.dateDebut) - Type_M.dureeVie < 0
+                                GROUP BY comp.idCritere;`*/ (err, result) => {
                                   if (err) {
                                     reject(err);
                                   } else {
+                                    /*console.log(
+                                    `nb promises ${nb_promises} numero ${num_promise} `
+                                  );
+                                  num_promise = num_promise + 1;
+                                    /*
+                                  result.map((row) => {
+                                    impactItem[year][idItem][idEtapeACV][result.indexOf(row)] = { cout: row["result"].length===0?0:row["result"] };
+                                    console.log(
+                                      impactItem[year][idItem][idEtapeACV]
+                                    );
+                                  });
+                                  resolve();
+                                  */
+                                    //console.log(result)
                                     result.map((row) => {
                                       impactItem[year][idItem][idEtapeACV][
                                         idCritere
@@ -334,26 +339,39 @@ function bdRequest(request, data) {
                             new Promise((resolve, reject) => {
                               //query impact cumulé pour fabrication, distribution, fin de vie
                               OPSIAN_db.query(
-                                `SELECT
-                                IF(
-                                  (SELECT YEAR(dateDebut) 
-                                  FROM Item_U 
-                                  WHERE idItem = ${idItem}) < ${year + 1},
-                                    
-                                      (SELECT SUM(comp.valeur) 
-                                      FROM Composant_M comp 
-                                      JOIN Reference_M ON comp.idType = Reference_M.idType
-                                      JOIN Item_U ON Item_U.idReference = Reference_M.idReference
-                                      WHERE comp.idCritere = ${idCritere} 
-                                      AND comp.idEtapeACV = ${idEtapeACV} 
-                                      AND YEAR(dateDebut)<${year + 1}
-                                      AND idItem = ${idItem} 
-                                      )
-                                      ,0) AS result;`,
-                                (err, result) => {
+                                `SELECT COALESCE(SUM(comp.valeur) * Item_U.quantité ,0) AS result
+                                FROM Composant_M comp 
+                                JOIN Reference_M ON comp.idType = Reference_M.idType
+                                JOIN Item_U ON Item_U.idReference = Reference_M.idReference
+                                WHERE comp.idEtapeACV = ${idEtapeACV} 
+                                AND YEAR(dateDebut)<${year + 1}
+                                AND idItem = ${idItem}
+                                AND comp.idCritere = ${idCritere};`,
+                                /*
+                              `SELECT COALESCE(SUM(comp.valeur) * Item_U.quantité ,0) AS result
+                                FROM Composant_M comp 
+                                JOIN Reference_M ON comp.idType = Reference_M.idType
+                                JOIN Item_U ON Item_U.idReference = Reference_M.idReference
+                                WHERE comp.idEtapeACV = ${idEtapeACV} 
+                                AND YEAR(dateDebut)<${year + 1}
+                                AND idItem = ${idItem}
+                                GROUP BY comp.idCritere;`*/ (err, result) => {
                                   if (err) {
                                     reject(err);
                                   } else {
+                                    /*console.log(
+                                    `nb promises ${nb_promises} numero ${num_promise} `
+                                  );
+                                  num_promise = num_promise + 1;
+                                  /*
+                                  result.map((row) => {
+                                    impactItem[year][idItem][idEtapeACV][result.indexOf(row)] = { cout: row["result"].length===0?0:row["result"]  };
+                                    console.log(
+                                      impactItem[year][idItem][idEtapeACV]
+                                    );
+                                  });
+                                  resolve();
+                                  */
                                     result.map((row) => {
                                       impactItem[year][idItem][idEtapeACV][
                                         idCritere
@@ -371,12 +389,22 @@ function bdRequest(request, data) {
                   });
                 }
 
+                //console.log(`nb promises ${nb_promises}`);
+
                 Promise.all(promises)
                   .then((results) => {
                     // Traiter les résultats ici
                     resolve([impactItem, unite]);
-                    console.log(`bd request ${request} ${data.user} awsered in ${(Date.now()-timer)/1000}s`);
-                    console.log(`calcul for all items answered in ${(Date.now()-requestEff)/1000}s`)
+                    console.log(
+                      `bd request ${request} ${data.user} awsered in ${
+                        (Date.now() - timer) / 1000
+                      }s`
+                    );
+                    console.log(
+                      `calcul for all items answered in ${
+                        (Date.now() - requestEff) / 1000
+                      }s`
+                    );
                   })
                   .catch((error) => {
                     // Gérer les erreurs ici
@@ -391,12 +419,12 @@ function bdRequest(request, data) {
         }, 1000);
 
         break;
-      case "getType": // OK
+      case "getRef": // OK
         setTimeout(() => {
           let refList = [];
 
           OPSIAN_db.query(
-            'SELECT nomReference FROM Reference_M;',
+            "SELECT nomReference FROM Reference_M;",
             (err, result) => {
               if (err) throw err;
               //console.log(result);
@@ -405,7 +433,9 @@ function bdRequest(request, data) {
             }
           );
 
-          console.log(`bd request ${request} awseredin ${(Date.now()-timer)/1000}s`);
+          console.log(
+            `bd request ${request} awseredin ${(Date.now() - timer) / 1000}s`
+          );
         }, 1000);
         break;
       case "getUser": // OK
@@ -417,7 +447,9 @@ function bdRequest(request, data) {
             userList = result.map((row) => row.user);
             resolve(userList);
           });
-          console.log(`bd request ${request} awsered in ${(Date.now()-timer)/1000}s`);
+          console.log(
+            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+          );
         }, 1000);
         break;
       case "setUser": // OK
@@ -434,10 +466,12 @@ function bdRequest(request, data) {
             }
           );
 
-          console.log(`bd request ${request} awsered in ${(Date.now()-timer)/1000}s`);
+          console.log(
+            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+          );
         }, 1000);
         break;
-      case "setUserPush": // à verif
+      case "setUserPush": // OK
         setTimeout(() => {
           OPSIAN_db.query(
             `INSERT INTO Push_U (date, idUser) 
@@ -455,68 +489,231 @@ function bdRequest(request, data) {
             }
           );
 
-          console.log(`bd request ${request} awsered in ${(Date.now()-timer)/1000}s`);
+          console.log(
+            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+          );
         }, 1000);
         break;
         3;
-      case "setUserInv": // à verif
+      case "setUserInv": // OK
         setTimeout(() => {
           data.inv.forEach((item) => {
             let ref = item.type;
             let dateAchat = item.dateDebut;
 
             if (liste_reference.includes(ref)) {
-              for (let i = 0; i < item.quantity; i++) {
-                OPSIAN_db.query(
-                  `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference)
-                  VALUES (
-                    '${dateAchat}',
-                    (SELECT MAX(push.idPush)
-                      FROM Push_U push, User_U user
-                      JOIN Push_U ON Push_U.idUser = user.idUser
-                      WHERE user.user = '${data.user}'),
-                    (SELECT ref.idReference
-                    FROM Reference_M ref
-                    WHERE ref.nomReference = '${ref}'),
-                    '${ref}'
-                  )
-                ;`,
-                  (err, result) => {
-                    if (err) throw err;
-                    //console.log(`=> SET userInv = ${data.user}  OK`);
-                    resolve(true);
-                  }
-                );
-              }
-            } else {
-              for (let i = 0; i < item.quantity; i++) {
-                OPSIAN_db.query(
-                  `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference)
-                  VALUES (
-                    '${dateAchat}',
-                    (SELECT MAX(push.idPush)
+              OPSIAN_db.query(
+                `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference, quantité)
+                VALUES (
+                  '${dateAchat}',
+                  (SELECT MAX(push.idPush)
                     FROM Push_U push, User_U user
                     JOIN Push_U ON Push_U.idUser = user.idUser
                     WHERE user.user = '${data.user}'),
-                    (SELECT ref.idReference
-                    FROM Reference_M ref
-                    WHERE ref.nomReference = 'default'),
-                    '${ref}'
-                  );
-                  `,
-                  (err, result) => {
-                    if (err) throw err;
-                    //console.log(`=> SET userInv = ${data.user}  OK`);
-                    resolve(true);
-                  }
+                  (SELECT ref.idReference
+                  FROM Reference_M ref
+                  WHERE ref.nomReference = '${ref}'),
+                  '${ref}',
+                  ${item.quantity}
+                )
+              ;`,
+                (err, result) => {
+                  if (err) throw err;
+                  //console.log(`=> SET userInv = ${data.user}  OK`);
+                  resolve(true);
+                }
+              );
+            } else {
+              OPSIAN_db.query(
+                `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference,quantité)
+                VALUES (
+                  '${dateAchat}',
+                  (SELECT MAX(push.idPush)
+                  FROM Push_U push, User_U user
+                  JOIN Push_U ON Push_U.idUser = user.idUser
+                  WHERE user.user = '${data.user}'),
+                  (SELECT ref.idReference
+                  FROM Reference_M ref
+                  WHERE ref.nomReference = 'default'),
+                  '${ref}',
+                  ${item.quantity}
                 );
-              }
+                `,
+                (err, result) => {
+                  if (err) throw err;
+                  //console.log(`=> SET userInv = ${data.user}  OK`);
+                  resolve(true);
+                }
+              );
             }
           });
 
-          console.log(`bd request ${request} awsered in ${(Date.now()-timer)/1000}s`);
+          console.log(
+            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+          );
         }, 1000);
         break;
+      case "computeCost": // OK 
+
+        setTimeout(() => {
+          
+          let etapeACV = null;
+          let critere = null;
+          let types = null;
+          let promises = [];
+
+          promises.push( // collecte des critéres
+            new Promise((resolve, reject) => {
+              OPSIAN_db.query(
+                `SELECT idCritere 
+                FROM Critere_M
+                ;`,
+                (err, result) => {
+                  if (err) throw err;
+                  critere = result.map((row) => row.idCritere);
+                  resolve();
+                }
+              );
+            })
+          );
+
+          promises.push( // collecte des étapes ACV
+            new Promise((resolve, reject) => {
+              OPSIAN_db.query(
+                `SELECT idEtapeACV 
+                FROM EtapeACV_M
+                ;`,
+                (err, result) => {
+                  if (err) throw err;
+                  etapeACV = result.map((row) => row.idEtapeACV);
+                  resolve();
+                }
+              );
+            })
+          );
+
+          promises.push( // collecte des types
+            new Promise((resolve, reject) => {
+              OPSIAN_db.query(
+                `SELECT idType 
+                FROM Type_M
+                ;`,
+                (err, result) => {
+                  if (err) throw err;
+                  types = result.map((row) => row.idType);
+                  resolve();
+                }
+              );
+            })
+          );
+
+          Promise.all(promises)
+            .then(() => {
+
+              let nb_promesse = 0;
+
+              types.forEach((type) => {
+                let impactType = {};
+                promises = [];
+
+
+                etapeACV.forEach((idEtapeACV) => {
+
+                  critere.forEach((idCritere) => {
+
+                    impactType[idEtapeACV] = {};
+
+                    promises.push( // calcul cout 
+                      new Promise((resolve, reject) => {
+                        OPSIAN_db.query( // calcul cout pour 1 etape et 1 coup d'un type
+                          `SELECT COALESCE(SUM(comp.valeur),0) AS result
+                          FROM Composant_M comp 
+                          WHERE comp.idType = ${type} 
+                          AND comp.idEtapeACV = ${idEtapeACV}
+                          AND comp.idCritere = ${idCritere};`,
+                          (err, result) => {
+                            if (err) {
+                              reject(err);
+                            } else {
+                              result.map((row) => {
+                                impactType[idEtapeACV][idCritere] = { cout: row["result"] };
+                              });
+                              resolve();
+                            }
+                          }
+                        );
+                      })
+                    );
+                    
+                    });
+                  });
+
+                Promise.all(promises)
+                .then((results) => {
+                  // Traiter les résultats ici
+                  nb_promesse= nb_promesse + 1;
+                  console.log(impactType);
+                  
+                  OPSIAN_db.query( // met à jour le cout du type
+                    `UPDATE Type_M 
+                    SET cout = '${JSON.stringify(impactType)}' 
+                    WHERE idType = ${type};`,
+                    (err, result) => {
+                      if (err) throw err;
+                      resolve(true);
+                    }
+                  );
+                  
+                  console.log(`promesse ${nb_promesse} fini sur ${types.length}`);
+                  resolve(true);
+                })
+                .catch((error) => {
+                  // Gérer les erreurs ici
+                  console.error("Une erreur s'est produite :", error);
+                });
+
+              });
+
+              Promise.all(promises)
+                .then((results) => {
+                  // Traiter les résultats ici
+                  console.log(`=> BD updates costs`)
+                  resolve(true);
+                })
+                .catch((error) => {
+                  // Gérer les erreurs ici
+                  console.error("Une erreur s'est produite :", error);
+                });
+            })
+            .catch((error) => {
+              // Gérer les erreurs ici
+              console.error("Une erreur s'est produite :", error);
+            });
+
+        }, 1000);
+        break;
+      case "areCostsComputed": // à verif
+      setTimeout(() => {
+          
+        OPSIAN_db.query( // verifi si il y a au moins un cout null dans Type_M
+          `SELECT EXISTS(
+              SELECT 1 
+              FROM Type_M 
+              WHERE cout IS NULL OR cout = '{}') AS 'isNullExists';`,
+          (err, result) => {
+            if (err) throw err;
+            // Si 'isNullExists' est 1, cela signifie qu'il y a au moins un champ NULL dans la colonne 'cout'
+            // Donc, nous retournons 'false'. Sinon, nous retournons 'true'.
+            const allNonNull = result[0].isNullExists === 0;
+            console.log(`=> ${allNonNull}`)
+            resolve(allNonNull);
+          }
+        );
+
+      }, 1000);  
+
+
+      break;
     }
   });
 }
@@ -539,7 +736,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //requête setInventory (fini)
 app.put("/setInventory", async (req, res) => {
   try {
-    console.log(`setInventory for ${req.body.user}`);
+    console.log(`=> setInventory for ${req.body.user}`);
 
     let user = req.body.user;
     let inv = req.body.inventory;
@@ -552,7 +749,7 @@ app.put("/setInventory", async (req, res) => {
       user: user,
       date: toMySQLDateFormat(dayjs()),
     });
-    liste_reference = await bdRequest("getType");
+    liste_reference = await bdRequest("getRef");
     await bdRequest("setUserInv", { user: user, inv: inv });
 
     res.send(`BD updated with data for ${req.body.user}`);
@@ -566,7 +763,7 @@ app.put("/setInventory", async (req, res) => {
 
 //requête getInventory (fini) => a changer avec SQL + TEST
 app.get("/getInventory/:user", (req, res) => {
-  console.log(`getInventory for ${req.params.user}`);
+  console.log(`=> getInventory for ${req.params.user}`);
 
   if (req.params.user === undefined) {
     res.send(`ERROR: the user is undefined`);
@@ -579,19 +776,24 @@ app.get("/getInventory/:user", (req, res) => {
 
 //requête getImpact (fini)
 app.get("/getImpact/:user", async (req, res) => {
-
   let timer = Date.now();
 
   let user = req.params.user;
-  console.log(`getImpact for ${user}`);
+  console.log(`=> getImpact for ${user}`);
 
   let userList = await bdRequest("getUser");
 
   if (user === undefined) {
     res.send(`ERROR: the user is undefined`);
   } else if (userList.includes(user)) {
+
+    if(!await bdRequest("areCostsComputed")){
+      await bdRequest("computeCost");
+    }
+
     bdRequest("getUserImpact", { user: user })
       .then((result) => {
+        console.log(result[0]);
         let annualCost = {};
         let annees = Object.keys(result[0]);
         let items = Object.keys(result[0][annees[0]]);
@@ -599,7 +801,9 @@ app.get("/getImpact/:user", async (req, res) => {
         let critereList = Object.keys(
           result[0][annees[0]][items[0]][etapeACVList[0]]
         );
-        
+
+        //console.log(annees, etapeACVList, result[0][annees[0]][items[0]]);
+
         let formatTimer = Date.now();
 
         annees.forEach((annee) => {
@@ -611,12 +815,12 @@ app.get("/getImpact/:user", async (req, res) => {
           };
 
           let resEtapeACVList = Object.keys(cost);
-
           items.forEach((item) => {
             for (let i = 0; i < etapeACVList.length; i++) {
               for (let j = 0; j < critereList.length; j++) {
-                cost[resEtapeACVList[i]][j] +=
+                let cout =
                   result[0][annee][item][etapeACVList[i]][critereList[j]].cout;
+                cost[resEtapeACVList[i]][j] += cout === undefined ? 0 : cout;
               }
             }
           });
@@ -624,7 +828,9 @@ app.get("/getImpact/:user", async (req, res) => {
           annualCost[annee] = cost;
         });
 
-        console.log(`temps formatage données ${(Date.now()-formatTimer) / 1000}`);
+        console.log(
+          `temps formatage données ${(Date.now() - formatTimer) / 1000}`
+        );
 
         res.json({
           cost: annualCost,
@@ -632,7 +838,9 @@ app.get("/getImpact/:user", async (req, res) => {
           nbItem: nbProps,
           nbItemEnService: nbPropsEnService,
         });
-        console.log(`getImpact for ${user} answered in ${(Date.now()-timer)/1000}s`);
+        console.log(
+          `getImpact for ${user} answered in ${(Date.now() - timer) / 1000}s`
+        );
       })
       .catch((error) => {
         console.error(`Error computing Impact: ${error}`);
@@ -640,22 +848,52 @@ app.get("/getImpact/:user", async (req, res) => {
           `ERROR: the server encountimpactItemer dificulties during computing impact`
         );
       });
+
   } else {
     res.send(`ERROR: the user ${user} has not been found in the BD`);
   }
 });
 
-//requête getTypeList (fini)
-app.get("/getTypeList", async (req, res) => {
+//requête getRefList (fini)
+app.get("/getRefList", async (req, res) => {
   try {
-    console.log("getTypeList");
-    liste_reference = await bdRequest("getType");
+    console.log("=> getRefList");
+    liste_reference = await bdRequest("getRef");
     res.json(liste_reference);
   } catch (error) {
-    console.error(`Error getting type list: ${error}`);
+    console.error(`Error getting ref list: ${error}`);
     res
       .status(500)
       .send("ERROR: The server encountered difficulties getting the type list");
+  }
+});
+
+//requête computeCost (fini) /!\ pas d'implémentation dans front, que maintenance admin (wget <url>:<port>/computeCost par exemple)
+app.get("/computeCost", async (req, res) => {
+  try {
+    console.log("computeCost");
+    await bdRequest("=> computeCost");
+    res.send(`BD updates costs `);
+  } catch (error) {
+    console.error(`Error computeCost: ${error}`);
+    res
+      .status(500)
+      .send("ERROR: The server encountered difficulties computeCost");
+  }
+});
+
+//requête areCostsComputed (à faire) /!\ pas d'implémentation dans front, que maintenance admin (wget <url>:<port>/areCostsComputed par exemple)
+app.get("/areCostsComputed", async (req, res) => {
+  try {
+    console.log("=> areCostsComputed");
+    let areCostsComputed = await bdRequest("areCostsComputed");
+    console.log(areCostsComputed)
+    res.send(`areCostsComputed ${areCostsComputed}`);
+  } catch (error) {
+    console.error(`Error areCostsComputed: ${error}`);
+    res
+      .status(500)
+      .send("ERROR: The server encountered difficulties areCostsComputed");
   }
 });
 

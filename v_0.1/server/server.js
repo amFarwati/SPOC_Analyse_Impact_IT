@@ -30,17 +30,11 @@ const port = argv.port;
 var liste_reference = null;
 
 const OPSIAN_db = mysql.createConnection({
-<<<<<<< Updated upstream
-  host: "localhost",
-  user: "numuser",
-  password: "spocBDD",
-  database: "SPOC_Analyse_Impact_IT",
-=======
+
   host: `localhost`,
   user: "root",
   password: "spocBDD",
   database: "opsian",
->>>>>>> Stashed changes
 });
 
 OPSIAN_db.connect(function (err) {

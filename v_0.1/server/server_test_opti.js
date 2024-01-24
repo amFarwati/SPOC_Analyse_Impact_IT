@@ -131,7 +131,8 @@ function bdRequest(request, data) {
           let impactItem = {};
           let promises = [];
 
-          promises.push( // collecte id dernier push utilisateur
+          promises.push(
+            // collecte id dernier push utilisateur
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT MAX(idPush) 
@@ -142,13 +143,15 @@ function bdRequest(request, data) {
                 (err, result) => {
                   if (err) throw err;
                   idPush = result[0]["MAX(idPush)"];
+                  console.log("idPush", idPush);
                   resolve();
                 }
               );
             })
           );
 
-          promises.push( // collecte les unités
+          promises.push(
+            // collecte les unités
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT unite 
@@ -163,7 +166,8 @@ function bdRequest(request, data) {
             })
           );
 
-          promises.push( // collecte les critéres
+          promises.push(
+            // collecte les critéres
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT idCritere 
@@ -178,7 +182,8 @@ function bdRequest(request, data) {
             })
           );
 
-          promises.push( // collecte les étapes ACV
+          promises.push(
+            // collecte les étapes ACV
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT idEtapeACV 
@@ -196,7 +201,8 @@ function bdRequest(request, data) {
           Promise.all(promises)
             .then(() => {
               promises = [];
-              promises.push( // collecte la liste des items de l'inventaire utilisateur
+              promises.push(
+                // collecte la liste des items de l'inventaire utilisateur et compte le nombre total d'item dans l'inventaire
                 new Promise((resolve, reject) => {
                   OPSIAN_db.query(
                     `SELECT idItem 
@@ -205,212 +211,208 @@ function bdRequest(request, data) {
                     (err, result) => {
                       if (err) throw err;
                       userInv = result.map((row) => row.idItem);
+                      nbProps = userInv.length;
                       resolve();
                     }
                   );
                 })
               );
 
-              promises.push( // collecte la date min et max
+              promises.push(
+                // collecte la date min et max
                 new Promise((resolve, reject) => {
                   OPSIAN_db.query(
-                    `SELECT MAX(YEAR(dateDebut)),MIN(YEAR(dateDebut))
+                    `SELECT MAX(YEAR(Push_U.date)),MIN(YEAR(Item_U.dateDebut))
                     FROM Item_U 
-                    WHERE idPush = ${idPush};`,
+                    JOIN Push_U ON Item_U.idPush = Push_U.idPush
+                    WHERE Item_U.idPush = ${idPush};`,
                     (err, result) => {
                       if (err) throw err;
-                      dateMax = result[0]["MAX(YEAR(dateDebut))"];
-                      dateMin = result[0]["MIN(YEAR(dateDebut))"];
+                      result.map((row) => {
+                        dateMax = row["MAX(YEAR(Push_U.date))"];
+                        dateMin = row["MIN(YEAR(Item_U.dateDebut))"];
+                      });
                       resolve();
                     }
                   );
                 })
               );
 
-              Promise.all(promises).then(() => {
-                promises = [];
-                promises.push( // compte le nombre d'item encore en services
-                  new Promise((resolve, reject) => { 
-                    OPSIAN_db.query(
-                      `
+              promises.push(
+                // compte le nombre d'item encore en services
+                new Promise((resolve, reject) => {
+                  OPSIAN_db.query(
+                    `
                       SELECT COUNT(*) AS result
                       FROM Item_U
                       CROSS JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
                       CROSS JOIN Type_M ON Reference_M.idType = Type_M.idType
                       CROSS JOIN Push_U ON Item_U.idPush = Push_U.idPush
                       WHERE Push_U.idPush = ${idPush} AND (YEAR(Push_U.date)-YEAR(Item_U.dateDebut)-Type_M.dureeVie <0);`,
-                      (err, result) => {
-                        if (err) throw err;
-                        nbPropsEnService = result[0]["result"];
-                        resolve();
-                      }
-                    );
-                  })
-                );
+                    (err, result) => {
+                      if (err) throw err;
+                      nbPropsEnService = result[0]["result"];
+                      resolve();
+                    }
+                  );
+                })
+              );
 
-                promises.push( // compte le nombre total d'item dans l'inventaire
-                  new Promise((resolve, reject) => {
-                    OPSIAN_db.query(
-                      `
-                      SELECT COUNT(*) AS result
-                      FROM Item_U
-                      CROSS JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
-                      CROSS JOIN Type_M ON Reference_M.idType = Type_M.idType
-                      CROSS JOIN Push_U ON Item_U.idPush = Push_U.idPush
-                      WHERE Push_U.idPush = ${idPush};`,
-                      (err, result) => {
-                        if (err) throw err;
-                        nbProps = result[0]["result"];
-                        resolve();
-                      }
-                    );
-                  })
-                );
+              Promise.all(promises)
+                .then(() => {
+                  let requestEff = Date.now();
+                  for (let year = dateMin; year < dateMax + 1; year++) {
+                    impactItem[year] = {};
 
-                let requestEff = Date.now();
-                let nb_promises = 0;
-                let num_promise = 1;
-                for (let year = dateMin; year < dateMax + 1; year++) {
-                  impactItem[year] = {};
+                    userInv.forEach((idItem) => {
+                      promises = [];
 
-                  userInv.forEach((idItem) => {
-                    impactItem[year][idItem] = {};
+                      impactItem[year][idItem] = {};
+                      let inUse = false;
 
-                    etapeACV.forEach((idEtapeACV) => {
-                      critere.forEach((idCritere) => {
-                        impactItem[year][idItem][idEtapeACV] = {};
-                        nb_promises = nb_promises + 1;
-                        if (idEtapeACV === 3) {
+                      promises.push(
+                        // regarde si item isUsed
+                        new Promise((resolve, reject) => {
+                          OPSIAN_db.query(
+                            `SELECT EXISTS(
+                              SELECT 1 
+                              FROM Item_U 
+                              JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
+                              JOIN Type_M  ON Reference_M.idType = Type_M.idType
+                              WHERE idItem = ${idItem}
+                              AND YEAR(dateDebut) < ${year + 1}
+                              AND ${year} - YEAR(Item_U.dateDebut) - Type_M.dureeVie < 0
+                              ) AS 'isUsed';`,
+                            (err, result) => {
+                              if (err) throw err;
+                              inUse = result[0].isUsed === 1;
+                              resolve();
+                            }
+                          );
+                        })
+                      );
+
+                      Promise.all(promises)
+                        .then(() => {
+                          promises = [];
+
                           promises.push(
+                            // recupére le calcul du cout
                             new Promise((resolve, reject) => {
-                              //query impact instantané pour usage
                               OPSIAN_db.query(
-                                `SELECT COALESCE(SUM(comp.valeur) * Item_U.quantité ,0) AS result
-                                FROM Composant_M comp
-                                JOIN Reference_M ON comp.idType = Reference_M.idType
-                                JOIN Type_M  ON comp.idType = Type_M.idType
-                                JOIN Item_U ON Item_U.idReference = Reference_M.idReference
-                                WHERE comp.idEtapeACV = ${idEtapeACV} 
-                                AND idItem = ${idItem}
-                                AND YEAR(Item_U.dateDebut) < ${year + 1}
-                                AND ${year} - YEAR(Item_U.dateDebut) - Type_M.dureeVie < 0
-                                AND comp.idCritere = ${idCritere};`,
-                                /*
-                              `SELECT COALESCE(SUM(comp.valeur) * Item_U.quantité ,0) AS result
-                                FROM Composant_M comp
-                                JOIN Reference_M ON comp.idType = Reference_M.idType
-                                JOIN Type_M  ON comp.idType = Type_M.idType
-                                JOIN Item_U ON Item_U.idReference = Reference_M.idReference
-                                WHERE comp.idEtapeACV = ${idEtapeACV} 
-                                AND idItem = ${idItem}
-                                AND YEAR(Item_U.dateDebut) < ${year + 1}
-                                AND ${year} - YEAR(Item_U.dateDebut) - Type_M.dureeVie < 0
-                                GROUP BY comp.idCritere;`*/ (err, result) => {
-                                  if (err) {
-                                    reject(err);
+                                `SELECT cout, Item_U.quantité
+                          FROM Type_M
+                          JOIN Reference_M  ON Reference_M.idType = Type_M.idType
+                          JOIN Item_U ON Item_U.idReference = Reference_M.idReference
+                          WHERE Item_U.idItem = ${idItem}
+                          AND YEAR(Item_U.dateDebut) < ${year + 1}
+                          ;`,
+                                (err, result) => {
+                                  if (err) throw err;
+
+                                  let jsonData = result.map((row) =>
+                                    JSON.parse(row.cout)
+                                  )[0];
+                                  let quantite = result.map(
+                                    (row) => row.quantité
+                                  )[0];
+
+                                  if (result.length === 0) {
+                                    jsonData = {
+                                      1: {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      },
+                                      2: {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      },
+                                      3: {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      },
+                                      4: {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      },
+                                    };
                                   } else {
-                                    /*console.log(
-                                    `nb promises ${nb_promises} numero ${num_promise} `
-                                  );
-                                  num_promise = num_promise + 1;
-                                    /*
-                                  result.map((row) => {
-                                    impactItem[year][idItem][idEtapeACV][result.indexOf(row)] = { cout: row["result"].length===0?0:row["result"] };
-                                    console.log(
-                                      impactItem[year][idItem][idEtapeACV]
-                                    );
-                                  });
-                                  resolve();
-                                  */
-                                    //console.log(result)
-                                    result.map((row) => {
-                                      impactItem[year][idItem][idEtapeACV][
-                                        idCritere
-                                      ] = { cout: row["result"] };
-                                      resolve();
-                                    });
+                                    if (!inUse) {
+                                      jsonData["3"] = {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      };
+                                    }
+                                    for (let etape in jsonData) {
+                                      for (let critere in jsonData[etape]) {
+                                        jsonData[etape][critere].cout *=
+                                          quantite;
+                                      }
+                                    }
                                   }
+
+                                  impactItem[year][idItem] = jsonData;
+                                  console.log(impactItem)
+                                  resolve();
                                 }
                               );
                             })
                           );
-                        } else {
-                          promises.push(
-                            new Promise((resolve, reject) => {
-                              //query impact cumulé pour fabrication, distribution, fin de vie
-                              OPSIAN_db.query(
-                                `SELECT COALESCE(SUM(comp.valeur) * Item_U.quantité ,0) AS result
-                                FROM Composant_M comp 
-                                JOIN Reference_M ON comp.idType = Reference_M.idType
-                                JOIN Item_U ON Item_U.idReference = Reference_M.idReference
-                                WHERE comp.idEtapeACV = ${idEtapeACV} 
-                                AND YEAR(dateDebut)<${year + 1}
-                                AND idItem = ${idItem}
-                                AND comp.idCritere = ${idCritere};`,
-                                /*
-                              `SELECT COALESCE(SUM(comp.valeur) * Item_U.quantité ,0) AS result
-                                FROM Composant_M comp 
-                                JOIN Reference_M ON comp.idType = Reference_M.idType
-                                JOIN Item_U ON Item_U.idReference = Reference_M.idReference
-                                WHERE comp.idEtapeACV = ${idEtapeACV} 
-                                AND YEAR(dateDebut)<${year + 1}
-                                AND idItem = ${idItem}
-                                GROUP BY comp.idCritere;`*/ (err, result) => {
-                                  if (err) {
-                                    reject(err);
-                                  } else {
-                                    /*console.log(
-                                    `nb promises ${nb_promises} numero ${num_promise} `
-                                  );
-                                  num_promise = num_promise + 1;
-                                  /*
-                                  result.map((row) => {
-                                    impactItem[year][idItem][idEtapeACV][result.indexOf(row)] = { cout: row["result"].length===0?0:row["result"]  };
-                                    console.log(
-                                      impactItem[year][idItem][idEtapeACV]
-                                    );
-                                  });
-                                  resolve();
-                                  */
-                                    result.map((row) => {
-                                      impactItem[year][idItem][idEtapeACV][
-                                        idCritere
-                                      ] = { cout: row["result"] };
-                                      resolve();
-                                    });
-                                  }
-                                }
-                              );
+
+                          Promise.all(promises)
+                            .then(() => {
+                              if (
+                                idItem === userInv[userInv.length - 1] &&
+                                year === dateMax
+                              ) {
+                                console.log(impactItem)
+                                resolve([impactItem, unite]);
+                                console.log(
+                                  `bd request ${request} ${
+                                    data.user
+                                  } awsered in ${(Date.now() - timer) / 1000}s`
+                                );
+                                console.log(
+                                  `calcul for all items answered in ${
+                                    (Date.now() - requestEff) / 1000
+                                  }s`
+                                );
+                              }
                             })
-                          );
-                        }
-                      });
+                            .catch((error) => {
+                              // Gérer les erreurs ici
+                              console.error(
+                                "Une erreur s'est produite :",
+                                error
+                              );
+                            });
+                        })
+                        .catch((error) => {
+                          // Gérer les erreurs ici
+                          console.error("Une erreur s'est produite :", error);
+                        });
                     });
-                  });
-                }
-
-                //console.log(`nb promises ${nb_promises}`);
-
-                Promise.all(promises)
-                  .then((results) => {
-                    // Traiter les résultats ici
-                    resolve([impactItem, unite]);
-                    console.log(
-                      `bd request ${request} ${data.user} awsered in ${
-                        (Date.now() - timer) / 1000
-                      }s`
-                    );
-                    console.log(
-                      `calcul for all items answered in ${
-                        (Date.now() - requestEff) / 1000
-                      }s`
-                    );
-                  })
-                  .catch((error) => {
-                    // Gérer les erreurs ici
-                    console.error("Une erreur s'est produite :", error);
-                  });
-              });
+                  }
+                })
+                .catch((error) => {
+                  // Gérer les erreurs ici
+                  console.error("Une erreur s'est produite :", error);
+                });
             })
             .catch((error) => {
               // Gérer les erreurs ici
@@ -553,16 +555,15 @@ function bdRequest(request, data) {
           );
         }, 1000);
         break;
-      case "computeCost": // OK 
-
+      case "computeCost": // OK
         setTimeout(() => {
-          
           let etapeACV = null;
           let critere = null;
           let types = null;
           let promises = [];
 
-          promises.push( // collecte des critéres
+          promises.push(
+            // collecte des critéres
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT idCritere 
@@ -577,7 +578,8 @@ function bdRequest(request, data) {
             })
           );
 
-          promises.push( // collecte des étapes ACV
+          promises.push(
+            // collecte des étapes ACV
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT idEtapeACV 
@@ -592,7 +594,8 @@ function bdRequest(request, data) {
             })
           );
 
-          promises.push( // collecte des types
+          promises.push(
+            // collecte des types
             new Promise((resolve, reject) => {
               OPSIAN_db.query(
                 `SELECT idType 
@@ -609,23 +612,21 @@ function bdRequest(request, data) {
 
           Promise.all(promises)
             .then(() => {
-
               let nb_promesse = 0;
 
               types.forEach((type) => {
                 let impactType = {};
                 promises = [];
 
-
                 etapeACV.forEach((idEtapeACV) => {
-
                   critere.forEach((idCritere) => {
-
                     impactType[idEtapeACV] = {};
 
-                    promises.push( // calcul cout 
+                    promises.push(
+                      // calcul cout
                       new Promise((resolve, reject) => {
-                        OPSIAN_db.query( // calcul cout pour 1 etape et 1 coup d'un type
+                        OPSIAN_db.query(
+                          // calcul cout pour 1 etape et 1 coup d'un type
                           `SELECT COALESCE(SUM(comp.valeur),0) AS result
                           FROM Composant_M comp 
                           WHERE comp.idType = ${type} 
@@ -636,7 +637,9 @@ function bdRequest(request, data) {
                               reject(err);
                             } else {
                               result.map((row) => {
-                                impactType[idEtapeACV][idCritere] = { cout: row["result"] };
+                                impactType[idEtapeACV][idCritere] = {
+                                  cout: row["result"],
+                                };
                               });
                               resolve();
                             }
@@ -644,40 +647,41 @@ function bdRequest(request, data) {
                         );
                       })
                     );
-                    
-                    });
                   });
-
-                Promise.all(promises)
-                .then((results) => {
-                  // Traiter les résultats ici
-                  nb_promesse= nb_promesse + 1;
-                  console.log(impactType);
-                  
-                  OPSIAN_db.query( // met à jour le cout du type
-                    `UPDATE Type_M 
-                    SET cout = '${JSON.stringify(impactType)}' 
-                    WHERE idType = ${type};`,
-                    (err, result) => {
-                      if (err) throw err;
-                      resolve(true);
-                    }
-                  );
-                  
-                  console.log(`promesse ${nb_promesse} fini sur ${types.length}`);
-                  resolve(true);
-                })
-                .catch((error) => {
-                  // Gérer les erreurs ici
-                  console.error("Une erreur s'est produite :", error);
                 });
 
+                Promise.all(promises)
+                  .then((results) => {
+                    // Traiter les résultats ici
+                    nb_promesse = nb_promesse + 1;
+                    console.log(impactType);
+
+                    OPSIAN_db.query(
+                      // met à jour le cout du type
+                      `UPDATE Type_M 
+                    SET cout = '${JSON.stringify(impactType)}' 
+                    WHERE idType = ${type};`,
+                      (err, result) => {
+                        if (err) throw err;
+                        resolve(true);
+                      }
+                    );
+
+                    console.log(
+                      `promesse ${nb_promesse} fini sur ${types.length}`
+                    );
+                    resolve(true);
+                  })
+                  .catch((error) => {
+                    // Gérer les erreurs ici
+                    console.error("Une erreur s'est produite :", error);
+                  });
               });
 
               Promise.all(promises)
                 .then((results) => {
                   // Traiter les résultats ici
-                  console.log(`=> BD updates costs`)
+                  console.log(`=> BD updates costs`);
                   resolve(true);
                 })
                 .catch((error) => {
@@ -689,31 +693,27 @@ function bdRequest(request, data) {
               // Gérer les erreurs ici
               console.error("Une erreur s'est produite :", error);
             });
-
         }, 1000);
         break;
-      case "areCostsComputed": // à verif
-      setTimeout(() => {
-          
-        OPSIAN_db.query( // verifi si il y a au moins un cout null dans Type_M
-          `SELECT EXISTS(
-              SELECT 1 
-              FROM Type_M 
-              WHERE cout IS NULL OR cout = '{}') AS 'isNullExists';`,
-          (err, result) => {
-            if (err) throw err;
-            // Si 'isNullExists' est 1, cela signifie qu'il y a au moins un champ NULL dans la colonne 'cout'
-            // Donc, nous retournons 'false'. Sinon, nous retournons 'true'.
-            const allNonNull = result[0].isNullExists === 0;
-            console.log(`=> ${allNonNull}`)
-            resolve(allNonNull);
-          }
-        );
-
-      }, 1000);  
-
-
-      break;
+      case "areCostsComputed": // OK
+        setTimeout(() => {
+          OPSIAN_db.query(
+            // verifi si il y a au moins un cout null dans Type_M
+            `SELECT EXISTS(
+                SELECT 1 
+                FROM Type_M 
+                WHERE cout IS NULL OR cout = '{}') AS 'isNullExists';`,
+            (err, result) => {
+              if (err) throw err;
+              // Si 'isNullExists' est 1, cela signifie qu'il y a au moins un champ NULL dans la colonne 'cout'
+              // Donc, nous retournons 'false'. Sinon, nous retournons 'true'.
+              const allNonNull = result[0].isNullExists === 0;
+              console.log(`=> ${allNonNull}`);
+              resolve(allNonNull);
+            }
+          );
+        }, 1000);
+        break;
     }
   });
 }
@@ -786,14 +786,13 @@ app.get("/getImpact/:user", async (req, res) => {
   if (user === undefined) {
     res.send(`ERROR: the user is undefined`);
   } else if (userList.includes(user)) {
-
-    if(!await bdRequest("areCostsComputed")){
+    if (!(await bdRequest("areCostsComputed"))) {
       await bdRequest("computeCost");
     }
 
     bdRequest("getUserImpact", { user: user })
       .then((result) => {
-        console.log(result[0]);
+        //console.log(result[0]);
         let annualCost = {};
         let annees = Object.keys(result[0]);
         let items = Object.keys(result[0][annees[0]]);
@@ -843,12 +842,11 @@ app.get("/getImpact/:user", async (req, res) => {
         );
       })
       .catch((error) => {
-        console.error(`Error computing Impact: ${error}`);
+        console.log(`Error computing Impact: ${error}`);
         res.send(
-          `ERROR: the server encountimpactItemer dificulties during computing impact`
+          `ERROR: the server encounting difficulties during computing impact`
         );
       });
-
   } else {
     res.send(`ERROR: the user ${user} has not been found in the BD`);
   }
@@ -887,7 +885,7 @@ app.get("/areCostsComputed", async (req, res) => {
   try {
     console.log("=> areCostsComputed");
     let areCostsComputed = await bdRequest("areCostsComputed");
-    console.log(areCostsComputed)
+    console.log(areCostsComputed);
     res.send(`areCostsComputed ${areCostsComputed}`);
   } catch (error) {
     console.error(`Error areCostsComputed: ${error}`);

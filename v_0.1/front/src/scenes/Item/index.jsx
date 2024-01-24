@@ -209,7 +209,20 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
   };
 
   useEffect(()=>{
-    setUserParc(formatageUpData(boxes))
+    let allUpdated = true; 
+
+    if( boxes.length === 0){
+      
+    }else{
+      boxes.forEach((box)=>{
+        if(box.date === "" || box.quantity === "" || box.type === ""){
+          allUpdated = false;
+        }
+      });
+    }
+
+    allUpdated?handlerDataLoading():setUserParc(formatageUpData(boxes))
+    
   },[boxes]);
 
   useEffect(() => {
@@ -250,7 +263,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
               subtitle="Choisissez chaque item à la main"
             />
           </Box>
-          {onLoad ? (
+          {/*onLoad ? (
             <></>
           ) : (
             <Box textAlign="center" marginBottom="16px">
@@ -265,7 +278,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
                 Analyser
               </Button>
             </Box>
-          )}
+          )*/}
           <Box ml="20px" mr="20px">
             <Divider sx={{ marginY: 2 }} /> {/* Add a line of separation */}
             <Liste

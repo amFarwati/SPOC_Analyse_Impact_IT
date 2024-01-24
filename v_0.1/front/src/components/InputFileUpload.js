@@ -29,7 +29,7 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function InputFileUpload({setIsUpload}) {
 
-    const setUserParc = useContext(User_Context)[1];
+    const [userParc, setUserParc] = useContext(User_Context);
     const [fileChange, setFileChange] = useState(false);
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
@@ -51,12 +51,12 @@ export default function InputFileUpload({setIsUpload}) {
             });
 
             let invNormalised = bdFormat_User(results.data);
-            console.log("apres",invNormalised);
+            console.log("=> input File",invNormalised);
             setUserParc(invNormalised);
             setFileChange(!fileChange);
+            setIsUpload(true);
         };
         reader.readAsText(file);
-        setIsUpload(true);
         }
     };
 

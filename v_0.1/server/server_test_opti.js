@@ -121,7 +121,7 @@ function bdRequest(request, data) {
     let timer = Date.now();
 
     switch (request) {
-      case "getUserImpact": // à modif
+      case "getUserImpact": // OK
         setTimeout(() => {
           let idPush = null;
           let user = data.user;
@@ -130,6 +130,11 @@ function bdRequest(request, data) {
           let critere = null;
           let impactItem = {};
           let promises = [];
+
+          dateMin = null;
+          dateMax = null;
+          nbProps = null;
+          nbPropsEnService = null;
 
           promises.push(
             // collecte id dernier push utilisateur
@@ -202,7 +207,7 @@ function bdRequest(request, data) {
             .then(() => {
               promises = [];
               promises.push(
-                // collecte la liste des items de l'inventaire utilisateur et compte le nombre total d'item dans l'inventaire
+                // collecte la liste des items de l'inventaire utilisateur
                 new Promise((resolve, reject) => {
                   OPSIAN_db.query(
                     `SELECT idItem 
@@ -211,7 +216,6 @@ function bdRequest(request, data) {
                     (err, result) => {
                       if (err) throw err;
                       userInv = result.map((row) => row.idItem);
-                      nbProps = userInv.length;
                       resolve();
                     }
                   );
@@ -232,26 +236,6 @@ function bdRequest(request, data) {
                         dateMax = row["MAX(YEAR(Push_U.date))"];
                         dateMin = row["MIN(YEAR(Item_U.dateDebut))"];
                       });
-                      resolve();
-                    }
-                  );
-                })
-              );
-
-              promises.push(
-                // compte le nombre d'item encore en services
-                new Promise((resolve, reject) => {
-                  OPSIAN_db.query(
-                    `
-                      SELECT COUNT(*) AS result
-                      FROM Item_U
-                      CROSS JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
-                      CROSS JOIN Type_M ON Reference_M.idType = Type_M.idType
-                      CROSS JOIN Push_U ON Item_U.idPush = Push_U.idPush
-                      WHERE Push_U.idPush = ${idPush} AND (YEAR(Push_U.date)-YEAR(Item_U.dateDebut)-Type_M.dureeVie <0);`,
-                    (err, result) => {
-                      if (err) throw err;
-                      nbPropsEnService = result[0]["result"];
                       resolve();
                     }
                   );
@@ -297,7 +281,7 @@ function bdRequest(request, data) {
                           promises = [];
 
                           promises.push(
-                            // recupére le calcul du cout
+                            // recupére le calcul du cout + compte le nombre d'item encore en services à date du push + nb total
                             new Promise((resolve, reject) => {
                               OPSIAN_db.query(
                                 `SELECT cout, Item_U.quantité
@@ -316,6 +300,10 @@ function bdRequest(request, data) {
                                   let quantite = result.map(
                                     (row) => row.quantité
                                   )[0];
+
+                                  if (year === dateMax){
+                                    nbProps = nbProps + quantite;
+                                  }
 
                                   if (result.length === 0) {
                                     jsonData = {
@@ -357,6 +345,10 @@ function bdRequest(request, data) {
                                         4: { cout: 0 },
                                         5: { cout: 0 },
                                       };
+                                    }else{
+                                      if (year === dateMax){
+                                        nbPropsEnService = nbPropsEnService +quantite;
+                                      }
                                     }
                                     for (let etape in jsonData) {
                                       for (let critere in jsonData[etape]) {
@@ -367,7 +359,7 @@ function bdRequest(request, data) {
                                   }
 
                                   impactItem[year][idItem] = jsonData;
-                                  console.log(impactItem)
+                                  //console.log(impactItem)
                                   resolve();
                                 }
                               );
@@ -380,7 +372,6 @@ function bdRequest(request, data) {
                                 idItem === userInv[userInv.length - 1] &&
                                 year === dateMax
                               ) {
-                                console.log(impactItem)
                                 resolve([impactItem, unite]);
                                 console.log(
                                   `bd request ${request} ${

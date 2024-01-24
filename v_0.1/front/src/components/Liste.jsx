@@ -45,7 +45,9 @@ function MaListe({ typeEquipement,boxes,setBoxes }) {
         }
         return box;
       });
+
       setBoxes(updatedBoxes);
+
     }
   };
 

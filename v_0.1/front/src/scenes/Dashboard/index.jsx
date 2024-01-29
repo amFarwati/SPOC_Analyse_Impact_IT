@@ -216,7 +216,7 @@ function Dashboard({
           </Box>
         )}
         <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Header title="DASHBOARD" subtitle="Bienvenue sur votre Dashbord" />
+          <Header title="DASHBOARD" subtitle="Bienvenue sur votre Dashboard" />
         </Box>
 
         {/*GRID and charts*/}

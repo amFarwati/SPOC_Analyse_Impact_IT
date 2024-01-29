@@ -71,7 +71,7 @@ function Sidebar({user, serveur}) {
                   alignItems="center"
                   ml="15px"
                 >
-                  <Typography variant="h3" color={colors.grey[100]}>ADMINIS</Typography>
+                  <Typography variant="h3" color={colors.grey[100]}>ADMINS</Typography>
                   <IconButton onClick={()=>setIsCollapsed(!isCollapsed)}>
                       <MenuOutlinedIcon/>
                   </IconButton>
@@ -100,15 +100,15 @@ function Sidebar({user, serveur}) {
             {/* MENU ITEM */}
             <Box paddingLeft={isCollapsed? undefined:"10%"}>
               <Item 
-              title='Accueil'
+                title='Accueil'
                 to='/'
                 icon={<HomeRoundedIcon/>}
                 selected={selected}
                 setSelected={setSelected}
               />
               <Item 
-                title='Connexion'
-                to='/connexion'
+                title="S'inscrire / Se connecter"
+                to='/'
                 icon={<ExitToAppRoundedIcon/>}
                 selected={selected}
                 setSelected={setSelected}

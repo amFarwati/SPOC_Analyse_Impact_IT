@@ -32,9 +32,9 @@ var liste_reference = null;
 const OPSIAN_db = mysql.createConnection({
 
   host: `localhost`,
-  user: "root",
+  user: "numuser",
   password: "spocBDD",
-  database: "opsian",
+  database: "SPOC_Analyse_Impact_IT",
 });
 
 OPSIAN_db.connect(function (err) {

@@ -100,15 +100,15 @@ function Sidebar({user, serveur}) {
             {/* MENU ITEM */}
             <Box paddingLeft={isCollapsed? undefined:"10%"}>
               <Item 
-                title='Home'
+              title='Accueil'
                 to='/'
                 icon={<HomeRoundedIcon/>}
                 selected={selected}
                 setSelected={setSelected}
               />
               <Item 
-                title='Sign Up / Login'
-                to='/'
+                title='Connexion'
+                to='/connexion'
                 icon={<ExitToAppRoundedIcon/>}
                 selected={selected}
                 setSelected={setSelected}
@@ -121,7 +121,7 @@ function Sidebar({user, serveur}) {
                 Analyse
               </Typography>
               <Item 
-                title='Dashboard'
+                title='Tableau de bord'
                 to='/'
                 icon={<DashboardIcon/>}
                 selected={selected}
@@ -143,7 +143,7 @@ function Sidebar({user, serveur}) {
               </Typography>
               <Item 
                 title='Profile'
-                to='/'
+                to='/profile'
                 icon={<AccountCircleOutlinedIcon/>}
                 selected={selected}
                 setSelected={setSelected}

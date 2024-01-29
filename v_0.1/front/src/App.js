@@ -5,6 +5,9 @@ import SideBar from "./scenes/global/Sidebar";
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./scenes/Dashboard";
 import Selection from "./scenes/Item";
+import Login from "./scenes/Login/Login";
+import Profile from "./scenes/Profile/Profile";
+import Inscription from "./scenes/Inscription/Inscription";
 import { useState } from "react";
 
 function App() {
@@ -118,6 +121,24 @@ function App() {
                         typeEquipement={typeEquipement}
                         setTypeEquipement={setTypeEquipement}
                       />
+                    }
+                  />
+                  <Route
+                    path="/connexion"
+                    element={
+                      <Login/>
+                    }
+                  />
+                  <Route
+                    path="/profile"
+                    element={
+                      <Profile/>
+                    }
+                  />
+                  <Route
+                    path="/inscription"
+                    element={
+                      <Inscription/>
                     }
                   />
                 </Routes>

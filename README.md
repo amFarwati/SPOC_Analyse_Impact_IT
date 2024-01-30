@@ -39,13 +39,12 @@ ou
 Nous sommes deux étudiants de l'__INSA Lyon__, spécialité __Télécommunications Services & usages__. Pendant nos études, avons pu faire un projet en partenariat avec une entreprise pour concevoir une _Sustainable Proof Of Concept_ ou SPOC.  
   
 C'est Hugues Benoit-Cattin, notre référent à l'INSA et à La Riche Industrielle, qui nous a présenté les objectifs que devait atteindre notre analyseur d'impact informatique. 
-
 <div class="container" style="display:flex; text-align:center;justify-content: center;">
     <div style="padding: 20px;">
         <img src="./images/Maxime.jpg" alt="Maxime" height="150">
-        <p >Maxime Herry<br>Développeur</p>
+        <p>Maxime Herry<br>Développeur</p>
     </div >
-        <div style="padding: 20px;">
+    <div style="padding: 20px;">
         <img src="./images/Arthur.jpg" alt="Arthur" height="150">
         <p>Arthur-Mustapha Farwati<br>Développeur</p>
     </div>
@@ -53,19 +52,17 @@ C'est Hugues Benoit-Cattin, notre référent à l'INSA et à La Riche Industriel
         <img src="./images/HBC.jpg" alt="Hugues Benoit-Cattin" height="150">
         <p>Hugues Benoit-Cattin<br>Référent</p>
     </div>
-    
 </div>
-
 
 <div class="container" style="display:flex; text-align:center;justify-content: center;">
     <div style="padding: 20px;">
-            <img src="./images/INSA.png" alt="INSA" height="50">
+        <img src="./images/INSA.png" alt="INSA" height="50">
     </div >
     <div style="padding: 20px;">
         <img src="./images/Ruche.png" alt="Ruche" height="50">
     </div>
-    
 </div>
+
 
 
 ### La Ruche Industrielle

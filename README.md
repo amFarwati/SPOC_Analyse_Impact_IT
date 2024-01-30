@@ -41,7 +41,7 @@ Nous sommes deux étudiants de l'__INSA Lyon__, spécialité __Télécommunicati
 C'est Hugues Benoit-Cattin, notre référent à l'INSA et à La Riche Industrielle, qui nous a présenté les objectifs que devait atteindre notre analyseur d'impact informatique. 
 <div class="container" style="display:flex; text-align:center;justify-content: center;">
     <div style="padding: 20px;">
-        <img src="./images/Maxime.jpg" alt="Maxime" height="150">
+        <img src="./images/Maxime.JPG" alt="Maxime" height="150">
         <p>Maxime Herry<br>Développeur</p>
     </div >
     <div style="padding: 20px;">

@@ -42,11 +42,11 @@ C'est Hugues Benoit-Cattin, notre référent à l'INSA et à La Riche Industriel
 
 <div class="container" style="display:flex; text-align:center;justify-content: center;">
     <div style="padding: 20px;">
-        <img src="./images/Maxime.JPG" alt="Maxime" height="150">
+        <img src="./images/Maxime.jpg" alt="Maxime" height="150">
         <p >Maxime Herry<br>Développeur</p>
     </div >
         <div style="padding: 20px;">
-        <img src="./images/Arthur.JPG" alt="Arthur" height="150">
+        <img src="./images/Arthur.jpg" alt="Arthur" height="150">
         <p>Arthur-Mustapha Farwati<br>Développeur</p>
     </div>
     <div class="container" style="text-align:center;justify-content: center; padding: 20px;">
@@ -62,7 +62,7 @@ C'est Hugues Benoit-Cattin, notre référent à l'INSA et à La Riche Industriel
             <img src="./images/INSA.png" alt="INSA" height="50">
     </div >
     <div style="padding: 20px;">
-        <img src="./images/Ruche.PNG" alt="Ruche" height="50">
+        <img src="./images/Ruche.png" alt="Ruche" height="50">
     </div>
     
 </div>

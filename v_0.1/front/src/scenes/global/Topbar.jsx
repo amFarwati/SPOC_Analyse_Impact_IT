@@ -16,12 +16,6 @@ function Topbar() {
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
 
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = () => {
-    setOpen(!open);
-  };
-
   return (
     <Box display="flex" justifyContent="space-between" p={2} mb="18px">
       {/* Search Bar */}
@@ -54,14 +48,14 @@ function Topbar() {
       <Box display="flex" justifyContent="center" alignItems="center">
         {/* Aligner à droite */}
         <Box sx={{ marginLeft: "auto" }}>
-          <IconButton onClick={colorMode.toggleColorMode}>
+          <IconButton title="Mode sombre/jour" onClick={colorMode.toggleColorMode}>
             {theme.palette.mode === "dark" ? (
               <DarkModeOutlinedIcon />
             ) : (
               <LightModeOutlinedIcon />
             )}
           </IconButton>
-          <IconButton>
+          <IconButton href="./Modèle_de_demo.ods" download title="Téléchargement d'un modèle de demo">
             <DownloadOutlinedIcon />
           </IconButton>
           <IconButton>

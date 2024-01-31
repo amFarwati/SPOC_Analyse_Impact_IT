@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../theme";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import UploadOutlinedIcon from "@mui/icons-material/UploadOutlined"
+import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined"
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 
@@ -14,13 +14,6 @@ function Topbar() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
-
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = () => {
-    setOpen(!open);
-  };
-
 
   return (
     <Box display="flex" justifyContent="space-between" p={2} mb="18px">
@@ -46,8 +39,8 @@ function Topbar() {
               <LightModeOutlinedIcon />
             )}
           </IconButton>
-          <IconButton href="./Modèle_de_demo.ods" download title="Ouvrir la feuille de calcul Google Sheets">
-            <UploadOutlinedIcon />
+          <IconButton href="./Modèle_de_demo.ods" download title="Téléchargement d'un modèle de demo">
+            <DownloadOutlinedIcon />
           </IconButton>
           <IconButton>
             <SettingsOutlinedIcon />

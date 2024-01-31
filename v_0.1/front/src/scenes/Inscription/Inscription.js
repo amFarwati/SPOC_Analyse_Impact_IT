@@ -136,7 +136,15 @@ const Inscription = () => {
               variant="contained"
               color="primary"
               style={{ marginTop: "20px", fontSize: "20px" }}
-              disabled={!passwordsMatch}
+              disabled={
+                !passwordsMatch ||
+                !mail ||
+                !hasLetter ||
+                !hasMinLength ||
+                !hasNumber ||
+                !hasSpecialChar ||
+                !hasUppercase
+              }
             >
               S'inscrire
             </Button>

@@ -16,6 +16,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const Inscription = () => {
   const [mail, setMail] = useState("");
+  const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -77,10 +78,20 @@ const Inscription = () => {
               label="Email"
               variant="outlined"
               value={mail}
-              onChange={(e) => setMail(e.target.value)}
+              onChange={(e) => {
+                setMail(e.target.value);
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                setEmailError(
+                  emailRegex.test(e.target.value)
+                    ? ""
+                    : "Format d'e-mail invalide"
+                );
+              }}
               margin="normal"
               fullWidth
               size="large"
+              error={!!emailError}
+              helperText={emailError}
             />
             <TextField
               label="Mot de passe"
@@ -143,7 +154,8 @@ const Inscription = () => {
                 !hasMinLength ||
                 !hasNumber ||
                 !hasSpecialChar ||
-                !hasUppercase
+                !hasUppercase ||
+                emailError
               }
             >
               S'inscrire

@@ -1,5 +1,5 @@
-echo "Switching to branch V0.1"
-git checkout V0.1
+echo "Switching to main branch"
+git checkout main
 
 echo "Building app..."
 npm run build

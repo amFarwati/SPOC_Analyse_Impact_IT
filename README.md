@@ -39,6 +39,7 @@ ou
 Nous sommes deux étudiants de l'__INSA Lyon__, spécialité __Télécommunications Services & usages__. Pendant nos études, avons pu faire un projet en partenariat avec une entreprise pour concevoir une _Sustainable Proof Of Concept_ ou SPOC.  
   
 C'est Hugues Benoit-Cattin, notre référent à l'INSA et à La Riche Industrielle, qui nous a présenté les objectifs que devait atteindre notre analyseur d'impact informatique. 
+
 <div class="container" style="display:flex; text-align:center;justify-content: center;">
     <div style="padding: 20px;">
         <img src="./images/Maxime.JPG" alt="Maxime" height="150">

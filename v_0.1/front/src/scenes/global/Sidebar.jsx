@@ -101,14 +101,14 @@ function Sidebar({user, serveur}) {
             <Box paddingLeft={isCollapsed? undefined:"10%"}>
               <Item 
                 title='Accueil'
-                to='/'
+                to='/accueil'
                 icon={<HomeRoundedIcon/>}
                 selected={selected}
                 setSelected={setSelected}
               />
               <Item 
                 title="S'inscrire / Se connecter"
-                to='/'
+                to='/connexion'
                 icon={<ExitToAppRoundedIcon/>}
                 selected={selected}
                 setSelected={setSelected}
@@ -122,7 +122,7 @@ function Sidebar({user, serveur}) {
               </Typography>
               <Item 
                 title='Tableau de bord'
-                to='/'
+                to='/dashboard'
                 icon={<DashboardIcon/>}
                 selected={selected}
                 setSelected={setSelected}

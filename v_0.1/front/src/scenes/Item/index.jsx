@@ -1,8 +1,6 @@
 import {
   Box,
   Divider,
-  Button,
-  IconButton,
   useTheme,
   Typography,
   FormControl,
@@ -13,46 +11,58 @@ import {
 import Header from "../../components/Header";
 import Liste from "../../components/Liste";
 import { tokens } from "../../theme";
-import UploadOutlinedIcon from "@mui/icons-material/UploadOutlined";
 import { useEffect, useState } from "react";
 import axios from "redaxios";
-import dayjs from "dayjs";
 import "dayjs/locale/fr";
 import Barchart from "../../components/Barchart";
 import Piechart from "../../components/Piechart";
-import DownloadingRoundedIcon from "@mui/icons-material/DownloadingRounded";
 import CircularProgress from "@mui/material/CircularProgress";
 import AirIcon from "@mui/icons-material/Air";
 import MasksIcon from "@mui/icons-material/Masks";
 import WifiIcon from "@mui/icons-material/Wifi";
 import WaterIcon from "@mui/icons-material/Water";
 import FactoryIcon from "@mui/icons-material/Factory";
-import InputFileUpload from "../../components/InputFileUpload";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
-
 import * as React from "react";
 
-function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
+function Item({
+  user,
+  baseUrl,
+  onLoad,
+  setOnLoad,
+  typeEquipement,
+  setTypeEquipement,
+  userParc,
+  setUserParc,
+  use,
+  setUse,
+  fab,
+  setFab,
+  distrib,
+  setDistrib,
+  fin,
+  setFin,
+  annualCost,
+  setAnnualCost,
+  unite,
+  setUnite,
+  nbItem,
+  setNbItem,
+  nbItemEnService,
+  setNbItemEnService,
+  annee,
+  setAnnee,
+  critere,
+  setCritere,
+  boxes,
+  setBoxes,
+}) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [pipe, setPipe] = useState(-1);
-
-  const [userParc, setUserParc] = useState([]);
-  const [onLoad, setOnLoad] = useState(null);
-  const [use, setUse] = useState([0, 0, 0, 0, 0]);
-  const [fab, setFab] = useState([0, 0, 0, 0, 0]);
-  const [distrib, setDistrib] = useState([0, 0, 0, 0, 0]);
-  const [fin, setFin] = useState([0, 0, 0, 0, 0]);
-  const [annualCost, setAnnualCost] = useState([]);
-  const [unite, setUnite] = useState([]);
-  const [nbItem, setNbItem] = useState(0);
-  const [nbItemEnService, setNbItemEnService] = useState(0);
-  const [annee, setAnnee] = useState(-1);
-  const [critere, setCritere] = useState(0);
-  const [etape, setEtape] = useState(0);
+  const [boxesChange, setBoxesChange] = useState(false);
+  const [boxesEmpty, setBoxesEmpty] = useState(false);
 
   const chartColor = [
     "#329D9C",
@@ -60,15 +70,8 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
     "#7BE495",
     colors.lightLimeAccent[400],
   ];
+
   const login = `${user}_iteratif`;
-
-  const [boxes, setBoxes] = React.useState(() => {
-    // Load saved data from local storage or use a default value
-    const savedData = JSON.parse(localStorage.getItem("boxes")) || [];
-    return savedData;
-  });
-
-  const [emptyBox, setEmptyBox] = React.useState(true);
 
   const formatageCout = (coutJSON) => {
     /*coutJSON tel que 
@@ -118,8 +121,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
   };
 
   const handlerDataLoading = () => {
-    setUserParc(formatageUpData(boxes));
-    if (userParc.length !== 0) {
+    if (userParc.length !== 0 && !onLoad) {
       setOnLoad(true);
       console.log(`ResultDisplay =>`, userParc);
       console.log(`/setInventory ${baseUrl} ${login}_test =>`);
@@ -148,7 +150,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
               // Vérification si la requête a réussi (statut 200-299)
               if (!res.ok) {
                 throw new Error(`Erreur HTTP! Statut: ${res.status}`);
-              }
+              } 
               // Manipulation des données
               console.log(res.data);
 
@@ -162,6 +164,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
               setNbItemEnService(res.data.nbItemEnService);
               setOnLoad(false);
               console.log(annualCost);
+            
             })
             .catch((error) => {
               // Gestion des erreurs
@@ -188,9 +191,8 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
   };
 
   // requete serveur pour récupérer list des types pris en charge
-  const handlerGetTypeList = () => {
+  const handlerGetRefList = () => {
     console.log(`handlerGetRefList ${baseUrl} =>`);
-    setIsLoading(true);
 
     axios
       .get(`${baseUrl}/getRefList`, { withCredentials: true })
@@ -202,7 +204,6 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
         // Manipulation des données
         setTypeEquipement(filterGlobalType(res.data));
         console.log(typeEquipement);
-        setIsLoading(false);
       })
       .catch((error) => {
         // Gestion des erreurs
@@ -210,28 +211,36 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
       });
   };
 
-  useEffect(()=>{
-    let allUpdated = true; 
-    console.log(boxes)
+  useEffect(() => {
+    if (boxes.length === 0) {
+      setBoxesEmpty(true);
+    } else if (boxesChange) {
 
-    if( boxes.length === 0){
+      console.log("try change", boxesChange);
+      let allUpdated = true;
+      console.log("boxes", boxes);
 
-      setOnLoad(null);
-      
-    }else{
-      boxes.forEach((box)=>{
-        if(box.date === "" || box.quantity === "" || box.type === ""){
+      boxes.forEach((box) => {
+        if (box.date === "" || box.quantity === "" || box.type === "") {
           allUpdated = false;
         }
       });
 
-      console.log(allUpdated);
-      
-
-      allUpdated?handlerDataLoading():setUserParc(formatageUpData(boxes))
+      if (allUpdated) {
+        console.log("=> request maj userParc");
+        setBoxesEmpty(false);
+        setUserParc(formatageUpData(boxes));
+      }
     }
-    
-  },[boxes]);
+  }, [boxesChange, boxes]);
+
+  useEffect(() => {
+    if (boxesChange&&!boxesEmpty) {
+      console.log("=> request compute impact");
+      setBoxesChange(false);
+      handlerDataLoading();
+    }
+  }, [userParc,boxesEmpty, baseUrl, login]);
 
   useEffect(() => {
     if (annee !== -1) {
@@ -241,9 +250,9 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
 
   useEffect(() => {
     if (typeEquipement === -1) {
-      handlerGetTypeList();
+      handlerGetRefList();
     }
-  }, []);
+  }, [typeEquipement]);
 
   return (
     <Box margin=" 0 20px 20px 20px">
@@ -275,13 +284,13 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
             <Divider sx={{ marginY: 2 }} /> {/* Add a line of separation */}
             <Liste
               typeEquipement={typeEquipement}
-              setPipe={setPipe}
               boxes={boxes}
               setBoxes={setBoxes}
+              setBoxesChange={setBoxesChange}
             />
           </Box>
         </Box>
-        
+
         <Box
           gridColumn="span 8"
           gridRow="span 4"
@@ -310,7 +319,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
                   </IconButton>
                 </Box>*/}
           </Box>
-          {onLoad === null ? (
+          {boxesEmpty === true ? (
             <>
               <Box height="70%" justifyContent="center" display="flex">
                 <Skeleton variant="rounded" width="95%" height="100%" />
@@ -384,7 +393,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
               </Typography>
             </Box>
           </Box>
-          {onLoad === null ? (
+          {boxesEmpty === true ? (
             <Box
               display="flex"
               justifyContent="center"
@@ -451,7 +460,7 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
                   </IconButton>
                 </Box>*/}
           </Box>
-          {onLoad === null ? (
+          {boxesEmpty === true ? (
             <>
               <Box display="flex" flexDirection="column" m={4} height="80%">
                 <Stack spacing={1}>
@@ -655,4 +664,5 @@ function Item({ user, baseUrl, typeEquipement, setTypeEquipement }) {
     </Box>
   );
 }
+
 export default Item;

@@ -17,7 +17,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-function MaListe({ typeEquipement,boxes,setBoxes }) {
+function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -32,6 +32,7 @@ function MaListe({ typeEquipement,boxes,setBoxes }) {
   const supprimerBox = (id) => {
     const nouvellesBoxes = boxes.filter((box) => box.id !== id);
     setBoxes(nouvellesBoxes);
+    setBoxesChange(true);
   };
 
   const handleDateChange = (id, enteredDate) => {
@@ -47,7 +48,7 @@ function MaListe({ typeEquipement,boxes,setBoxes }) {
       });
 
       setBoxes(updatedBoxes);
-
+      setBoxesChange(true);
     }
   };
 
@@ -60,6 +61,7 @@ function MaListe({ typeEquipement,boxes,setBoxes }) {
         return box;
       });
       setBoxes(updatedBoxes);
+      setBoxesChange(true);
     }
   };
 
@@ -71,6 +73,7 @@ function MaListe({ typeEquipement,boxes,setBoxes }) {
       return box;
     });
     setBoxes(updatedBoxes);
+    setBoxesChange(true);
   };
 
   useEffect(() => {

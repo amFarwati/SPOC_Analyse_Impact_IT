@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Button, TextField, Container, Avatar } from '@mui/material';
+import React, { useState } from "react";
+import { Button, TextField, Container, Avatar } from "@mui/material";
 
 const Profile = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [password, setPassword] = useState('');
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [password, setPassword] = useState("");
   const [profilePic, setProfilePic] = useState(null);
 
   const handleSubmit = (event) => {

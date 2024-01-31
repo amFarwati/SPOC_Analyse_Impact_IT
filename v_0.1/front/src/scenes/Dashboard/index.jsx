@@ -705,7 +705,7 @@ function Dashboard({
             {onLoad === null ? (
               <>
                 <Box justifyContent="center" display="flex" m={4}>
-                  <Skeleton variant="rounded" width="100%" height={330} />
+                  <Skeleton variant="rounded" width="100%" height={230} />
                 </Box>
               </>
             ) : onLoad ? (

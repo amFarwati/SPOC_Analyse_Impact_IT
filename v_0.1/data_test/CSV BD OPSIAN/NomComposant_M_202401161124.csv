@@ -1,0 +1,520 @@
+"idNomComposant";"nomComposant"
+1;Access floor
+2;Acoustic flocking
+3;Actuator
+4;Aggregation WDM (Wavelength Division Multiplexing)
+5;Aggregation router
+6;Air conditioning group 0.8 MW
+7;Air insulated switchgear envelope
+8;Air insulated switchgear module
+9;Alarm
+10;Alimentation externe ordinateur portable
+11;Alimentation externe smartphone et tablette
+12;Articulated lorry transport Euro 0, 1, 2, 3, 4 mix 40 t total weight, 27 t max payload RER
+13;BBU 2G-5G (BTS, NODEB, ENODEB and GNODEB) one card
+14;Backbone WDM (Wavelength Division Multiplexing)
+15;Backbone network EU-28
+16;Backbone network FR
+17;Ballasted column 400 mm diameter
+18;Barcode scanner
+19;Barrier
+20;Baseboard wood
+21;Basement wall
+22;Bituminous primer
+23;Blade server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  16 RAM, 16 GB each  0 GPU
+24;Blade server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+25;Blade server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 4 GB each  0 GPU
+26;Blade server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  24 RAM, 16 GB each  0 GPU
+27;Blade server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 16 GB each  0 GPU
+28;Blade server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 64 GB each  0 GPU
+29;Blade server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+30;Blade server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  16 RAM, 16 GB each  0 GPU
+31;Blade server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+32;Blade server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 4 GB each  0 GPU
+33;Blade server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  24 RAM, 16 GB each  0 GPU
+34;Blade server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 16 GB each  0 GPU
+35;Blade server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 64 GB each  0 GPU
+36;Blade server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+37;Blade server  1 processor low-end  0 SSD: 0 GB each  1 HDD  2 RAM, 16 GB each  0 GPU
+38;Blade server  1 processor low-end  0 SSD: 0 GB each  1 HDD  2 RAM, 4 GB each  0 GPU
+39;Blade server  1 processor low-end  0 SSD: 0 GB each  1 HDD  8 RAM, 16 GB each  0 GPU
+40;Blade server  1 processor low-end  0 SSD: 0 GB each  4 HDD  2 RAM, 16 GB each  0 GPU
+41;Blade server  1 processor low-end  0 SSD: 0 GB each  4 HDD  2 RAM, 4 GB each  0 GPU
+42;Blade server  1 processor low-end  0 SSD: 0 GB each  4 HDD  8 RAM, 16 GB each  0 GPU
+43;Blade server  1 processor low-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+44;Blade server  1 processor low-end  1 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+45;Blade server  1 processor low-end  2 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+46;Blade server  1 processor low-end  2 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+47;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  16 RAM, 16 GB each  0 GPU
+48;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  16 RAM, 16 GB each  1 GPU
+49;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+50;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  1 GPU
+51;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 4 GB each  0 GPU
+52;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 4 GB each  1 GPU
+53;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  24 RAM, 16 GB each  0 GPU
+54;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  24 RAM, 16 GB each  1 GPU
+55;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 16 GB each  0 GPU
+56;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 16 GB each  1 GPU
+57;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 64 GB each  0 GPU
+58;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 64 GB each  1 GPU
+59;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+60;Blade server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  8 RAM, 16 GB each  1 GPU
+61;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  16 RAM, 16 GB each  0 GPU
+62;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  16 RAM, 16 GB each  1 GPU
+63;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+64;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 16 GB each  1 GPU
+65;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 4 GB each  0 GPU
+66;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 4 GB each  1 GPU
+67;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  24 RAM, 16 GB each  0 GPU
+68;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  24 RAM, 16 GB each  1 GPU
+69;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 16 GB each  0 GPU
+70;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 16 GB each  1 GPU
+71;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 64 GB each  0 GPU
+72;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 64 GB each  1 GPU
+73;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+74;Blade server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  1 GPU
+75;Blade servers power supply
+76;Buried insulation
+77;Buried pipeline
+78;Cable Cat 6a
+79;Cable Serial bus
+80;Cable multipair
+81;Cablofil
+82;Capacitive touchscreen LCD display panel, color, high-tech application
+83;Capacitive touchscreen OLED display panel, color
+84;Cash-desk printer
+85;Casing mix of equipment
+86;Central intrusion alarm
+87;Centralized technical management (CTM)
+88;Collection router
+89;Computer monitor 24 inches, LCD
+90;Computer monitor 28 inches, LCD
+91;Computer monitor 39 inches, OLED
+92;Concrete gutter
+93;Concrete slab
+94;Connected device (IoT) Auto - Appliances
+95;Connected device (IoT) Auto - Audio
+96;Connected device (IoT) Auto - Cooking
+97;Connected device (IoT) Auto - Lighting
+98;Connected device (IoT) Auto - Space
+99;Connected device (IoT) Auto - Street lights
+100;Connected device (IoT) Auto - Water heating
+101;Connected device (IoT) Blinds + windows
+102;Connected device (IoT) Comm building control
+103;Connected device (IoT) Gateway - Bus
+104;Connected device (IoT) Gateway - LE to WiFi
+105;Connected device (IoT) Security - Control
+106;Connected device (IoT) Security - Video
+107;Connected device (IoT) Sensors - Health
+108;Connected device (IoT) Sensors - Industry
+109;Connected device (IoT) Sensors - Res-LE
+110;Connected device (IoT) Sensors - Res-WiFi
+111;Connected device (IoT) Smart meters
+112;Connected speaker
+113;Connector RJ45
+114;Container ship ocean technology mix 27.500 dwt pay load capacity RER
+115;Copper braiding (grounding)
+116;Copper cable
+117;DSLAM (Digital Subscriber Line Access Multiplexer)
+118;DVD-ROM Drive
+119;Desktop 1 CPU 126 mm² 14 nm lithography, 4 GB RAM, 256 GB SSD, integrated graphic card
+120;Desktop 1 CPU 149.6 mm² 14 nm lithography, 8 GB RAM, 1000 GB HDD, 256 GB SSD, separated graphic card 363 mm² 28 nm lithography
+121;Desktop 1 CPU 180 mm² 14 nm lithography, 8 GB RAM, 1000 GB HDD, 256 GB SSD, separated graphic card 363 mm² 28 nm lithography
+122;Desktop 1 CPU 192 mm² 14 nm lithography, 16 GB RAM, 2000 GB HDD, 1024 GB SSD, separated graphic card 363 mm² 28 nm lithography
+123;Desktop 1 CPU 192 mm² 14 nm lithography, 16 GB RAM, 2000 GB HDD, 512 GB SSD, separated graphic card 363 mm² 28 nm lithography
+124;Diesel oil combustion in engine, including diesel oil production consumption mix, at consumer 42 MJ/kg net calorific value RER
+125;Diesel oil production mix, at plant RER
+126;Digital price tag - Power unit
+127;Digital price tag - Tag
+128;Digital price tag - Tranceiver
+129;Digital signage display
+130;Dividing wall
+131;Dividing wall glazed
+132;Docking station
+133;Door glazed
+134;Door one leaf
+135;Door steel
+136;Door wood
+137;Download or upload 1 GB of data, via a fixed-line connection, end-user equipment not included FR
+138;Download or upload 1 GB of data, via a mobile connection, end-user equipment not included FR
+139;Drain
+140;Drinking water water purification treatment production mix, at plant from groundwater RER
+141;Dual-flow ventilation
+142;Duckboard
+143;Duct
+144;Edging
+145;Electric cabinet
+146;Electric convection heater
+147;Electric panel
+148;Electricity Mix Production mix Low voltage BE
+149;Electricity Mix Production mix Low voltage CN
+150;Electricity Mix Production mix Low voltage DE
+151;Electricity Mix Production mix Low voltage DK
+152;Electricity Mix Production mix Low voltage FI
+153;Electricity Mix Production mix Low voltage FR
+154;Electricity Mix Production mix Low voltage NL
+155;Electricity Mix Production mix Low voltage UE-27
+156;Electricity Mix Production mix Low voltage UK
+157;Electricity Mix Production mix Low voltage US
+158;Emergency lighting unit
+159;Empty 42U bay
+160;External solid State Drive (SSD) 2,5, TLC, 1024 Go  production mix, at plant CN
+161;External solid State Drive (SSD) 2,5, TLC, 2048 Go  production mix, at plant CN
+162;External solid State Drive (SSD) 2,5, TLC, 256 Go  production mix, at plant CN
+163;Extraction tower
+164;False floor
+165;Fan
+166;Feature phone
+167;Fence
+168;Fence and barrier wire mesh
+169;Fire detection station
+170;Firewall
+171;Fixed-line network at consumer xDSL, FFTx average mix  EU-28
+172;Fixed-line network at consumer xDSL, FFTx average mix  FR
+173;Flexible covering
+174;Flexicooling air conditioning cabinet
+175;Flexicooling air conditioning crate
+176;Frame
+177;Generator 1136 kVA
+178;Girder galvanized steel
+179;Grid curtain wall
+180;Hard disk drive mix of 2.5 and 3.5, mix of aluminium and glass disks
+181;Home console
+182;IAD (Integrated Access Device) / CPE (Customer Premise Equipment) router
+183;IAD router with ONT/SFP
+184;IAD/CPE cable router
+185;IAD/CPE router without ONT (Optical Network Termination) / SFP (Small Form-factor-Pluggable)
+186;Impacts related to an IT department employee over a day FR
+187;Impacts related to an employee over a day FR
+188;Impacts related to one square meter of IT department office over a year FR
+189;Impermeability
+190;Insulation
+191;Insulation lining
+192;Integrated tank
+193;Interior light
+194;Landline phone
+195;Laptop 14.5 inches display, 1 CPU 126 mm² 14 nm lithography, 8 GB RAM, 564 GB SSD, integrated graphic card
+196;Laptop 14.5 inches display, 1 CPU 156 mm² 7 nm lithography, 13 GB RAM, 427 GB SSD, integrated graphic card
+197;Laptop 15.6 inches display, 1 CPU 126 mm² 14 nm lithography, 16 GB RAM, 512 GB SSD, separated graphic card 445 mm² 12 nm lithography
+198;Lead battery 300 kVA
+199;Lead battery 33 kVA
+200;Lead battery 60 kVA
+201;Lift
+202;Light
+203;Light fuel oil at refinery from crude oil, fuel supply production mix, at refinery 0.1 wt.% sulphur EU-27
+204;Light fuel oil combustion in 1 MW boiler consumption mix, at consumer RER
+205;MME (Mobility Management Entity) /SGSN (Serving GPRS support node)
+206;Mobile network at consumer 2G, 3G, 4G, 5G average mix  EU-28
+207;Mobile network at consumer 2G, 3G, 4G, 5G average mix  FR
+208;Motherboard mix of equipment, without processor or RAM
+209;Motion sensor
+210;Nozzle
+211;OAN (Optical Access Node) and/or MDF (Main Distribution Frame ) site collection router/switch
+212;OLED display panel, color
+213;OLT (Optical Line Termination)
+214;ONT (external)
+215;Optical fibre – 12 strands
+216;Optical fibre – 144 strands
+217;Optical fibre – 2 strands
+218;Optical fibre – 24 strands
+219;Optical fibre – 288 strands
+220;Optical fibre – 48 strands
+221;Optical fibre – 576 strands
+222;Optical fibre – 72 strands
+223;Optical fibre – 720 strands
+224;Optical fibre – 96 strands
+225;P-PE-Peering router
+226;Paint
+227;Paper production mix, at plant from virgin fiber
+228;Paper production mix, at plant without deinking, 100% recycled, from waste paper
+229;Passive multiband antenna (1.4m to 2.7m)
+230;Perforated tiles
+231;Personnal laser printer
+232;Photovoltaic panel mono 300 Wc
+233;Plane technology mix, cargo 68 t payload RER
+234;Portable console
+235;Portal motorized
+236;Post galvanized steel
+237;Power socket
+238;Power supply unit (PSU), computers, rack and mainframe servers input AC 100-240V, output DC 12V
+239;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 101,83 mm² die area, 58 masks, 14 nm photolithography
+240;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 122,3 mm² die area, 58 masks, 14 nm photolithography
+241;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 126 mm² die area, 58 masks, 14 nm photolithography
+242;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 131 mm² die area, 54 masks, 22 nm photolithography
+243;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 149.6 mm² die area, 58 masks, 14 nm photolithography
+244;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 174 mm² die area, 58 masks, 14 nm photolithography
+245;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 177mm² die area, 54 masks, 22 nm photolithography
+246;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 181mm² die area, 54 masks, 22 nm photolithography
+247;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 182 mm² die area, 58 masks, 14 nm photolithography
+248;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 246 mm² die area, 58 masks, 14 nm photolithography
+249;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 246,24mm² die area, 58 masks, 14 nm photolithography
+250;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 260mm² die area, 54 masks, 22 nm photolithography
+251;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 306,18mm² die area, 58 masks, 14 nm photolithography
+252;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 325,44mm² die area, 58 masks, 14 nm photolithography
+253;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 355.52mm² die area, 54 masks, 22 nm photolithography
+254;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 456,12mm² die area, 58 masks, 14 nm photolithography
+255;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 485 mm² die area, 58 masks, 14 nm photolithography
+256;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 622 mm² die area, 54 masks, 22 nm photolithography
+257;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 694 mm² die area, 58 masks, 14 nm photolithography
+258;Processor, DRAM, 2D and 3D NAND type semiconductor silicon substrate, PBGA/TFBGA/VFBGA encapsulation, 82 mm² die area, 58 masks, 14 nm photolithography
+259;Professional laser printer
+260;R134a leakage
+261;R410a leakage
+262;Rack server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  16 RAM, 16 GB each  0 GPU
+263;Rack server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+264;Rack server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 4 GB each  0 GPU
+265;Rack server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  24 RAM, 16 GB each  0 GPU
+266;Rack server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 16 GB each  0 GPU
+267;Rack server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 64 GB each  0 GPU
+268;Rack server  1 processor high-end  1 SSD: 1024 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+269;Rack server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  16 RAM, 16 GB each  0 GPU
+270;Rack server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+271;Rack server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 4 GB each  0 GPU
+272;Rack server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  24 RAM, 16 GB each  0 GPU
+273;Rack server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 16 GB each  0 GPU
+274;Rack server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 64 GB each  0 GPU
+275;Rack server  1 processor high-end  4 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+276;Rack server  1 processor low-end  0 SSD: 0 GB each  1 HDD  2 RAM, 16 GB each  0 GPU
+277;Rack server  1 processor low-end  0 SSD: 0 GB each  1 HDD  2 RAM, 4 GB each  0 GPU
+278;Rack server  1 processor low-end  0 SSD: 0 GB each  1 HDD  8 RAM, 16 GB each  0 GPU
+279;Rack server  1 processor low-end  0 SSD: 0 GB each  4 HDD  2 RAM, 16 GB each  0 GPU
+280;Rack server  1 processor low-end  0 SSD: 0 GB each  4 HDD  2 RAM, 4 GB each  0 GPU
+281;Rack server  1 processor low-end  0 SSD: 0 GB each  4 HDD  8 RAM, 16 GB each  0 GPU
+282;Rack server  1 processor low-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+283;Rack server  1 processor low-end  1 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+284;Rack server  1 processor low-end  2 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+285;Rack server  1 processor low-end  2 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+286;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  16 RAM, 16 GB each  0 GPU
+287;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  16 RAM, 16 GB each  1 GPU
+288;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+289;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 16 GB each  1 GPU
+290;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 4 GB each  0 GPU
+291;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  2 RAM, 4 GB each  1 GPU
+292;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  24 RAM, 16 GB each  0 GPU
+293;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  24 RAM, 16 GB each  1 GPU
+294;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 16 GB each  0 GPU
+295;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 16 GB each  1 GPU
+296;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 64 GB each  0 GPU
+297;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  48 RAM, 64 GB each  1 GPU
+298;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+299;Rack server  2 processor high-end  1 SSD: 1024 GB each  0 HDD  8 RAM, 16 GB each  1 GPU
+300;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  16 RAM, 16 GB each  0 GPU
+301;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  16 RAM, 16 GB each  1 GPU
+302;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 16 GB each  0 GPU
+303;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 16 GB each  1 GPU
+304;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 4 GB each  0 GPU
+305;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  2 RAM, 4 GB each  1 GPU
+306;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  24 RAM, 16 GB each  0 GPU
+307;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  24 RAM, 16 GB each  1 GPU
+308;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 16 GB each  0 GPU
+309;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 16 GB each  1 GPU
+310;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 64 GB each  0 GPU
+311;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  48 RAM, 64 GB each  1 GPU
+312;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  0 GPU
+313;Rack server  2 processor high-end  4 SSD: 2048 GB each  0 HDD  8 RAM, 16 GB each  1 GPU
+314;Random-access memory, RAM DDR5, 128GB production mix, at plant CN
+315;Random-access memory, RAM DDR5, 16GB production mix, at plant CN
+316;Random-access memory, RAM DDR5, 2GB production mix, at plant CN
+317;Random-access memory, RAM DDR5, 32GB production mix, at plant CN
+318;Random-access memory, RAM DDR5, 4GB production mix, at plant CN
+319;Random-access memory, RAM DDR5, 64GB production mix, at plant CN
+320;Random-access memory, RAM DDR5, 8GB production mix, at plant CN
+321;Refrigerant production mix
+322;Retaining wall
+323;Retention reservoir
+324;Ribbon
+325;Road
+326;SP-GW (Serving/PDN-Gateway)/GGSN (Gateway GPRS Support Node)
+327;Search for an information with a search engine, consulting 2 pages of results, with a fixed-line connection, 50% desktop computer, 50% laptop computer FR
+328;Search for an information with a search engine, consulting 2 pages of results, with a mobile connection, 15% tablet, 85% smartphone FR
+329;Security Gateway 4G/5G
+330;Self-contained emergency lighting unit
+331;Set top box
+332;Set up a audioconference audio only, between 2 persons, with a fixed-line connection, laptop FR
+333;Set up a audioconference audio only, between 2 persons, with a mobile connection, smartphone FR
+334;Set up a audioconference audio only, between 20 persons, with a fixed-line connection, laptop FR
+335;Set up a audioconference audio only, between 20 persons, with a mobile connection, smartphone FR
+336;Set up a webconference between 2 persons, with a fixed-line connection, laptop FR
+337;Set up a webconference between 2 persons, with a mobile connection, smartphone FR
+338;Set up a webconference between 20 persons, with a fixed-line connection, laptop FR
+339;Set up a webconference between 20 persons, with a mobile connection, smartphone FR
+340;Shaft fan
+341;Siphon
+342;Smartphone 6.57 inches display OLED, 1 CPU 101.66 mm² 8 nm lithography, 7 GB RAM, 160 GB SSD
+343;Smartphone 6.59 inches display LCD, 1 CPU 101.66 mm² 12 nm lithography, 6 GB RAM, 128 GB SSD
+344;Smartphone 6.72 inches display OLED, 1 CPU 101.66 mm² 7 nm lithography, 11 GB RAM, 341 GB SSD
+345;Smoke detector
+346;Solid State Drive (SSD) 2,5, MLC, 1024 Go  production mix, at plant CN
+347;Solid State Drive (SSD) 2,5, MLC, 2048 Go  production mix, at plant CN
+348;Solid State Drive (SSD) 2,5, MLC, 256 Go  production mix, at plant CN
+349;Solid State Drive (SSD) 2,5, QLC, 1024 Go  production mix, at plant CN
+350;Solid State Drive (SSD) 2,5, QLC, 2048 Go  production mix, at plant CN
+351;Solid State Drive (SSD) 2,5, QLC, 256 Go  production mix, at plant CN
+352;Solid State Drive (SSD) 2,5, SLC, 1024 Go  production mix, at plant CN
+353;Solid State Drive (SSD) 2,5, SLC, 2048 Go  production mix, at plant CN
+354;Solid State Drive (SSD) 2,5, SLC, 256 Go  production mix, at plant CN
+355;Solid State Drive (SSD) 2,5, TLC, 1024 Go  production mix, at plant CN
+356;Solid State Drive (SSD) 2,5, TLC, 2048 Go  production mix, at plant CN
+357;Solid State Drive (SSD) 2,5, TLC, 256 Go  production mix, at plant CN
+358;Stairs concrete
+359;Stairs galvanized steel
+360;Storage bay  24 disks - HDD
+361;Storage bay  24 disks - MLC, 1024 GB
+362;Storage bay  24 disks - MLC, 2048 GB
+363;Storage bay  24 disks - MLC, 256 GB
+364;Storage bay  24 disks - QLC, 1024 GB
+365;Storage bay  24 disks - QLC, 2048 GB
+366;Storage bay  24 disks - QLC, 256 GB
+367;Storage bay  24 disks - SLC, 1024 GB
+368;Storage bay  24 disks - SLC, 2048 GB
+369;Storage bay  24 disks - SLC, 256 GB
+370;Storage bay  24 disks - TLC, 1024 GB
+371;Storage bay  24 disks - TLC, 2048 GB
+372;Storage bay  24 disks - TLC, 256 GB
+373;Storage bay  48 disks - HDD
+374;Storage bay  48 disks - MLC, 1024 GB
+375;Storage bay  48 disks - MLC, 2048 GB
+376;Storage bay  48 disks - MLC, 256 GB
+377;Storage bay  48 disks - QLC, 1024 GB
+378;Storage bay  48 disks - QLC, 2048 GB
+379;Storage bay  48 disks - QLC, 256 GB
+380;Storage bay  48 disks - SLC, 1024 GB
+381;Storage bay  48 disks - SLC, 2048 GB
+382;Storage bay  48 disks - SLC, 256 GB
+383;Storage bay  48 disks - TLC, 1024 GB
+384;Storage bay  48 disks - TLC, 2048 GB
+385;Storage bay  48 disks - TLC, 256 GB
+386;Store in the cloud 1 GB of data, for 1 year, via a fixed-line connection, end-user equipment not included FR
+387;Store in the cloud 1 GB of data, for 1 year, via a mobile connection, end-user equipment not included FR
+388;Store in the cloud 1 GB of data, for 10 year, via a fixed-line connection, end-user equipment not included FR
+389;Store in the cloud 1 GB of data, for 10 year, via a mobile connection, end-user equipment not included FR
+390;Switch
+391;Switch/Router  12 ports per U  1 processors  48 GB RAM
+392;Switch/Router  12 ports per U  2 processors  256 GB RAM
+393;Switch/Router  16 ports per U  1 processors  512 GB RAM
+394;Switch/Router  16 ports per U  1 processors  8 GB RAM
+395;Switch/Router  24 ports per U  1 processors  2 GB RAM
+396;Switch/Router  24 ports per U  1 processors  4 GB RAM
+397;Switch/Router  24 ports per U  1 processors  512 GB RAM
+398;Switch/Router  40 ports per U  1 processors  512 GB RAM
+399;Switch/Router  48 ports per U  1 processors  16 GB RAM
+400;Switch/Router  48 ports per U  1 processors  2 GB RAM
+401;Switch/Router  48 ports per U  1 processors  24 GB RAM
+402;Switch/Router  48 ports per U  1 processors  4 GB RAM
+403;Switch/Router  48 ports per U  1 processors  512 GB RAM
+404;Switch/Router  64 ports per U  1 processors  16 GB RAM
+405;Switch/Router  72 ports per U  1 processors  16 GB RAM
+406;Switch/Router  72 ports per U  1 processors  4 GB RAM
+407;Switch/Router  72 ports per U  1 processors  8 GB RAM
+408;Switch/Router  8 ports per U  1 processors  32 GB RAM
+409;Switch/Router  8 ports per U  1 processors  512 GB RAM
+410;Switch/Router  8 ports per U  1 processors  8 GB RAM
+411;Switch/Router  8 ports per U  2 processors  32 GB RAM
+412;TFT LCD display panel, color
+413;Tablet 10.2 inches display LCD, 1 CPU 125 mm² 16 nm lithography, 4 GB RAM, 32 GB SSD
+414;Tablet 10.3 inches display LCD, 1 CPU 125 mm² 16 nm lithography, 4 GB RAM, 256 GB SSD
+415;Tablet 11.1 inches display LCD, 1 CPU 83,27 mm² 7 nm lithography, 6 GB RAM, 512 GB SSD
+416;Television 45 inches, LCD
+417;Television 53 inches, OLED
+418;Television 68 inches, OLED
+419;Tiling
+420;Toner
+421;Train for freight transport technology mix electricity RER
+422;Transformer 1250 kVA
+423;Typical datacenter FR
+424;Typical datacenter, architecture FR
+425;Typical datacenter, non-IT equipment FR
+426;USB key 128 GB capacity TLC
+427;USB key 16 GB capacity TLC
+428;USB key 32 GB capacity TLC
+429;Under slab
+430;Under-tile waterproofing system - SEL
+431;Under-tile waterproofing system - SPEC
+432;Uninterruptible power supply (UPS) 300 kVA
+433;Uninterruptible power supply (UPS) 33 KTL
+434;Uninterruptible power supply (UPS) 60 KTL
+435;Variable Refrigerant Volume (VRV), external unit
+436;Variable Refrigerant Volume (VRV), internal unit
+437;Video card, 1070 g, 302 cm² PWB, 251 mm² die, 75 mask layers, 7 nm lithography
+438;Video card, 1280 g, 310 cm² PWB, 545 mm² die, 64 mask layers, 12 nm lithography
+439;Video card, 1280 g, 310 cm² PWB, 754 mm² die, 64 mask layers, 12 nm lithography
+440;Video card, 1370 g, 271 cm² PWB, 392 mm² die, 70 mask layers, 8 nm lithography
+441;Video card, 1520 g, 320 cm² PWB, 520 mm² die, 75 mask layers, 7 nm lithography
+442;Video card, 1530 g, 319 cm² PWB, 628 mm² die, 70 mask layers, 8 nm lithography
+443;Video card, 2040 g, 259 cm² PWB, 445 mm² die, 64 mask layers, 12 nm lithography
+444;Video card, 298 g, 197 cm² PWB, 123 mm² die, 58 mask layers, 14 nm lithography
+445;Video card, 501 g, 162 cm² PWB, 103 mm² die, 58 mask layers, 14 nm lithography
+446;Video card, 590 g, 280 cm² PWB, 232 mm² die, 58 mask layers, 14 nm lithography
+447;Video card, 814 g, 299 cm² PWB, 314 mm² die, 55 mask layers, 16 nm lithography
+448;Video card, 865 g, 311 cm² PWB, 495 mm² die, 58 mask layers, 14 nm lithography
+449;Video card, 875 g, 280 cm² PWB, 232 mm² die, 64 mask layers, 12 nm lithography
+450;Video card, 898 g, 333 cm² PWB, 314 mm² die, 55 mask layers, 16 nm lithography
+451;Video card, 898 g, 333 cm² PWB, 471 mm² die, 55 mask layers, 16 nm lithography
+452;Video card, 940 g, 337 cm² PWB, 232 mm² die, 58 mask layers, 14 nm lithography
+453;Video card, 962 g, 316 cm² PWB, 158 mm² die, 75 mask layers, 7 nm lithography
+454;Wafer substrat silicium 20 masques Chine
+455;Wafer substrat silicium 20 masques EU-28
+456;Wafer substrat silicium 20 masques FR
+457;Wafer substrat silicium 20 masques TW
+458;Wafer substrat silicium 29 masques, 130 nm photolithography Chine
+459;Wafer substrat silicium 29 masques, 130 nm photolithography EU-28
+460;Wafer substrat silicium 29 masques, 130 nm photolithography FR
+461;Wafer substrat silicium 29 masques, 130 nm photolithography TW
+462;Wafer substrat silicium 33 masques, 90 nm photolithography Chine
+463;Wafer substrat silicium 33 masques, 90 nm photolithography EU-28
+464;Wafer substrat silicium 33 masques, 90 nm photolithography FR
+465;Wafer substrat silicium 33 masques, 90 nm photolithography TW
+466;Wafer substrat silicium 40 masques Chine
+467;Wafer substrat silicium 40 masques EU-28
+468;Wafer substrat silicium 40 masques FR
+469;Wafer substrat silicium 40 masques TW
+470;Wafer substrat silicium 42 masques, 45 nm photolithography Chine
+471;Wafer substrat silicium 42 masques, 45 nm photolithography EU-28
+472;Wafer substrat silicium 42 masques, 45 nm photolithography FR
+473;Wafer substrat silicium 42 masques, 45 nm photolithography TW
+474;Wafer substrat silicium 50 masques, 28 nm photolithography Chine
+475;Wafer substrat silicium 50 masques, 28 nm photolithography EU-28
+476;Wafer substrat silicium 50 masques, 28 nm photolithography FR
+477;Wafer substrat silicium 50 masques, 28 nm photolithography TW
+478;Wafer substrat silicium 54 masques, 22 nm photolithography Chine
+479;Wafer substrat silicium 54 masques, 22 nm photolithography EU-28
+480;Wafer substrat silicium 54 masques, 22 nm photolithography FR
+481;Wafer substrat silicium 54 masques, 22 nm photolithography TW
+482;Wafer substrat silicium 55 masques, 16 nm photolithography Chine
+483;Wafer substrat silicium 55 masques, 16 nm photolithography EU-28
+484;Wafer substrat silicium 55 masques, 16 nm photolithography FR
+485;Wafer substrat silicium 55 masques, 16 nm photolithography TW
+486;Wafer substrat silicium 58 masques, 14 nm photolithography Chine
+487;Wafer substrat silicium 58 masques, 14 nm photolithography EU-28
+488;Wafer substrat silicium 58 masques, 14 nm photolithography FR
+489;Wafer substrat silicium 58 masques, 14 nm photolithography TW
+490;Wafer substrat silicium 64 masques, 12 nm EUV lithography Chine
+491;Wafer substrat silicium 64 masques, 12 nm EUV lithography EU-28
+492;Wafer substrat silicium 64 masques, 12 nm EUV lithography FR
+493;Wafer substrat silicium 64 masques, 12 nm EUV lithography TW
+494;Wafer substrat silicium 70 masques, 5 ou 8 nm EUV lithography Chine
+495;Wafer substrat silicium 70 masques, 5 ou 8 nm EUV lithography EU-28
+496;Wafer substrat silicium 70 masques, 5 ou 8 nm EUV lithography FR
+497;Wafer substrat silicium 70 masques, 5 ou 8 nm EUV lithography TW
+498;Wafer substrat silicium 75 masques, 7 nm EUV lithography Chine
+499;Wafer substrat silicium 75 masques, 7 nm EUV lithography EU-28
+500;Wafer substrat silicium 75 masques, 7 nm EUV lithography FR
+501;Wafer substrat silicium 75 masques, 7 nm EUV lithography TW
+502;Wall, floor, ceiling coating wood
+503;Wastewater network
+504;Watch 1 hour of streaming video 1080p, 60 fps, via a fixed-line connection, 82% television, 18% laptop FR
+505;Watch 1 hour of streaming video 1080p, 60 fps, via a mobile connection, 67% tablet, 33% smartphone FR
+506;Watch 1 hour of streaming video 4k, 60 fps, via a fixed-line connection, 82% television, 18% laptop FR
+507;Watch 1 hour of streaming video 4k, 60 fps, via a mobile connection, 67% tablet, 33% smartphone FR
+508;Watch 1 hour of streaming video 720p, 30 fps, via a fixed-line connection, 82% television, 18% laptop FR
+509;Watch 1 hour of streaming video 720p, 30 fps, via a mobile connection, 67% tablet, 33% smartphone FR
+510;WiFi hotspot
+511;Wireless barcode scanner
+512;Write, send and read an email 1MB size, to five recipient, with a fixed-line connection, 50% desktop computer, 50% laptop computer, 10-year storage with 3 redundancies on the sender and receiver sides FR
+513;Write, send and read an email 1MB size, to five recipient, with a mobile connection, 15% tablet, 85% smartphone, 10-year storage with 3 redundancies on the sender and receiver sides FR
+514;Write, send and read an email 1MB size, to one recipient, with a fixed-line connection, 50% desktop computer, 50% laptop computer, 10-year storage with 3 redundancies on the sender and receiver sides FR
+515;Write, send and read an email 1MB size, to one recipient, with a mobile connection, 15% tablet, 85% smartphone, 10-year storage with 3 redundancies on the sender and receiver sides FR
+516;Write, send and read an email 7kB size, to five recipient, with a fixed-line connection, 50% desktop computer, 50% laptop computer, 10-year storage with 3 redundancies on the sender and receiver sides FR
+517;Write, send and read an email 7kB size, to five recipient, with a mobile connection, 15% tablet, 85% smartphone, 10-year storage with 3 redundancies on the sender and receiver sides FR
+518;Write, send and read an email 7kB size, to one recipient, with a fixed-line connection, 50% desktop computer, 50% laptop computer, 10-year storage with 3 redundancies on the sender and receiver sides FR
+519;Write, send and read an email 7kB size, to one recipient, with a mobile connection, 15% tablet, 85% smartphone, 10-year storage with 3 redundancies on the sender and receiver sides FR

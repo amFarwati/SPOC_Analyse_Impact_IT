@@ -2,7 +2,7 @@ import { useTheme,Typography } from "@mui/material";
 import { useState } from 'react';
 import {ResponsiveLine} from "@nivo/line";
 import {tokens} from "../theme";
-import InfoButton from "./infoButton";
+import InfoButton from "./InfoButton.jsx";
 import Box from '@mui/material/Box';
 import AirIcon from '@mui/icons-material/Air';
 import MasksIcon from '@mui/icons-material/Masks';

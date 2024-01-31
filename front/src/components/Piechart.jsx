@@ -1,7 +1,7 @@
 import { Typography,useTheme } from "@mui/material";
 import {ResponsivePie} from "@nivo/pie";
 import {tokens} from "../theme";
-import InfoButton from "./infoButton";
+import InfoButton from "./InfoButton.jsx";
 import Box from '@mui/material/Box';
 import AirIcon from '@mui/icons-material/Air';
 import MasksIcon from '@mui/icons-material/Masks';

@@ -9,7 +9,7 @@ import {ResponsiveBar} from "@nivo/bar";
 import {tokens} from "../theme";
 import Stack from '@mui/material/Stack';
 
-import InfoButton from "./infoButton";
+import InfoButton from "./InfoButton.jsx";
 import AirIcon from '@mui/icons-material/Air';
 import MasksIcon from '@mui/icons-material/Masks';
 import WifiIcon from '@mui/icons-material/Wifi';

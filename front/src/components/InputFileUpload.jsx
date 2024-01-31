@@ -7,7 +7,7 @@ import {Button,useTheme} from '@mui/material';
 import dayjs from 'dayjs';
 import 'dayjs/locale/fr';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { tokens } from "../theme";
+import { tokens } from "../theme.js";
 import UploadOutlinedIcon from "@mui/icons-material/UploadOutlined"
 
 

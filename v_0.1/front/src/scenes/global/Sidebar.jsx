@@ -100,7 +100,7 @@ function Sidebar({ user, serveur }) {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  INSA Lyon
+                  {user}
                 </Typography>
                 <Typography
                   variant="h5"

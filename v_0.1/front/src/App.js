@@ -47,7 +47,8 @@ function App() {
     return savedData;
   });
 
-  const login = "user_1";
+  const [login, setLogin] = useState("user_1");
+  const [token, setToken] = useState("");
   //const baseUrl = `http://insa-numimpact-01.insa-lyon.fr/server`;
   const baseUrl = `http://localhost:4000`;
 
@@ -140,9 +141,9 @@ function App() {
                       />
                     }
                   />
-                  <Route path="/connexion" element={<Login />} />
+                  <Route path="/connexion" element={<Login setLogin={ setLogin } setToken={ setToken } />} />
                   <Route path="/profile" element={<Profile />} />
-                  <Route path="/inscription" element={<Inscription />} />
+                  <Route path="/inscription" element={<Inscription setLogin={ setLogin } setToken={ setToken }/>} />
                   <Route path="*" element={<Navigate to="/selection" replace />} />
                 </Routes>
               </Box>

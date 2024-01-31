@@ -30,12 +30,12 @@ const port = argv.port;
 var liste_reference = null;
 
 const OPSIAN_db = mysql.createConnection({
-  host: "localhost",
-  //user: "numuser",
+  host: "numuser",
+  //user: "localhost",
   user: "root",
   password: "spocBDD",
-  //database: "SPOC_Analyse_Impact_IT",
-  database: "opsian",
+  //database: "opsian",
+  database: "SPOC_Analyse_Impact_IT",
 });
 
 OPSIAN_db.connect(function (err) {

@@ -14,11 +14,12 @@ import { Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
-const Login = () => {
+const Login = ({ setLogin,setToken,server_URL }) => {
   const [mail, setMail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [waitingRes, setWaitingRes] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -99,7 +100,7 @@ const Login = () => {
               variant="contained"
               color="primary"
               style={{ marginTop: "20px", fontSize: "20px" }}
-              disabled={!mail || !password || emailError}
+              disabled={!mail || !password || emailError || waitingRes}
             >
               Connexion
             </Button>

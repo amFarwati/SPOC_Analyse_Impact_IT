@@ -13,8 +13,9 @@ import {
 import { Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import axios from "redaxios";
 
-const Inscription = () => {
+const Inscription = ({ setLogin,setToken,server_URL }) => {
   const [mail, setMail] = useState("");
   const [emailError, setEmailError] = useState("");
   const [password, setPassword] = useState("");
@@ -25,12 +26,35 @@ const Inscription = () => {
   const [hasLetter, setHasLetter] = useState(false);
   const [hasUppercase, setHasUppercase] = useState(false);
   const [hasMinLength, setHasMinLength] = useState(false);
+  const [waitingRes, setWaitingRes] = useState(false);
 
   const passwordsMatch = password === confirmPassword;
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // Gérer la soumission du formulaire ici
+
+    setWaitingRes(true);
+
+    console.log(`inscription de ${mail} avec le mot de passe ${password}`);
+    setLogin(mail);
+
+
+    console.log(`/setUser ${server_URL} ${mail} =>`);
+    axios
+      .get(`${server_URL}/getImpact/${mail}`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+
+      })
+      .catch((error) => {
+        // Gestion des erreurs
+        console.error("Erreur de redaxios:", error.message);
+        setWaitingRes(false);
+      });
+
+
   };
 
   const checkPassword = (password) => {
@@ -155,7 +179,8 @@ const Inscription = () => {
                 !hasNumber ||
                 !hasSpecialChar ||
                 !hasUppercase ||
-                emailError
+                emailError ||
+                waitingRes
               }
             >
               S'inscrire

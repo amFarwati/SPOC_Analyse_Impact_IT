@@ -1,10 +1,12 @@
 import React from "react";
-import { Box, Typography, Slide, Grid } from "@mui/material";
+import { Box, Typography, Grow, Grid } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import backgroundImage from "./fond3.jpg";
 import Maxime from "../../Assets/Maxime.jpg"
 import Arthur from "../../Assets/Arthur.jpg"
 import HBC from "../../Assets/HBC.jpg"
+import Insa from "../../Assets/INSA.png"
+import Ruche from "../../Assets/Ruche.png"
 
 
 const Accueil = () => {
@@ -24,18 +26,18 @@ const Accueil = () => {
         }}
       >
         <Box sx={{ p: 8, color: "#000000", textAlign: "center" }}>
-          <Slide direction="down" in={true} timeout={2000}>
+          <Grow direction="right" in={true} timeout={2000}>
             <Typography variant="h2" component="h1" gutterBottom style={{ fontSize: "3rem", fontWeight: "bold" }}>
               OPSIAN
             </Typography>
-          </Slide>
-          <Slide direction="down" in={true} timeout={2000}>
+          </Grow>
+          <Grow direction="right" in={true} timeout={2000}>
             <Typography variant="h6" component="h2" gutterBottom style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
             OPen Source Impact ANalyzer, est une solution d'analyse d'impact IT qui permet aux utilisateurs d'avoir une idée de leur impact environnemental concernant leur parc informatique.
 
 
             </Typography>
-          </Slide>
+          </Grow>
           <Box
             sx={{
               mt: 4,
@@ -50,7 +52,7 @@ const Accueil = () => {
             </Typography>
             <Typography variant="body1" gutterBottom>
             Nous sommes deux étudiants de l'INSA Lyon, spécialité Télécommunications Services & usages. Pendant nos études, avons pu faire un projet en partenariat avec une entreprise pour concevoir une Sustainable Proof Of Concept ou SPOC.
-            C'est Hugues Benoit-Cattin, notre référent à l'INSA et à La Riche Industrielle, qui nous a présenté les objectifs que devait atteindre notre analyseur d'impact informatique.            </Typography>
+            C'est Hugues Benoit-Cattin, notre référent à l'INSA et à La Ruche Industrielle, qui nous a présenté les objectifs que devait atteindre notre analyseur d'impact informatique.            </Typography>
           </Box>
           <Box sx={{ display: "flex", justifyContent: "center", marginTop: "2rem" }}>
             <Box sx={{ marginRight: "1rem" }}>
@@ -100,3 +102,4 @@ const Accueil = () => {
 };
 
 export default Accueil;
+

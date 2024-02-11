@@ -14,7 +14,8 @@ import { tokens } from "../../theme";
 import Linechart from "../../components/Linechart";
 import Barchart from "../../components/Barchart";
 import Piechart from "../../components/Piechart";
-import DownloadingRoundedIcon from "@mui/icons-material/DownloadingRounded";
+import RestartAltRoundedIcon from "@mui/icons-material/RestartAltRounded";
+import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 import CircularProgress from "@mui/material/CircularProgress";
 import AirIcon from "@mui/icons-material/Air";
 import MasksIcon from "@mui/icons-material/Masks";
@@ -72,12 +73,6 @@ function Dashboard({
   ];
 
   const formatageCout = (coutJSON) => {
-    /*coutJSON tel que 
-            FABRICATION : [0,0,0,0,0],
-            DISTRIBUTION : [0,0,0,0,0],
-            UTILISATION : [0,0,0,0,0],
-            FIN_DE_VIE : [0,0,0,0,0]
-        */
     setUse(coutJSON.UTILISATION);
     setFab(coutJSON.FABRICATION);
     setDistrib(coutJSON.DISTRIBUTION);
@@ -195,22 +190,37 @@ function Dashboard({
               display="flex"
               justifyContent="space-between"
               alignItems="center"
-              width={600}
+              width={1000}
             >
               <InputFileUpload setIsUpload={setIsUpload} />
               <Button
                 component="label"
                 sx={{
-                  backgroundColor: colors.blueAccent[700],
+                  backgroundColor: colors.blueAccent[800],
                   color: colors.grey[100],
                   fontSize: "14px",
                   fontWeight: "bold",
                   padding: "10px 20px",
                 }}
                 onClick={handleImpactRequest}
-                startIcon={<DownloadingRoundedIcon sx={{ mr: "10px" }} />}
+                startIcon={<RestartAltRoundedIcon sx={{ mr: "10px" }} />}
               >
                 Charger le dernier inventaire
+              </Button>
+              <Button
+                component="label"
+                sx={{
+                  backgroundColor: colors.greenAccent[700],
+                  color: colors.grey[100],
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  padding: "10px 20px",
+                }}
+                startIcon={<DownloadOutlinedIcon sx={{ mr: "10px" }} />}
+                onClick={() => window.open("./Modèle_de_demo.ods", "_blank")}
+                title="Téléchargement d'un modèle de demo"
+              >
+                Modèle de démo
               </Button>
             </Box>
           </Box>

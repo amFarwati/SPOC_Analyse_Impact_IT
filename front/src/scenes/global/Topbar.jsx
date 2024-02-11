@@ -36,10 +36,14 @@ function Topbar() {
         </Box>
         <Box display="flex" alignItems="center" ml={5} width={300}>
           <Box sx={{ width: "65%" }}>
-            <img width="100%" src={logo_INSA} />
+            <img width="100%" alt="logo de l'insa Lyon" src={logo_INSA} />
           </Box>
           <Box sx={{ width: "35%" }}>
-            <img width="100%" src={logo_RUCHE} />
+            <img
+              width="100%"
+              alt=" logo de la Ruche Industrielle"
+              src={logo_RUCHE}
+            />
           </Box>
         </Box>
       </Box>
@@ -48,14 +52,21 @@ function Topbar() {
       <Box display="flex" justifyContent="center" alignItems="center">
         {/* Aligner à droite */}
         <Box sx={{ marginLeft: "auto" }}>
-          <IconButton title="Mode sombre/jour" onClick={colorMode.toggleColorMode}>
+          <IconButton
+            title="Mode sombre/jour"
+            onClick={colorMode.toggleColorMode}
+          >
             {theme.palette.mode === "dark" ? (
               <DarkModeOutlinedIcon />
             ) : (
               <LightModeOutlinedIcon />
             )}
           </IconButton>
-          <IconButton href="./Modèle_de_demo.ods" download title="Téléchargement d'un modèle de demo">
+          <IconButton
+            href="./Templates_prepares.zip"
+            download
+            title="Téléchargement de templates préparés"
+          >
             <DownloadOutlinedIcon />
           </IconButton>
           <IconButton>

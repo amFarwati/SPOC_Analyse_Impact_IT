@@ -30,12 +30,10 @@ const port = argv.port;
 var liste_reference = null;
 
 const OPSIAN_db = mysql.createConnection({
-  host: "numuser",
-  //user: "localhost",
-  user: "root",
+  host: "localhost",
+  user: "numuser",
   password: "spocBDD",
-  //database: "opsian",
-  database: "SPOC_Analyse_Impact_IT",
+  database: "opsian",
 });
 
 OPSIAN_db.connect(function (err) {
@@ -303,7 +301,7 @@ function bdRequest(request, data) {
                                     (row) => row.quantité
                                   )[0];
 
-                                  if (year === dateMax){
+                                  if (year === dateMax) {
                                     nbProps = nbProps + quantite;
                                   }
 
@@ -347,9 +345,10 @@ function bdRequest(request, data) {
                                         4: { cout: 0 },
                                         5: { cout: 0 },
                                       };
-                                    }else{
-                                      if (year === dateMax){
-                                        nbPropsEnService = nbPropsEnService +quantite;
+                                    } else {
+                                      if (year === dateMax) {
+                                        nbPropsEnService =
+                                          nbPropsEnService + quantite;
                                       }
                                     }
                                     for (let etape in jsonData) {

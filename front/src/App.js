@@ -49,7 +49,7 @@ function App() {
 
   const login = "user_1";
   //const baseUrl = `http://insa-numimpact-01.insa-lyon.fr/server`;
-  const baseUrl = `http://insa-numimpact-01.insa-lyon.fr/server`;
+  const baseUrl = `http://localhost:4000`;
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -75,30 +75,30 @@ function App() {
                         baseUrl={baseUrl}
                         typeEquipement={typeEquipement}
                         setTypeEquipement={setTypeEquipement}
-                        userParc = {userParc_selec}
-                        setUserParc= {setUserParc_selec}
+                        userParc={userParc_selec}
+                        setUserParc={setUserParc_selec}
                         onLoad={onLoad_selec}
                         setOnLoad={setOnLoad_selec}
-                        use = {use_selec}
-                        setUse = {setUse_selec}
-                        fab = {fab_selec}
-                        setFab = {setFab_selec}
-                        distrib = {distrib_selec}
-                        setDistrib = {setDistrib_selec}
-                        fin = {fin_selec}
-                        setFin = {setFin_selec}
-                        annualCost = {annualCost_selec}
-                        setAnnualCost = {setAnnualCost_selec}
-                        unite = {unite_selec}
-                        setUnite = {setUnite_selec}
-                        nbItem = {nbItem_selec}
-                        setNbItem = {setNbItem_selec}
-                        nbItemEnService = {nbItemEnService_selec}
-                        setNbItemEnService = {setNbItemEnService_selec}
-                        annee = {annee_selec}
-                        setAnnee = {setAnnee_selec}
-                        critere = {critere_selec}
-                        setCritere = {setCritere_selec}
+                        use={use_selec}
+                        setUse={setUse_selec}
+                        fab={fab_selec}
+                        setFab={setFab_selec}
+                        distrib={distrib_selec}
+                        setDistrib={setDistrib_selec}
+                        fin={fin_selec}
+                        setFin={setFin_selec}
+                        annualCost={annualCost_selec}
+                        setAnnualCost={setAnnualCost_selec}
+                        unite={unite_selec}
+                        setUnite={setUnite_selec}
+                        nbItem={nbItem_selec}
+                        setNbItem={setNbItem_selec}
+                        nbItemEnService={nbItemEnService_selec}
+                        setNbItemEnService={setNbItemEnService_selec}
+                        annee={annee_selec}
+                        setAnnee={setAnnee_selec}
+                        critere={critere_selec}
+                        setCritere={setCritere_selec}
                         boxes={boxes}
                         setBoxes={setBoxes}
                       />
@@ -143,7 +143,10 @@ function App() {
                   <Route path="/connexion" element={<Login />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/inscription" element={<Inscription />} />
-                  <Route path="*" element={<Navigate to="/selection" replace />} />
+                  <Route
+                    path="*"
+                    element={<Navigate to="/selection" replace />}
+                  />
                 </Routes>
               </Box>
             </Box>

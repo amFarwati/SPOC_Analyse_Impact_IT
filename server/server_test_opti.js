@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import Papa from "papaparse";
 import yargs from "yargs";
 import dayjs from "dayjs";
+import bcrypt from "bcryptjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
 import { promises as fsPromises } from "fs";
@@ -27,7 +28,9 @@ dayjs.extend(customParseFormat);
 
 const app = express();
 const port = argv.port;
-var liste_reference = null;
+
+// Définir le facteur de coût
+const saltRounds = 10;
 
 const OPSIAN_db = mysql.createConnection({
   //host: "numuser",
@@ -49,70 +52,26 @@ var nbProps = null;
 var nbPropsEnService = null;
 var unite = null;
 
-var db_modele = null;
+var liste_reference = null;
 
-//fonction conversion CSV en JSON
-async function convertCsvToJson(csvFilePath) {
-  try {
-    // Read the CSV file
-    const csvData = await fsPromises.readFile(csvFilePath, "utf8");
-
-    // Parse CSV to JSON
-    const parseResult = await new Promise((resolve, reject) => {
-      Papa.parse(csvData, {
-        header: true, // Assumes the first row contains headers
-        skipEmptyLines: true,
-        complete: (result) => {
-          resolve(result.data);
-        },
-        error: (error) => {
-          reject(error.message);
-        },
-      });
-    });
-
-    return parseResult;
-  } catch (error) {
-    throw new Error(`Error converting CSV to JSON: ${error.message}`);
-  }
-}
-
-//fonction conversion string en array de int
-function stringToArray(inputString) {
-  // Utilisez la méthode split pour diviser la chaîne en fonction du point-virgule
-  var stringArray = inputString.split(";");
-
-  var numberArray = stringArray.map(function (str) {
-    return parseInt(str, 10);
-  });
-
-  return numberArray;
-}
-
-//fonction conversion inventaire (format Json) en dictionnaire (key;value (int))
-function bdFormat_User(jsonContent) {
-  let itemList = jsonContent;
-  itemList.forEach((item) => {
-    item.quantity = parseInt(item.quantity);
-  });
-  return itemList;
-}
-
-//fonction conversion modéle (format Json) en dictionnaire (key;value (int))
-function bdFormat_Model(jsonContent) {
-  let modelDict = {};
-  let keyList = Object.keys(jsonContent[0]);
-
-  keyList.forEach((key) => {
-    modelDict[key.split(".")[1]] = stringToArray(jsonContent[0][key]);
-  });
-
-  return modelDict;
-}
-
+//fonction conversion date au format mySQL
 function toMySQLDateFormat(date) {
   date = dayjs(date);
   return date.toISOString().slice(0, 19).replace("T", " ");
+}
+
+//function generation token unique via bcrypt
+function generateAuthToken(name, mail) {
+  let token_root = `${name}${mail}${Date.now()}`;
+  let salt_token = bcrypt.genSaltSync(saltRounds);
+  let token = bcrypt.hashSync(token_root, salt_token);
+  return token;
+}
+
+//async fonction authentification session
+async function authCheck(email, token) {
+  let accepted = token === (await bdRequest("authCheck", { email: email }));
+  return accepted;
 }
 
 //async fonction requêtage BD (interface serveur/BD modéle)
@@ -125,8 +84,12 @@ function bdRequest(request, data) {
     switch (request) {
       case "getUserImpact": // OK
         setTimeout(() => {
-          let idPush = null;
           let user = data.user;
+          let type = data.type;
+
+          console.log(user, type, request);
+
+          let idPush = null;
           let userInv = null;
           let etapeACV = null;
           let critere = null;
@@ -145,7 +108,8 @@ function bdRequest(request, data) {
                 `SELECT MAX(idPush) 
                 FROM Push_U 
                 JOIN User_U ON Push_U.idUser = User_U.idUser
-                WHERE User_U.user = '${user}'
+                WHERE User_U.email_hash = '${user}'
+                AND Push_U.inventaire = ${type}
                 ;`,
                 (err, result) => {
                   if (err) throw err;
@@ -207,205 +171,212 @@ function bdRequest(request, data) {
 
           Promise.all(promises)
             .then(() => {
-              promises = [];
-              promises.push(
-                // collecte la liste des items de l'inventaire utilisateur
-                new Promise((resolve, reject) => {
-                  OPSIAN_db.query(
-                    `SELECT idItem 
-                    FROM Item_U 
-                    WHERE idPush = ${idPush};`,
-                    (err, result) => {
-                      if (err) throw err;
-                      userInv = result.map((row) => row.idItem);
-                      resolve();
-                    }
-                  );
-                })
-              );
+              if (idPush !== null) {
+                promises = [];
+                promises.push(
+                  // collecte la liste des items de l'inventaire utilisateur
+                  new Promise((resolve, reject) => {
+                    OPSIAN_db.query(
+                      `SELECT idItem 
+                      FROM Item_U 
+                      WHERE idPush = ${idPush};`,
+                      (err, result) => {
+                        if (err) throw err;
+                        userInv = result.map((row) => row.idItem);
+                        resolve();
+                      }
+                    );
+                  })
+                );
 
-              promises.push(
-                // collecte la date min et max
-                new Promise((resolve, reject) => {
-                  OPSIAN_db.query(
-                    `SELECT MAX(YEAR(Push_U.date)),MIN(YEAR(Item_U.dateDebut))
-                    FROM Item_U 
-                    JOIN Push_U ON Item_U.idPush = Push_U.idPush
-                    WHERE Item_U.idPush = ${idPush};`,
-                    (err, result) => {
-                      if (err) throw err;
-                      result.map((row) => {
-                        dateMax = row["MAX(YEAR(Push_U.date))"];
-                        dateMin = row["MIN(YEAR(Item_U.dateDebut))"];
-                      });
-                      resolve();
-                    }
-                  );
-                })
-              );
-
-              Promise.all(promises)
-                .then(() => {
-                  let requestEff = Date.now();
-                  for (let year = dateMin; year < dateMax + 1; year++) {
-                    impactItem[year] = {};
-
-                    userInv.forEach((idItem) => {
-                      promises = [];
-
-                      impactItem[year][idItem] = {};
-                      let inUse = false;
-
-                      promises.push(
-                        // regarde si item isUsed
-                        new Promise((resolve, reject) => {
-                          OPSIAN_db.query(
-                            `SELECT EXISTS(
-                              SELECT 1 
-                              FROM Item_U 
-                              JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
-                              JOIN Type_M  ON Reference_M.idType = Type_M.idType
-                              WHERE idItem = ${idItem}
-                              AND YEAR(dateDebut) < ${year + 1}
-                              AND ${year} - YEAR(Item_U.dateDebut) - Type_M.dureeVie < 0
-                              ) AS 'isUsed';`,
-                            (err, result) => {
-                              if (err) throw err;
-                              inUse = result[0].isUsed === 1;
-                              resolve();
-                            }
-                          );
-                        })
-                      );
-
-                      Promise.all(promises)
-                        .then(() => {
-                          promises = [];
-
-                          promises.push(
-                            // recupére le calcul du cout + compte le nombre d'item encore en services à date du push + nb total
-                            new Promise((resolve, reject) => {
-                              OPSIAN_db.query(
-                                `SELECT cout, Item_U.quantité
-                          FROM Type_M
-                          JOIN Reference_M  ON Reference_M.idType = Type_M.idType
-                          JOIN Item_U ON Item_U.idReference = Reference_M.idReference
-                          WHERE Item_U.idItem = ${idItem}
-                          AND YEAR(Item_U.dateDebut) < ${year + 1}
-                          ;`,
-                                (err, result) => {
-                                  if (err) throw err;
-
-                                  let jsonData = result.map((row) =>
-                                    JSON.parse(row.cout)
-                                  )[0];
-                                  let quantite = result.map(
-                                    (row) => row.quantité
-                                  )[0];
-
-                                  if (year === dateMax){
-                                    nbProps = nbProps + quantite;
-                                  }
-
-                                  if (result.length === 0) {
-                                    jsonData = {
-                                      1: {
-                                        1: { cout: 0 },
-                                        2: { cout: 0 },
-                                        3: { cout: 0 },
-                                        4: { cout: 0 },
-                                        5: { cout: 0 },
-                                      },
-                                      2: {
-                                        1: { cout: 0 },
-                                        2: { cout: 0 },
-                                        3: { cout: 0 },
-                                        4: { cout: 0 },
-                                        5: { cout: 0 },
-                                      },
-                                      3: {
-                                        1: { cout: 0 },
-                                        2: { cout: 0 },
-                                        3: { cout: 0 },
-                                        4: { cout: 0 },
-                                        5: { cout: 0 },
-                                      },
-                                      4: {
-                                        1: { cout: 0 },
-                                        2: { cout: 0 },
-                                        3: { cout: 0 },
-                                        4: { cout: 0 },
-                                        5: { cout: 0 },
-                                      },
-                                    };
-                                  } else {
-                                    if (!inUse) {
-                                      jsonData["3"] = {
-                                        1: { cout: 0 },
-                                        2: { cout: 0 },
-                                        3: { cout: 0 },
-                                        4: { cout: 0 },
-                                        5: { cout: 0 },
-                                      };
-                                    }else{
-                                      if (year === dateMax){
-                                        nbPropsEnService = nbPropsEnService +quantite;
-                                      }
-                                    }
-                                    for (let etape in jsonData) {
-                                      for (let critere in jsonData[etape]) {
-                                        jsonData[etape][critere].cout *=
-                                          quantite;
-                                      }
-                                    }
-                                  }
-
-                                  impactItem[year][idItem] = jsonData;
-                                  //console.log(impactItem)
-                                  resolve();
-                                }
-                              );
-                            })
-                          );
-
-                          Promise.all(promises)
-                            .then(() => {
-                              if (
-                                idItem === userInv[userInv.length - 1] &&
-                                year === dateMax
-                              ) {
-                                resolve([impactItem, unite]);
-                                console.log(
-                                  `bd request ${request} ${
-                                    data.user
-                                  } awsered in ${(Date.now() - timer) / 1000}s`
-                                );
-                                console.log(
-                                  `calcul for all items answered in ${
-                                    (Date.now() - requestEff) / 1000
-                                  }s`
-                                );
-                              }
-                            })
-                            .catch((error) => {
-                              // Gérer les erreurs ici
-                              console.error(
-                                "Une erreur s'est produite :",
-                                error
-                              );
-                            });
-                        })
-                        .catch((error) => {
-                          // Gérer les erreurs ici
-                          console.error("Une erreur s'est produite :", error);
+                promises.push(
+                  // collecte la date min et max
+                  new Promise((resolve, reject) => {
+                    OPSIAN_db.query(
+                      `SELECT MAX(YEAR(Push_U.date)),MIN(YEAR(Item_U.dateDebut))
+                      FROM Item_U 
+                      JOIN Push_U ON Item_U.idPush = Push_U.idPush
+                      WHERE Item_U.idPush = ${idPush};`,
+                      (err, result) => {
+                        if (err) throw err;
+                        result.map((row) => {
+                          dateMax = row["MAX(YEAR(Push_U.date))"];
+                          dateMin = row["MIN(YEAR(Item_U.dateDebut))"];
                         });
-                    });
-                  }
-                })
-                .catch((error) => {
-                  // Gérer les erreurs ici
-                  console.error("Une erreur s'est produite :", error);
-                });
+                        resolve();
+                      }
+                    );
+                  })
+                );
+
+                Promise.all(promises)
+                  .then(() => {
+                    let requestEff = Date.now();
+                    for (let year = dateMin; year < dateMax + 1; year++) {
+                      impactItem[year] = {};
+
+                      userInv.forEach((idItem) => {
+                        promises = [];
+
+                        impactItem[year][idItem] = {};
+                        let inUse = false;
+
+                        promises.push(
+                          // regarde si item isUsed
+                          new Promise((resolve, reject) => {
+                            OPSIAN_db.query(
+                              `SELECT EXISTS(
+                                SELECT 1 
+                                FROM Item_U 
+                                JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
+                                JOIN Type_M  ON Reference_M.idType = Type_M.idType
+                                WHERE idItem = ${idItem}
+                                AND YEAR(dateDebut) < ${year + 1}
+                                AND ${year} - YEAR(Item_U.dateDebut) - Type_M.dureeVie < 0
+                                ) AS 'isUsed';`,
+                              (err, result) => {
+                                if (err) throw err;
+                                inUse = result[0].isUsed === 1;
+                                resolve();
+                              }
+                            );
+                          })
+                        );
+
+                        Promise.all(promises)
+                          .then(() => {
+                            promises = [];
+
+                            promises.push(
+                              // recupére le calcul du cout + compte le nombre d'item encore en services à date du push + nb total
+                              new Promise((resolve, reject) => {
+                                OPSIAN_db.query(
+                                  `SELECT cout, Item_U.quantité
+                            FROM Type_M
+                            JOIN Reference_M  ON Reference_M.idType = Type_M.idType
+                            JOIN Item_U ON Item_U.idReference = Reference_M.idReference
+                            WHERE Item_U.idItem = ${idItem}
+                            AND YEAR(Item_U.dateDebut) < ${year + 1}
+                            ;`,
+                                  (err, result) => {
+                                    if (err) throw err;
+
+                                    let jsonData = result.map((row) =>
+                                      JSON.parse(row.cout)
+                                    )[0];
+                                    let quantite = result.map(
+                                      (row) => row.quantité
+                                    )[0];
+
+                                    if (year === dateMax) {
+                                      nbProps = nbProps + quantite;
+                                    }
+
+                                    if (result.length === 0) {
+                                      jsonData = {
+                                        1: {
+                                          1: { cout: 0 },
+                                          2: { cout: 0 },
+                                          3: { cout: 0 },
+                                          4: { cout: 0 },
+                                          5: { cout: 0 },
+                                        },
+                                        2: {
+                                          1: { cout: 0 },
+                                          2: { cout: 0 },
+                                          3: { cout: 0 },
+                                          4: { cout: 0 },
+                                          5: { cout: 0 },
+                                        },
+                                        3: {
+                                          1: { cout: 0 },
+                                          2: { cout: 0 },
+                                          3: { cout: 0 },
+                                          4: { cout: 0 },
+                                          5: { cout: 0 },
+                                        },
+                                        4: {
+                                          1: { cout: 0 },
+                                          2: { cout: 0 },
+                                          3: { cout: 0 },
+                                          4: { cout: 0 },
+                                          5: { cout: 0 },
+                                        },
+                                      };
+                                    } else {
+                                      if (!inUse) {
+                                        jsonData["3"] = {
+                                          1: { cout: 0 },
+                                          2: { cout: 0 },
+                                          3: { cout: 0 },
+                                          4: { cout: 0 },
+                                          5: { cout: 0 },
+                                        };
+                                      } else {
+                                        if (year === dateMax) {
+                                          nbPropsEnService =
+                                            nbPropsEnService + quantite;
+                                        }
+                                      }
+                                      for (let etape in jsonData) {
+                                        for (let critere in jsonData[etape]) {
+                                          jsonData[etape][critere].cout *=
+                                            quantite;
+                                        }
+                                      }
+                                    }
+
+                                    impactItem[year][idItem] = jsonData;
+                                    //console.log(impactItem)
+                                    resolve();
+                                  }
+                                );
+                              })
+                            );
+
+                            Promise.all(promises)
+                              .then(() => {
+                                if (
+                                  idItem === userInv[userInv.length - 1] &&
+                                  year === dateMax
+                                ) {
+                                  resolve([impactItem, unite]);
+                                  console.log(
+                                    `bd request ${request} ${
+                                      data.user
+                                    } awsered in ${
+                                      (Date.now() - timer) / 1000
+                                    }s`
+                                  );
+                                  console.log(
+                                    `calcul for all items answered in ${
+                                      (Date.now() - requestEff) / 1000
+                                    }s`
+                                  );
+                                }
+                              })
+                              .catch((error) => {
+                                // Gérer les erreurs ici
+                                console.error(
+                                  "Une erreur s'est produite :",
+                                  error
+                                );
+                              });
+                          })
+                          .catch((error) => {
+                            // Gérer les erreurs ici
+                            console.error("Une erreur s'est produite :", error);
+                          });
+                      });
+                    }
+                  })
+                  .catch((error) => {
+                    // Gérer les erreurs ici
+                    console.error("Une erreur s'est produite :", error);
+                  });
+              } else {
+                resolve("No push for this user");
+              }
             })
             .catch((error) => {
               // Gérer les erreurs ici
@@ -437,11 +408,45 @@ function bdRequest(request, data) {
         setTimeout(() => {
           let userList = [];
 
-          OPSIAN_db.query("SELECT user FROM User_U;", (err, result) => {
+          OPSIAN_db.query("SELECT email_hash FROM User_U;", (err, result) => {
             if (err) throw err;
-            userList = result.map((row) => row.user);
+            userList = result.map((row) => row.email_hash);
+
             resolve(userList);
           });
+          console.log(
+            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+          );
+        }, 1000);
+        break;
+      case "login": // à vérif sécu
+        setTimeout(() => {
+          let rejected = true;
+          let inBD = false;
+          let auth_token = null;
+
+          OPSIAN_db.query(
+            `SELECT password_hash FROM User_U WHERE email_hash = "${data.mail}";`,
+            (err, result) => {
+              if (err) throw err;
+              if (result.length != 0) {
+                inBD = true;
+                if (
+                  bcrypt.compareSync(data.password, result[0].password_hash)
+                ) {
+                  rejected = false;
+                  auth_token = generateAuthToken(data.user, data.mail);
+                  OPSIAN_db.query(
+                    `UPDATE User_U SET auth_token = '${auth_token}' WHERE email_hash = "${data.mail}";`,
+                    (err, result) => {
+                      if (err) throw err;
+                    }
+                  );
+                }
+              }
+              resolve([rejected, inBD, auth_token]);
+            }
+          );
           console.log(
             `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
           );
@@ -451,9 +456,8 @@ function bdRequest(request, data) {
         setTimeout(() => {
           //console.log(data.user)
           OPSIAN_db.query(
-            `INSERT INTO User_U 
-            SET user = "${data.user}"
-            ;`,
+            `INSERT INTO User_U (user, email_hash, password_hash, auth_token) 
+            VALUES ('${data.user}', '${data.mail}', '${data.password}', '${data.auth_token}');`,
             (err, result) => {
               if (err) throw err;
               console.log(`=> SET user = ${data.user} OK `);
@@ -469,12 +473,13 @@ function bdRequest(request, data) {
       case "setUserPush": // OK
         setTimeout(() => {
           OPSIAN_db.query(
-            `INSERT INTO Push_U (date, idUser) 
+            `INSERT INTO Push_U (inventaire,date, idUser) 
             VALUES (
+              ${data.type},
               '${data.date}', 
               (SELECT idUser 
               FROM User_U 
-              WHERE user = '${data.user}')
+              WHERE email_hash = '${data.user}')
             );
             `,
             (err, result) => {
@@ -504,7 +509,7 @@ function bdRequest(request, data) {
                   (SELECT MAX(push.idPush)
                     FROM Push_U push, User_U user
                     JOIN Push_U ON Push_U.idUser = user.idUser
-                    WHERE user.user = '${data.user}'),
+                    WHERE user.email_hash = '${data.user}'),
                   (SELECT ref.idReference
                   FROM Reference_M ref
                   WHERE ref.nomReference = '${ref}'),
@@ -526,7 +531,7 @@ function bdRequest(request, data) {
                   (SELECT MAX(push.idPush)
                   FROM Push_U push, User_U user
                   JOIN Push_U ON Push_U.idUser = user.idUser
-                  WHERE user.user = '${data.user}'),
+                  WHERE user.email_hash = '${data.user}'),
                   (SELECT ref.idReference
                   FROM Reference_M ref
                   WHERE ref.nomReference = 'default'),
@@ -707,6 +712,19 @@ function bdRequest(request, data) {
           );
         }, 1000);
         break;
+      case "authCheck": // à vérif sécu
+        setTimeout(() => {
+          OPSIAN_db.query(
+            `SELECT auth_token 
+            FROM User_U 
+            WHERE email_hash = '${data.email}';`,
+            (err, result) => {
+              if (err) throw err;
+              resolve(result[0].auth_token);
+            }
+          );
+        }, 1000);
+        break;
     }
   });
 }
@@ -726,26 +744,37 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-//requête setInventory (fini)
-app.put("/setInventory", async (req, res) => {
+//requête setInventory (à check secu multi user)
+app.put("/setInventory/:user/:token", async (req, res) => {
   try {
-    console.log(`=> setInventory for ${req.body.user}`);
+    let user = req.params.user;
+    let token = decodeURIComponent(req.params.token);
+    let accepted = await authCheck(user, token);
+    console.log(`=> setInventory for ${user} accepted ${accepted}`);
 
-    let user = req.body.user;
-    let inv = req.body.inventory;
-    let userList = await bdRequest("getUser");
+    if (accepted) {
+      console.log(`=> setInventory for ${req.body.user}`);
 
-    if (!userList.includes(user)) {
-      await bdRequest("setUser", { user: user });
+      let user = req.body.user;
+      let inv = req.body.inventory;
+      let type = req.body.type;
+      let userList = await bdRequest("getUser");
+
+      if (!userList.includes(user)) {
+        await bdRequest("setUser", { user: user });
+      }
+      await bdRequest("setUserPush", {
+        user: user,
+        date: toMySQLDateFormat(dayjs()),
+        type: type,
+      });
+      liste_reference = await bdRequest("getRef");
+      await bdRequest("setUserInv", { user: user, inv: inv });
+
+      res.send(`BD updated with data for ${req.body.user}`);
+    } else {
+      res.send(`ERROR: the auth token is invalid`);
     }
-    await bdRequest("setUserPush", {
-      user: user,
-      date: toMySQLDateFormat(dayjs()),
-    });
-    liste_reference = await bdRequest("getRef");
-    await bdRequest("setUserInv", { user: user, inv: inv });
-
-    res.send(`BD updated with data for ${req.body.user}`);
   } catch (error) {
     console.error(`Error setting user inventory: ${error}`);
     res
@@ -754,103 +783,195 @@ app.put("/setInventory", async (req, res) => {
   }
 });
 
-//requête getInventory (fini) => a changer avec SQL + TEST
-app.get("/getInventory/:user", (req, res) => {
-  console.log(`=> getInventory for ${req.params.user}`);
+//requête setUser (à check secu multi user)
+app.put("/setUser", async (req, res) => {
+  try {
+    console.log(`=> setUser for ${req.body.name}`);
 
-  if (req.params.user === undefined) {
-    res.send(`ERROR: the user is undefined`);
-  } else if (req.params.user in db) {
-    res.json(db[req.params.user]);
-  } else {
-    res.send(`ERROR: the user ${req.params.user} has not been found in the BD`);
-  }
-});
+    let user_name = req.body.name;
+    let user_mail = req.body.mail;
+    let user_password = req.body.password;
 
-//requête getImpact (fini)
-app.get("/getImpact/:user", async (req, res) => {
-  let timer = Date.now();
+    //console.log(user_name, user_mail, hashedMail , bcrypt.compareSync(user_mail, hashedMail), user_password, hashedPassword, bcrypt.compareSync(user_password, hashedPassword));
 
-  let user = req.params.user;
-  console.log(`=> getImpact for ${user}`);
+    /*let user_organisme = req.body.organisme; */ // à faire plus tard
 
-  let userList = await bdRequest("getUser");
+    let userList = await bdRequest("getUser");
 
-  if (user === undefined) {
-    res.send(`ERROR: the user is undefined`);
-  } else if (userList.includes(user)) {
-    if (!(await bdRequest("areCostsComputed"))) {
-      await bdRequest("computeCost");
-    }
+    if (!userList.includes(user_mail)) {
+      // Générer un sel
+      let salt_password = bcrypt.genSaltSync(saltRounds);
 
-    bdRequest("getUserImpact", { user: user })
-      .then((result) => {
-        //console.log(result[0]);
-        let annualCost = {};
-        let annees = Object.keys(result[0]);
-        let items = Object.keys(result[0][annees[0]]);
-        let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
-        let critereList = Object.keys(
-          result[0][annees[0]][items[0]][etapeACVList[0]]
-        );
+      // Hacher le mot de passe avec le sel
+      let hashedPassword = bcrypt.hashSync(user_password, salt_password);
 
-        //console.log(annees, etapeACVList, result[0][annees[0]][items[0]]);
+      // Auth token
+      let auth_token = generateAuthToken(user_name, user_mail);
+      console.log(auth_token);
 
-        let formatTimer = Date.now();
-
-        annees.forEach((annee) => {
-          let cost = {
-            FABRICATION: [0, 0, 0, 0, 0],
-            DISTRIBUTION: [0, 0, 0, 0, 0],
-            UTILISATION: [0, 0, 0, 0, 0],
-            FIN_DE_VIE: [0, 0, 0, 0, 0],
-          };
-
-          let resEtapeACVList = Object.keys(cost);
-          items.forEach((item) => {
-            for (let i = 0; i < etapeACVList.length; i++) {
-              for (let j = 0; j < critereList.length; j++) {
-                let cout =
-                  result[0][annee][item][etapeACVList[i]][critereList[j]].cout;
-                cost[resEtapeACVList[i]][j] += cout === undefined ? 0 : cout;
-              }
-            }
-          });
-
-          annualCost[annee] = cost;
-        });
-
-        console.log(
-          `temps formatage données ${(Date.now() - formatTimer) / 1000}`
-        );
-
-        res.json({
-          cost: annualCost,
-          unite: unite,
-          nbItem: nbProps,
-          nbItemEnService: nbPropsEnService,
-        });
-        console.log(
-          `getImpact for ${user} answered in ${(Date.now() - timer) / 1000}s`
-        );
-      })
-      .catch((error) => {
-        console.log(`Error computing Impact: ${error}`);
-        res.send(
-          `ERROR: the server encounting difficulties during computing impact`
-        );
+      await bdRequest("setUser", {
+        user: user_name,
+        mail: user_mail,
+        password: hashedPassword,
+        auth_token: auth_token,
       });
-  } else {
-    res.send(`ERROR: the user ${user} has not been found in the BD`);
+
+      res.send(auth_token);
+    } else {
+      res.send(`Already in the BD`);
+    }
+  } catch (error) {
+    console.error(`Error setting user : ${error}`);
+    res
+      .status(500)
+      .send("ERROR: The server encountered difficulties setting user");
   }
 });
 
-//requête getRefList (fini)
-app.get("/getRefList", async (req, res) => {
+//requête login (à check secu multi user)
+app.put("/login", async (req, res) => {
+  try {
+    let user_mail = req.body.mail;
+    let user_password = req.body.password;
+
+    console.log(`=> login for ${user_mail}`);
+
+    //console.log(user_name, user_mail, hashedMail , bcrypt.compareSync(user_mail, hashedMail), user_password, hashedPassword, bcrypt.compareSync(user_password, hashedPassword));
+
+    /*let user_organisme = req.body.organisme; */ // à faire plus tard
+
+    const [rejected, inBD, auth_token] = await bdRequest("login", {
+      mail: user_mail,
+      password: user_password,
+    });
+
+    if (!inBD) {
+      res.send("notInBd");
+    } else if (rejected) {
+      res.send("rejected");
+      console.log("rejected");
+    } else {
+      res.send(auth_token);
+      console.log("accepted");
+    }
+  } catch (error) {
+    console.error(`Error setting user : ${error}`);
+    res
+      .status(500)
+      .send("ERROR: The server encountered difficulties setting user");
+  }
+});
+
+//requête getImpact (à check secu multi user)
+app.get("/getImpact/:user/:type/:token", async (req, res) => {
+  let user = req.params.user;
+  let token = decodeURIComponent(req.params.token);
+  let accepted = await authCheck(user, token);
+  console.log(`=> getImpact for ${user} accepted ${accepted}`);
+
+  if (accepted) {
+    let timer = Date.now();
+    let type = req.params.type;
+    let userList = await bdRequest("getUser");
+
+    console.log(`=> getImpact for ${user} type ${type}`);
+
+    if (user === undefined) {
+      res.send(`ERROR: the user is undefined`);
+    } else if (userList.includes(user)) {
+      if (!(await bdRequest("areCostsComputed"))) {
+        await bdRequest("computeCost");
+      }
+
+      bdRequest("getUserImpact", { user: user, type: type })
+        .then((result) => {
+          //console.log(result[0]);
+          if (result !== "No push for this user") {
+            let annualCost = {};
+            let annees = Object.keys(result[0]);
+            let items = Object.keys(result[0][annees[0]]);
+            let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
+            let critereList = Object.keys(
+              result[0][annees[0]][items[0]][etapeACVList[0]]
+            );
+
+            //console.log(annees, etapeACVList, result[0][annees[0]][items[0]]);
+
+            let formatTimer = Date.now();
+
+            annees.forEach((annee) => {
+              let cost = {
+                FABRICATION: [0, 0, 0, 0, 0],
+                DISTRIBUTION: [0, 0, 0, 0, 0],
+                UTILISATION: [0, 0, 0, 0, 0],
+                FIN_DE_VIE: [0, 0, 0, 0, 0],
+              };
+
+              let resEtapeACVList = Object.keys(cost);
+              items.forEach((item) => {
+                for (let i = 0; i < etapeACVList.length; i++) {
+                  for (let j = 0; j < critereList.length; j++) {
+                    let cout =
+                      result[0][annee][item][etapeACVList[i]][critereList[j]]
+                        .cout;
+                    cost[resEtapeACVList[i]][j] +=
+                      cout === undefined ? 0 : cout;
+                  }
+                }
+              });
+
+              annualCost[annee] = cost;
+            });
+
+            console.log(
+              `temps formatage données ${(Date.now() - formatTimer) / 1000}`
+            );
+
+            res.json({
+              cost: annualCost,
+              unite: unite,
+              nbItem: nbProps,
+              nbItemEnService: nbPropsEnService,
+            });
+            console.log(
+              `getImpact for ${user} answered in ${
+                (Date.now() - timer) / 1000
+              }s`
+            );
+          } else {
+            res.send(`No push for this user`);
+          }
+        })
+        .catch((error) => {
+          console.log(`Error computing Impact: ${error}`);
+          res.send(
+            `ERROR: the server encounting difficulties during computing impact`
+          );
+        });
+    } else {
+      res.send(`ERROR: the user ${user} has not been found in the BD`);
+    }
+  } else {
+    res.send(`ERROR: the auth token is invalid`);
+  }
+});
+
+//requête getRefList (à check secu multi user)
+app.get("/getRefList/:user/:token", async (req, res) => {
   try {
     console.log("=> getRefList");
-    liste_reference = await bdRequest("getRef");
-    res.json(liste_reference);
+
+    let user = req.params.user;
+    let token = decodeURIComponent(req.params.token);
+    let accepted = await authCheck(user, token);
+    console.log(`=> getRefList for ${user} accepted ${accepted}`);
+
+    if (accepted) {
+      liste_reference = await bdRequest("getRef");
+      res.json(liste_reference);
+    } else {
+      res.send(`ERROR: the auth token is invalid`);
+    }
   } catch (error) {
     console.error(`Error getting ref list: ${error}`);
     res

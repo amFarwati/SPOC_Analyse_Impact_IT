@@ -11,13 +11,20 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 const Profile = ({ setProfilePic }) => {
+  
   const [selectedImage, setSelectedImage] = useState(null);
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+
+  const [organisme, setOrganisme] = useState(""); // à faire plus tard
+
   const [mail, setMail] = useState("");
   const [emailError, setEmailError] = useState("");
+
   const [oldPassword, setOldPassword] = useState("");
   const [showOldPassword, setShowOldPassword] = useState(false);
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,6 +33,7 @@ const Profile = ({ setProfilePic }) => {
   const [hasLetter, setHasLetter] = useState(false);
   const [hasUppercase, setHasUppercase] = useState(false);
   const [hasMinLength, setHasMinLength] = useState(false);
+
   const [waitingRes, setWaitingRes] = useState(false);
 
   const passwordsMatch = password === confirmPassword;

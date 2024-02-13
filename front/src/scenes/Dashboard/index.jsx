@@ -10,6 +10,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import Header from "../../components/Header";
+import AlertDialog from "../../components/AlertDialogSlide";
 import { tokens } from "../../theme";
 import Linechart from "../../components/Linechart";
 import Barchart from "../../components/Barchart";
@@ -31,7 +32,8 @@ import * as React from "react";
 export const User_Context = createContext();
 
 function Dashboard({
-  login,
+  token,
+  user,
   baseUrl,
   userParc,
   setUserParc,
@@ -63,6 +65,7 @@ function Dashboard({
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isUpload, setIsUpload] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const chartColor = [
     "#329D9C",
@@ -88,25 +91,34 @@ function Dashboard({
     setOnLoad(true);
     setAnnee(-1);
     console.log(`UserParc =>`, userParc);
-    console.log(`/getImpact ${baseUrl} ${login}_test =>`);
+    console.log(`/getImpact ${baseUrl} ${user} =>`);
+
+    let data = { type: 1 };
+
     axios
-      .get(`${baseUrl}/getImpact/${login}_test`, { withCredentials: true })
+      .get(`${baseUrl}/getImpact/${user}/${data.type}/${encodeURIComponent(token)}`, {
+        withCredentials: true,
+      })
       .then((res) => {
         // Vérification si la requête a réussi (statut 200-299)
         if (!res.ok) {
           throw new Error(`Erreur HTTP! Statut: ${res.status}`);
+        }else if(res.data === `No push for this user`){
+          setOpen(true);
+          setOnLoad(null);
+        }else{
+          // Manipulation des données
+          console.log(res.data);
+
+          let annees = Object.keys(res.data.cost);
+
+          formatageCout(res.data.cost[annees[annees.length - 1]]);
+          setAnnualCost(res.data.cost);
+          setUnite(res.data.unite);
+          setNbItem(res.data.nbItem);
+          setNbItemEnService(res.data.nbItemEnService);
+          setOnLoad(false);
         }
-        // Manipulation des données
-        console.log(res.data);
-
-        let annees = Object.keys(res.data.cost);
-
-        formatageCout(res.data.cost[annees[annees.length - 1]]);
-        setAnnualCost(res.data.cost);
-        setUnite(res.data.unite);
-        setNbItem(res.data.nbItem);
-        setNbItemEnService(res.data.nbItemEnService);
-        setOnLoad(false);
       })
       .catch((error) => {
         // Gestion des erreurs
@@ -120,13 +132,13 @@ function Dashboard({
       setIsUpload(false);
       setOnLoad(true);
       console.log(`UserParc =>`, userParc);
-      console.log(`/setInventory ${baseUrl} ${login}_test =>`);
+      console.log(`/setInventory ${baseUrl} ${user}_test =>`);
 
-      let data = { user: `${login}_test`, inventory: userParc };
+      let data = { user: `${user}`, inventory: userParc, type: 1 };
       console.log(data);
 
       axios
-        .put(`${baseUrl}/setInventory`, data, {
+        .put(`${baseUrl}/setInventory/${user}/${encodeURIComponent(token)}`, data, {
           withCredentials: true,
           "Content-Type": "application/json",
         })
@@ -137,9 +149,9 @@ function Dashboard({
           }
           // Manipulation des données
 
-          console.log(`/getImpact ${baseUrl} ${login}_test =>`);
+          console.log(`/getImpact ${baseUrl} ${user} =>`);
           axios
-            .get(`${baseUrl}/getImpact/${login}_test`, {
+            .get(`${baseUrl}/getImpact/${user}/${data.type}/${encodeURIComponent(token)}`, {
               withCredentials: true,
             })
             .then((res) => {
@@ -172,7 +184,7 @@ function Dashboard({
           setOnLoad(false);
         });
     }
-  }, [userParc, baseUrl, login, isUpload]);
+  }, [userParc, baseUrl, user, isUpload]);
 
   useEffect(() => {
     if (annee !== -1) {
@@ -185,8 +197,13 @@ function Dashboard({
   }, [critere]);
 
   return (
-    <User_Context.Provider value={[userParc, setUserParc, login]}>
+    <User_Context.Provider value={[userParc, setUserParc, user]}>
       <Box ml={2} mr={2} height="auto">
+        <AlertDialog
+          msg="Veuillez charger une premiere fois un inventaire"
+          open={open}
+          setOpen={setOpen}
+        />
         {onLoad ? (
           <></>
         ) : (

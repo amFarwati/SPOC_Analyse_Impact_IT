@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -13,22 +13,77 @@ import {
 import { Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import AlertDialog from "../../components/AlertDialogSlide";
+import axios from "redaxios";
 
-const Login = ({ setLogin,setToken,server_URL }) => {
+const Login = ({
+  setLogin,
+  setToken,
+  server_URL,
+  setIsLogged,
+  setIsDeconnected,
+}) => {
   const [mail, setMail] = useState("");
   const [emailError, setEmailError] = useState("");
+
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
   const [waitingRes, setWaitingRes] = useState(false);
+  const [msg, setMsg] = useState("");
+  const [open, setOpen] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Gérer la soumission du formulaire ici
+    setWaitingRes(true);
+
+    let data = {
+      mail: mail,
+      password: password,
+    };
+
+    axios
+      .put(`${server_URL}/login`, data, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.data);
+
+        if (res.data === `notInBd`) {;
+
+          setMsg("Cet email n'est pas enregistré");
+          setOpen(true);
+
+        } else if (res.data === `rejected`) {
+
+          setMsg("Mot de passe incorrect");
+          setOpen(true);
+
+        } else {
+
+          setToken(res.data);
+          setLogin(mail);
+          setIsDeconnected(false);
+          setIsLogged(true);
+
+        } 
+
+        setWaitingRes(false);
+      })
+      .catch((error) => {
+        // Gestion des erreurs
+        console.error("Erreur de redaxios:", error.message);
+        setWaitingRes(false);
+      });
   };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
+
+  useEffect(() => {
+    setIsLogged(false);
+  }, []);
 
   return (
     <Container
@@ -39,10 +94,14 @@ const Login = ({ setLogin,setToken,server_URL }) => {
         alignItems: "center",
       }}
     >
+      <AlertDialog
+        msg={msg}
+        open={open}
+        setOpen={setOpen}
+      />
       <Card
         style={{
           width: "70%",
-          height: "50%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",

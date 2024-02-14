@@ -27,6 +27,7 @@ import Stack from "@mui/material/Stack";
 import * as React from "react";
 
 function Item({
+  token,
   user,
   baseUrl,
   onLoad,
@@ -70,8 +71,6 @@ function Item({
     "#7BE495",
     colors.lightLimeAccent[400],
   ];
-
-  const login = `${user}_iteratif`;
 
   const formatageCout = (coutJSON) => {
     /*coutJSON tel que 
@@ -124,13 +123,13 @@ function Item({
     if (userParc.length !== 0 && !onLoad) {
       setOnLoad(true);
       console.log(`ResultDisplay =>`, userParc);
-      console.log(`/setInventory ${baseUrl} ${login}_test =>`);
+      console.log(`/setInventory ${baseUrl} ${user} =>`);
 
-      let data = { user: `${login}_test`, inventory: userParc };
+      let data = { user: `${user}`, inventory: userParc, type: 0 };
       console.log(data);
 
       axios
-        .put(`${baseUrl}/setInventory`, data, {
+        .put(`${baseUrl}/setInventory/${user}/${encodeURIComponent(token)}`, data, {
           withCredentials: true,
           "Content-Type": "application/json",
         })
@@ -141,9 +140,9 @@ function Item({
           }
           // Manipulation des données
 
-          console.log(`/getImpact ${baseUrl} ${login}_test =>`);
+          console.log(`/getImpact ${baseUrl} ${user} =>`);
           axios
-            .get(`${baseUrl}/getImpact/${login}_test`, {
+            .get(`${baseUrl}/getImpact/${user}/${data.type}/${encodeURIComponent(token)}`, {
               withCredentials: true,
             })
             .then((res) => {
@@ -195,7 +194,7 @@ function Item({
     console.log(`handlerGetRefList ${baseUrl} =>`);
 
     axios
-      .get(`${baseUrl}/getRefList`, { withCredentials: true })
+      .get(`${baseUrl}/getRefList/${user}/${encodeURIComponent(token)}`, { withCredentials: true })
       .then((res) => {
         // Vérification si la requête a réussi (statut 200-299)
         if (!res.ok) {
@@ -240,7 +239,7 @@ function Item({
       setBoxesChange(false);
       handlerDataLoading();
     }
-  }, [userParc,boxesEmpty, baseUrl, login]);
+  }, [userParc,boxesEmpty, baseUrl, user]);
 
   useEffect(() => {
     if (annee !== -1) {

@@ -19,7 +19,9 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
     <MenuItem
       active={selected === title}
       style={{ color: colors.grey[100] }}
-      onClick={() => setSelected(title)}
+
+      onClick={() => title === 'Déconnexion'?setSelected(true):setSelected(title)}
+
       icon={icon}
     >
       <Typography>{title}</Typography>
@@ -28,7 +30,7 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
   );
 };
 
-function Sidebar({ user, serveur }) {
+function Sidebar({ user, serveur, setIsDeconnected }) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -124,11 +126,10 @@ function Sidebar({ user, serveur }) {
               setSelected={setSelected}
             />
             <Item
-              title="Connexion"
-              to="/connexion"
+              title="Déconnexion"
               icon={<ExitToAppRoundedIcon />}
               selected={selected}
-              setSelected={setSelected}
+              setSelected={setIsDeconnected}
             />
             {isCollapsed ? (
               <Divider sx={{ marginY: 2 }} />

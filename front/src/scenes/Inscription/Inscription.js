@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   TextField,
@@ -13,10 +13,24 @@ import {
 import { Link } from "react-router-dom";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import AlertDialog from "../../components/AlertDialogSlide";
+import axios from "redaxios";
 
-const Inscription = () => {
+const Inscription = ({
+  setLogin,
+  setToken,
+  server_URL,
+  setIsLogged,
+  setIsDeconnected,
+}) => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+
+  const [organisme, setOrganisme] = useState(""); // à faire plus tard
+
   const [mail, setMail] = useState("");
   const [emailError, setEmailError] = useState("");
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,11 +40,50 @@ const Inscription = () => {
   const [hasUppercase, setHasUppercase] = useState(false);
   const [hasMinLength, setHasMinLength] = useState(false);
 
+  const [waitingRes, setWaitingRes] = useState(false);
+  const [open, setOpen] = useState(false);
+
   const passwordsMatch = password === confirmPassword;
 
   const handleSubmit = (event) => {
     event.preventDefault();
     // Gérer la soumission du formulaire ici
+
+    setWaitingRes(true);
+
+    console.log(`inscription de ${mail} avec le mot de passe ${password}`);
+    setLogin(mail);
+
+    console.log(`/setUser ${server_URL} ${mail} =>`);
+
+    let data = {
+      mail: mail,
+      password: password,
+      name: `${firstName} ${lastName}`,
+    };
+
+    axios
+      .put(`${server_URL}/setUser`, data, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        console.log(res.data);
+
+        if (res.data === `Already in the BD`) {
+          setOpen(true);
+        } else {
+          setToken(res.data);
+          setIsDeconnected(false);
+          setIsLogged(true);
+        }
+
+        setWaitingRes(false);
+      })
+      .catch((error) => {
+        // Gestion des erreurs
+        console.error("Erreur de redaxios:", error.message);
+        setWaitingRes(false);
+      });
   };
 
   const checkPassword = (password) => {
@@ -47,6 +100,10 @@ const Inscription = () => {
     setShowPassword(!showPassword);
   };
 
+  useEffect(() => {
+    setIsLogged(false);
+  }, []);
+
   return (
     <Container
       style={{
@@ -56,10 +113,14 @@ const Inscription = () => {
         alignItems: "center",
       }}
     >
+      <AlertDialog
+        msg="Un utilisateur utilise déjà cette email"
+        open={open}
+        setOpen={setOpen}
+      />
       <Card
         style={{
           width: "70%",
-          height: "50%",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -74,6 +135,22 @@ const Inscription = () => {
             Inscription
           </Typography>
           <form onSubmit={handleSubmit}>
+            <TextField
+              label="Prénom"
+              variant="outlined"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              margin="normal"
+              fullWidth
+            />
+            <TextField
+              label="Nom"
+              variant="outlined"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              margin="normal"
+              fullWidth
+            />
             <TextField
               label="Email"
               variant="outlined"
@@ -155,7 +232,8 @@ const Inscription = () => {
                 !hasNumber ||
                 !hasSpecialChar ||
                 !hasUppercase ||
-                emailError
+                emailError ||
+                waitingRes
               }
             >
               S'inscrire

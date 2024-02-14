@@ -1,15 +1,20 @@
 create database if not exists opsian;
 use opsian;
-create user 'numuser'@'localhost' identified with mysql_native_password by 'spocBDD';
+create user if not exists 'numuser'@'localhost' identified with mysql_native_password by 'spocBDD';
 flush privileges;
 
-drop table is exists Critere_M;
-drop table is exists EtapeACV_M;
-drop table is exists NomComposant_M;
-drop table is exists Source_M;
-drop table is exists Type_M;
-drop table is exists Composant_M;
-drop table is exists Reference_M;
+drop table if exists Item_U;
+drop table if exists Reference_M;
+drop table if exists Push_U;
+drop table if exists Composant_M;
+drop table if exists User_U;
+drop table if exists Type_M;
+drop table if exists Source_M;
+drop table if exists NomComposant_M;
+drop table if exists EtapeACV_M;
+drop table if exists Critere_M;
+
+
 
 -- opsian.Critere_M definition
 
@@ -65,6 +70,11 @@ CREATE TABLE `Type_M` (
 CREATE TABLE `User_U` (
   `idUser` int unsigned NOT NULL AUTO_INCREMENT,
   `user` varchar(255) DEFAULT NULL,
+  `email_hash` varchar(60) DEFAULT NULL,
+  `password_hash` varchar(60) DEFAULT NULL,
+  `auth_token` varchar(60) DEFAULT NULL,
+  `liste_organisme` json DEFAULT NULL,
+  `image_profile` blob,
   PRIMARY KEY (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -99,10 +109,11 @@ CREATE TABLE `Push_U` (
   `idPush` int unsigned NOT NULL AUTO_INCREMENT,
   `idUser` int unsigned DEFAULT NULL,
   `date` timestamp NULL DEFAULT NULL,
+  `inventaire` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`idPush`),
   KEY `fkUser_Push` (`idUser`),
   CONSTRAINT `fkUser_Push` FOREIGN KEY (`idUser`) REFERENCES `User_U` (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=424 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- opsian.Reference_M definition

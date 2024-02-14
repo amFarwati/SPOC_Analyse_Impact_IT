@@ -70,7 +70,8 @@ function generateAuthToken(name, mail) {
 
 //async fonction authentification session
 async function authCheck(email, token) {
-  let accepted = token === (await bdRequest("authCheck", { email: email }));
+  let hash_token = await bdRequest("authCheck", { email: email });
+  let accepted = bcrypt.compareSync(token, hash_token);
   return accepted;
 }
 
@@ -436,8 +437,9 @@ function bdRequest(request, data) {
                 ) {
                   rejected = false;
                   auth_token = generateAuthToken(data.user, data.mail);
+
                   OPSIAN_db.query(
-                    `UPDATE User_U SET auth_token = '${auth_token}' WHERE email_hash = "${data.mail}";`,
+                    `UPDATE User_U SET auth_token = '${bcrypt.hashSync(auth_token, bcrypt.genSaltSync(saltRounds))}' WHERE email_hash = "${data.mail}";`,
                     (err, result) => {
                       if (err) throw err;
                     }
@@ -457,7 +459,7 @@ function bdRequest(request, data) {
           //console.log(data.user)
           OPSIAN_db.query(
             `INSERT INTO User_U (user, email_hash, password_hash, auth_token) 
-            VALUES ('${data.user}', '${data.mail}', '${data.password}', '${data.auth_token}');`,
+            VALUES ('${data.user}', '${data.mail}', '${data.password}', '${bcrypt.hashSync(data.auth_token, bcrypt.genSaltSync(saltRounds))}');`,
             (err, result) => {
               if (err) throw err;
               console.log(`=> SET user = ${data.user} OK `);

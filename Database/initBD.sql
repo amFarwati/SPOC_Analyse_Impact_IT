@@ -133,3 +133,6 @@ CREATE TABLE `Item_U` (
   CONSTRAINT `fkPush_Item` FOREIGN KEY (`idPush`) REFERENCES `Push_U` (`idPush`),
   CONSTRAINT `fkReference_Item` FOREIGN KEY (`idReference`) REFERENCES `Reference_M` (`idReference`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+
+

@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import yargs from "yargs";
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from 'uuid';
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
 import { hideBin } from "yargs/helpers";
@@ -60,9 +61,7 @@ function toMySQLDateFormat(date) {
 
 //function generation token unique via bcrypt
 function generateAuthToken(name, mail) {
-  let token_root = `${name}${mail}${Date.now()}`;
-  let salt_token = bcrypt.genSaltSync(saltRounds);
-  let token = bcrypt.hashSync(token_root, salt_token);
+  let token = uuidv4();
   return token;
 }
 

@@ -42,8 +42,7 @@ function App() {
   const [critere_selec, setCritere_selec] = useState(0);
   const [typeEquipement, setTypeEquipement] = useState(-1);
   const [boxes, setBoxes] = useState(() => {
-    // Load saved data from local storage or use a default value
-    const savedData = JSON.parse(localStorage.getItem("boxes")) || [];
+    const savedData = [];
     return savedData;
   });
 

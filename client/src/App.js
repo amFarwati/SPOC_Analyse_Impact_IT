@@ -51,8 +51,8 @@ function App() {
   const [token, setToken] = useState("");
   const [isLogged, setIsLogged] = useState(false);
   const [isDeconnected, setIsDeconnected] = useState(false);
-  //const baseUrl = `http://insa-numimpact-01.insa-lyon.fr/server`;
-  const baseUrl = `http://localhost:4000`;
+  const baseUrl = `http://insa-numimpact-01.insa-lyon.fr/server`;
+  //const baseUrl = `http://localhost:4000`;
 
   useEffect(() => {
     console.log(

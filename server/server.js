@@ -31,9 +31,9 @@ const port = argv.port;
 const saltRounds = 10;
 
 const OPSIAN_db = mysql.createConnection({
-  user: "root",
+  //user: "root",
   host: "localhost",
-  //user: "numuser",
+  user: "numuser",
   password: "spocBDD",
   database: "opsian",
   //database: "SPOC_Analyse_Impact_IT",
@@ -434,7 +434,7 @@ function bdRequest(request, data) {
                   bcrypt.compareSync(data.password, result[0].password_hash)
                 ) {
                   rejected = false;
-                  auth_token = generateAuthToken(data.user,data.mail);
+                  auth_token = generateAuthToken(data.user, data.mail);
 
                   OPSIAN_db.query(
                     `UPDATE User_U SET auth_token = '${bcrypt.hashSync(
@@ -814,7 +814,7 @@ app.put("/setUser", async (req, res) => {
       let hashedPassword = bcrypt.hashSync(user_password, salt_password);
 
       // Auth token
-      let auth_token = generateAuthToken(user_name,user_mail);
+      let auth_token = generateAuthToken(user_name, user_mail);
       console.log(auth_token);
 
       await bdRequest("setUser", {
@@ -872,7 +872,6 @@ app.put("/login", async (req, res) => {
 
 //requête getImpact (à check secu multi user)
 app.get("/getImpact/:user/:type/:token", async (req, res) => {
-
   let user = req.params.user;
   let token = decodeURIComponent(req.params.token);
   let accepted = await authCheck(user, token);

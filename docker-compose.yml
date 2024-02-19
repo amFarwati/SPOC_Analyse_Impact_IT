@@ -14,6 +14,7 @@ services:
     environment:
       MYSQL_DATABASE: opsian
       MYSQL_USER: numuser
+      MYSQL_HOST: localhost
       MYSQL_ROOT_PASSWORD: spocBDD
       MYSQL_PASSWORD: spocBDD
       SERVICE_TAGS: prod

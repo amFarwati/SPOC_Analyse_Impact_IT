@@ -20,46 +20,28 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
 
 ## Installation
 
-Pour l'instant, pas de `docker compose` mais c'est prévu pour la suite...
+Prérequis : avoir docker desktop
 
-1. Cloner le repository depuis la branche main
-2. Installer node et npm
-3. Se déplacer dans le dossier front :
+1. Cloner le repository
 
 ```bash
-cd ./SPOC_Analyse_Impact_IT/front
+git clone https://github.com/amFarwati/SPOC_Analyse_Impact_IT.git
 ```
 
-4. Installer les dépendances pour le front :
+2. Se déplacer dans le dossier
 
 ```bash
-npm install
-npm install redaxios
+cd <votre_chemin>/Github/SPOC_Analyse_Impact_IT
 ```
 
-5. Se déplacer dans le dossier server :
+3. Lancer le 'docker-compose'
 
 ```bash
-cd ../server
+docker-compose -d --build  #par défaut
+docker compose -d --build  #si la première commande ne marche pas
 ```
 
-6. Télécharger mysql (suivre ce tuto si non installé préalablement):
-   > [**Tuto installation mysql**](https://www.digitalocean.com/community/tutorials/how-to-install-mysql-on-ubuntu-20-04)
-7. Monter la base de donnée :
-
-```bash
-./MontageBD.sh
-```
-
-8. Ouvrir deux terminaux et lancer le front et le server en parallèle :
-
-```bash
-cd ../server
-node server.js
-
-cd ../front
-npm start
-```
+L'installation des images et la mise en place de l'outil risque de prendre du temps la première fois (environ 5min).
 
 ## Utilisation
 

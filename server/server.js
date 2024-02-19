@@ -2,13 +2,11 @@
 import mysql from "mysql";
 import express from "express";
 import bodyParser from "body-parser";
-import Papa from "papaparse";
 import yargs from "yargs";
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
-import { promises as fsPromises } from "fs";
 import { hideBin } from "yargs/helpers";
 
 console.log("server test opti");
@@ -33,9 +31,9 @@ const port = argv.port;
 const saltRounds = 10;
 
 const OPSIAN_db = mysql.createConnection({
-  //host: "root",
+  user: "root",
   host: "localhost",
-  user: "numuser",
+  //user: "numuser",
   password: "spocBDD",
   database: "opsian",
   //database: "SPOC_Analyse_Impact_IT",
@@ -436,10 +434,13 @@ function bdRequest(request, data) {
                   bcrypt.compareSync(data.password, result[0].password_hash)
                 ) {
                   rejected = false;
-                  auth_token = generateAuthToken(data.user, data.mail);
+                  auth_token = generateAuthToken(data.user,data.mail);
 
                   OPSIAN_db.query(
-                    `UPDATE User_U SET auth_token = '${bcrypt.hashSync(auth_token, bcrypt.genSaltSync(saltRounds))}' WHERE email_hash = "${data.mail}";`,
+                    `UPDATE User_U SET auth_token = '${bcrypt.hashSync(
+                      auth_token,
+                      bcrypt.genSaltSync(saltRounds)
+                    )}' WHERE email_hash = "${data.mail}";`,
                     (err, result) => {
                       if (err) throw err;
                     }
@@ -459,7 +460,12 @@ function bdRequest(request, data) {
           //console.log(data.user)
           OPSIAN_db.query(
             `INSERT INTO User_U (user, email_hash, password_hash, auth_token) 
-            VALUES ('${data.user}', '${data.mail}', '${data.password}', '${bcrypt.hashSync(data.auth_token, bcrypt.genSaltSync(saltRounds))}');`,
+            VALUES ('${data.user}', '${data.mail}', '${
+              data.password
+            }', '${bcrypt.hashSync(
+              data.auth_token,
+              bcrypt.genSaltSync(saltRounds)
+            )}');`,
             (err, result) => {
               if (err) throw err;
               console.log(`=> SET user = ${data.user} OK `);
@@ -750,7 +756,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.put("/setInventory/:user/:token", async (req, res) => {
   try {
     let user = req.params.user;
-    let token = decodeURIComponent(req.params.token);
+    let token = decodeURIComponent(decodeURIComponent(req.params.token));
     let accepted = await authCheck(user, token);
     console.log(`=> setInventory for ${user} accepted ${accepted}`);
 
@@ -808,7 +814,7 @@ app.put("/setUser", async (req, res) => {
       let hashedPassword = bcrypt.hashSync(user_password, salt_password);
 
       // Auth token
-      let auth_token = generateAuthToken(user_name, user_mail);
+      let auth_token = generateAuthToken(user_name,user_mail);
       console.log(auth_token);
 
       await bdRequest("setUser", {
@@ -866,6 +872,7 @@ app.put("/login", async (req, res) => {
 
 //requête getImpact (à check secu multi user)
 app.get("/getImpact/:user/:type/:token", async (req, res) => {
+
   let user = req.params.user;
   let token = decodeURIComponent(req.params.token);
   let accepted = await authCheck(user, token);

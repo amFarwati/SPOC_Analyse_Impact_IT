@@ -14,7 +14,7 @@ function InfoButton({ title, info, onChange }) {
             <Tooltip 
                 title={
                     <Box display="flex" flexDirection='column' justifyContent="center" alignItems="center">
-                        {infos.map(e=>{return <Typography variant="h5" fontWeight="600" >{e}</Typography>})}
+                        {infos.map(e=>{return <Typography variant="h5" fontWeight="600" key={e} >{e}</Typography>})}
                     </Box>
                 }  
                 leaveDelay={200} 

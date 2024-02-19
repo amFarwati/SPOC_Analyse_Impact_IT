@@ -68,6 +68,8 @@ function Dashboard({
   const [isUpload, setIsUpload] = useState(false);
   const [open, setOpen] = useState(false);
 
+  token = encodeURIComponent (token);
+
   const chartColor = [
     "#329D9C",
     "#56C596",
@@ -91,7 +93,7 @@ function Dashboard({
     let data = { type: 1 };
 
     axios
-      .get(`${baseUrl}/getImpact/${user}/${data.type}/${encodeURIComponent(token)}`, {
+      .get(`${baseUrl}/getImpact/${user}/${data.type}/${token}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -133,7 +135,7 @@ function Dashboard({
       console.log(data);
 
       axios
-        .put(`${baseUrl}/setInventory/${user}/${encodeURIComponent(token)}`, data, {
+        .put(`${baseUrl}/setInventory/${user}/${token}`, data, {
           withCredentials: true,
           "Content-Type": "application/json",
         })
@@ -146,7 +148,7 @@ function Dashboard({
 
           console.log(`/getImpact ${baseUrl} ${user} =>`);
           axios
-            .get(`${baseUrl}/getImpact/${user}/${data.type}/${encodeURIComponent(token)}`, {
+            .get(`${baseUrl}/getImpact/${user}/${data.type}/${token}`, {
               withCredentials: true,
             })
             .then((res) => {

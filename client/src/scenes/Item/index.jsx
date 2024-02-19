@@ -24,6 +24,7 @@ import WaterIcon from "@mui/icons-material/Water";
 import FactoryIcon from "@mui/icons-material/Factory";
 import Skeleton from "@mui/material/Skeleton";
 import Stack from "@mui/material/Stack";
+
 import * as React from "react";
 
 function Item({
@@ -64,6 +65,8 @@ function Item({
 
   const [boxesChange, setBoxesChange] = useState(false);
   const [boxesEmpty, setBoxesEmpty] = useState(false);
+
+  token = encodeURIComponent (token);
 
   const chartColor = [
     "#329D9C",
@@ -129,7 +132,7 @@ function Item({
       console.log(data);
 
       axios
-        .put(`${baseUrl}/setInventory/${user}/${encodeURIComponent(token)}`, data, {
+        .put(`${baseUrl}/setInventory/${user}/${token}`, data, {
           withCredentials: true,
           "Content-Type": "application/json",
         })
@@ -142,7 +145,7 @@ function Item({
 
           console.log(`/getImpact ${baseUrl} ${user} =>`);
           axios
-            .get(`${baseUrl}/getImpact/${user}/${data.type}/${encodeURIComponent(token)}`, {
+            .get(`${baseUrl}/getImpact/${user}/${data.type}/${token}`, {
               withCredentials: true,
             })
             .then((res) => {
@@ -191,10 +194,10 @@ function Item({
 
   // requete serveur pour récupérer list des types pris en charge
   const handlerGetRefList = () => {
-    console.log(`handlerGetRefList ${baseUrl} =>`);
+    console.log(`handlerGetRefList ${baseUrl} => ${token} `);
 
     axios
-      .get(`${baseUrl}/getRefList/${user}/${encodeURIComponent(token)}`, { withCredentials: true })
+      .get(`${baseUrl}/getRefList/${user}/${token}`, { withCredentials: true })
       .then((res) => {
         // Vérification si la requête a réussi (statut 200-299)
         if (!res.ok) {

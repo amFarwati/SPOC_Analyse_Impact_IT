@@ -257,7 +257,7 @@ function Item({
   }, [typeEquipement]);
 
   return (
-    <Box height="100%" margin=" 0 20px 20px 20px">
+    <Box height="auto" margin=" 0 20px 20px 20px">
       <Box
         display="grid"
         gridTemplateColumns="repeat(12,1fr)"

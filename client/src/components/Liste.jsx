@@ -83,7 +83,7 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
   }, [boxes]);
 
   return (
-    <Box  height="100%">
+    <Box height="auto">
       <Box textAlign="center" marginBottom="16px">
         <Button
           onClick={ajouterBox}

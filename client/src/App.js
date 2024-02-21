@@ -83,7 +83,8 @@ function App() {
                 width="100%"
                 height="100%"
               >
-                <Topbar />
+                <Topbar sx={{ flex: 1 }} />
+                <Box sx={{ flex: 2 }} >
                 {isLogged && !isDeconnected ? (
                   <Routes>
                     <Route
@@ -202,6 +203,7 @@ function App() {
                     />
                   </Routes>
                 )}
+                </Box>
               </Box>
             </Box>
           </main>

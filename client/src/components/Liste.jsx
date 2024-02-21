@@ -83,7 +83,7 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
   }, [boxes]);
 
   return (
-    <Box>
+    <Box height="auto">
       <Box textAlign="center" marginBottom="16px">
         <Button
           onClick={ajouterBox}
@@ -101,7 +101,7 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
         flexDirection="column"
         alignItems="center"
         width="100%"
-        height={850}
+        height="100%"
         sx={{ overflowY: 'auto',
             }} 
       >
@@ -116,12 +116,13 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
             flexDirection="row"
             alignItems="center"
             justifyContent="space-between"
+            gap = "8px"
           >
             <TextField
               id="filled-select-currency"
+              style={{ width: '30%' }}
               select
               label="Item"
-              helperText="Sélectionnez votre item"
               variant="filled"
               value={box.type.slice(1)}
               onChange={(e) => handleTypeChange(box.id, `/${e.target.value}`)}
@@ -137,9 +138,9 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
             </TextField>
             <TextField
               label="Quantité"
+              style={{ width: '30%' }}
               variant="filled"
               value={box.quantity}
-              helperText="Seulement des chiffres"
               onChange={(e) => handleQuantityChange(box.id, e.target.value)}
             />
             <LocalizationProvider

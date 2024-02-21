@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import yargs from "yargs";
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
+import { v4 as uuidv4 } from "uuid";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
 import { hideBin } from "yargs/helpers";
@@ -60,9 +61,7 @@ function toMySQLDateFormat(date) {
 
 //function generation token unique via bcrypt
 function generateAuthToken(name, mail) {
-  let token_root = `${name}${mail}${Date.now()}`;
-  let salt_token = bcrypt.genSaltSync(saltRounds);
-  let token = bcrypt.hashSync(token_root, salt_token);
+  let token = uuidv4();
   return token;
 }
 
@@ -82,149 +81,154 @@ function bdRequest(request, data) {
 
     switch (request) {
       case "getUserImpact": // OK
-        setTimeout(() => {
-          let user = data.user;
-          let type = data.type;
+        let user = data.user;
+        let type = data.type;
 
-          console.log(user, type, request);
+        console.log(user, type, request);
 
-          let idPush = null;
-          let userInv = null;
-          let etapeACV = null;
-          let critere = null;
-          let impactItem = {};
-          let promises = [];
+        let idPush = null;
+        let userInv = null;
+        let etapeACV = null;
+        let critere = null;
+        let impactItem = {};
+        let promises = [];
 
-          dateMin = null;
-          dateMax = null;
-          nbProps = null;
-          nbPropsEnService = null;
+        dateMin = null;
+        dateMax = null;
+        nbProps = null;
+        nbPropsEnService = null;
 
-          promises.push(
-            // collecte id dernier push utilisateur
-            new Promise((resolve, reject) => {
-              OPSIAN_db.query(
-                `SELECT MAX(idPush) 
+        console.time("routine");
+
+        promises.push(
+          // collecte id dernier push utilisateur
+          new Promise((resolve, reject) => {
+            OPSIAN_db.query(
+              `SELECT MAX(idPush) 
                 FROM Push_U 
                 JOIN User_U ON Push_U.idUser = User_U.idUser
                 WHERE User_U.email_hash = '${user}'
                 AND Push_U.inventaire = ${type}
                 ;`,
-                (err, result) => {
-                  if (err) throw err;
-                  idPush = result[0]["MAX(idPush)"];
-                  console.log("idPush", idPush);
-                  resolve();
-                }
-              );
-            })
-          );
+              (err, result) => {
+                if (err) throw err;
+                idPush = result[0]["MAX(idPush)"];
+                console.log("idPush", idPush);
+                resolve();
+              }
+            );
+          })
+        );
 
-          promises.push(
-            // collecte les unités
-            new Promise((resolve, reject) => {
-              OPSIAN_db.query(
-                `SELECT unite 
+        promises.push(
+          // collecte les unités
+          new Promise((resolve, reject) => {
+            OPSIAN_db.query(
+              `SELECT unite 
                 FROM Critere_M
                 ;`,
-                (err, result) => {
-                  if (err) throw err;
-                  unite = result.map((row) => row.unite);
-                  resolve();
-                }
-              );
-            })
-          );
+              (err, result) => {
+                if (err) throw err;
+                unite = result.map((row) => row.unite);
+                resolve();
+              }
+            );
+          })
+        );
 
-          promises.push(
-            // collecte les critéres
-            new Promise((resolve, reject) => {
-              OPSIAN_db.query(
-                `SELECT idCritere 
+        promises.push(
+          // collecte les critéres
+          new Promise((resolve, reject) => {
+            OPSIAN_db.query(
+              `SELECT idCritere 
                 FROM Critere_M
                 ;`,
-                (err, result) => {
-                  if (err) throw err;
-                  critere = result.map((row) => row.idCritere);
-                  resolve();
-                }
-              );
-            })
-          );
+              (err, result) => {
+                if (err) throw err;
+                critere = result.map((row) => row.idCritere);
+                resolve();
+              }
+            );
+          })
+        );
 
-          promises.push(
-            // collecte les étapes ACV
-            new Promise((resolve, reject) => {
-              OPSIAN_db.query(
-                `SELECT idEtapeACV 
+        promises.push(
+          // collecte les étapes ACV
+          new Promise((resolve, reject) => {
+            OPSIAN_db.query(
+              `SELECT idEtapeACV 
                 FROM EtapeACV_M
                 ;`,
-                (err, result) => {
-                  if (err) throw err;
-                  etapeACV = result.map((row) => row.idEtapeACV);
-                  resolve();
-                }
-              );
-            })
-          );
+              (err, result) => {
+                if (err) throw err;
+                etapeACV = result.map((row) => row.idEtapeACV);
+                resolve();
+              }
+            );
+          })
+        );
 
-          Promise.all(promises)
-            .then(() => {
-              if (idPush !== null) {
-                promises = [];
-                promises.push(
-                  // collecte la liste des items de l'inventaire utilisateur
-                  new Promise((resolve, reject) => {
-                    OPSIAN_db.query(
-                      `SELECT idItem 
+        Promise.all(promises)
+          .then(() => {
+            console.timeEnd("routine");
+
+            console.time("calcul");
+
+            if (idPush !== null) {
+              promises = [];
+              promises.push(
+                // collecte la liste des items de l'inventaire utilisateur
+                new Promise((resolve, reject) => {
+                  OPSIAN_db.query(
+                    `SELECT idItem 
                       FROM Item_U 
                       WHERE idPush = ${idPush};`,
-                      (err, result) => {
-                        if (err) throw err;
-                        userInv = result.map((row) => row.idItem);
-                        resolve();
-                      }
-                    );
-                  })
-                );
+                    (err, result) => {
+                      if (err) throw err;
+                      userInv = result.map((row) => row.idItem);
+                      resolve();
+                    }
+                  );
+                })
+              );
 
-                promises.push(
-                  // collecte la date min et max
-                  new Promise((resolve, reject) => {
-                    OPSIAN_db.query(
-                      `SELECT MAX(YEAR(Push_U.date)),MIN(YEAR(Item_U.dateDebut))
+              promises.push(
+                // collecte la date min et max
+                new Promise((resolve, reject) => {
+                  OPSIAN_db.query(
+                    `SELECT MAX(YEAR(Push_U.date)),MIN(YEAR(Item_U.dateDebut))
                       FROM Item_U 
                       JOIN Push_U ON Item_U.idPush = Push_U.idPush
                       WHERE Item_U.idPush = ${idPush};`,
-                      (err, result) => {
-                        if (err) throw err;
-                        result.map((row) => {
-                          dateMax = row["MAX(YEAR(Push_U.date))"];
-                          dateMin = row["MIN(YEAR(Item_U.dateDebut))"];
-                        });
-                        resolve();
-                      }
-                    );
-                  })
-                );
+                    (err, result) => {
+                      if (err) throw err;
+                      result.map((row) => {
+                        dateMax = row["MAX(YEAR(Push_U.date))"];
+                        dateMin = row["MIN(YEAR(Item_U.dateDebut))"];
+                      });
+                      resolve();
+                    }
+                  );
+                })
+              );
 
-                Promise.all(promises)
-                  .then(() => {
-                    let requestEff = Date.now();
-                    for (let year = dateMin; year < dateMax + 1; year++) {
-                      impactItem[year] = {};
+              Promise.all(promises)
+                .then(() => {
+                  let requestEff = Date.now();
+                  for (let year = dateMin; year < dateMax + 1; year++) {
+                    impactItem[year] = {};
 
-                      userInv.forEach((idItem) => {
-                        promises = [];
+                    userInv.forEach((idItem) => {
+                      promises = [];
 
-                        impactItem[year][idItem] = {};
-                        let inUse = false;
+                      impactItem[year][idItem] = {};
+                      let inUse = false;
 
-                        promises.push(
-                          // regarde si item isUsed
-                          new Promise((resolve, reject) => {
-                            OPSIAN_db.query(
-                              `SELECT EXISTS(
+                      promises.push(
+                        // regarde si item isUsed
+                        new Promise((resolve, reject) => {
+                          OPSIAN_db.query(
+                            `SELECT EXISTS(
                                 SELECT 1 
                                 FROM Item_U 
                                 JOIN Reference_M ON Item_U.idReference = Reference_M.idReference
@@ -233,255 +237,259 @@ function bdRequest(request, data) {
                                 AND YEAR(dateDebut) < ${year + 1}
                                 AND ${year} - YEAR(Item_U.dateDebut) - Type_M.dureeVie < 0
                                 ) AS 'isUsed';`,
-                              (err, result) => {
-                                if (err) throw err;
-                                inUse = result[0].isUsed === 1;
-                                resolve();
-                              }
-                            );
-                          })
-                        );
+                            (err, result) => {
+                              if (err) throw err;
+                              inUse = result[0].isUsed === 1;
+                              resolve();
+                            }
+                          );
+                        })
+                      );
 
-                        Promise.all(promises)
-                          .then(() => {
-                            promises = [];
+                      Promise.all(promises)
+                        .then(() => {
+                          promises = [];
 
-                            promises.push(
-                              // recupére le calcul du cout + compte le nombre d'item encore en services à date du push + nb total
-                              new Promise((resolve, reject) => {
-                                OPSIAN_db.query(
-                                  `SELECT cout, Item_U.quantité
+                          promises.push(
+                            // recupére le calcul du cout + compte le nombre d'item encore en services à date du push + nb total
+                            new Promise((resolve, reject) => {
+                              OPSIAN_db.query(
+                                `SELECT cout, Item_U.quantité
                             FROM Type_M
                             JOIN Reference_M  ON Reference_M.idType = Type_M.idType
                             JOIN Item_U ON Item_U.idReference = Reference_M.idReference
                             WHERE Item_U.idItem = ${idItem}
                             AND YEAR(Item_U.dateDebut) < ${year + 1}
                             ;`,
-                                  (err, result) => {
-                                    if (err) throw err;
+                                (err, result) => {
+                                  if (err) throw err;
 
-                                    let jsonData = result.map((row) =>
-                                      JSON.parse(row.cout)
-                                    )[0];
-                                    let quantite = result.map(
-                                      (row) => row.quantité
-                                    )[0];
+                                  let jsonData = result.map((row) =>
+                                    JSON.parse(row.cout)
+                                  )[0];
+                                  let quantite = result.map(
+                                    (row) => row.quantité
+                                  )[0];
 
-                                    if (year === dateMax) {
-                                      nbProps = nbProps + quantite;
-                                    }
+                                  if (year === dateMax) {
+                                    nbProps = nbProps + quantite;
+                                  }
 
-                                    if (result.length === 0) {
-                                      jsonData = {
-                                        1: {
-                                          1: { cout: 0 },
-                                          2: { cout: 0 },
-                                          3: { cout: 0 },
-                                          4: { cout: 0 },
-                                          5: { cout: 0 },
-                                        },
-                                        2: {
-                                          1: { cout: 0 },
-                                          2: { cout: 0 },
-                                          3: { cout: 0 },
-                                          4: { cout: 0 },
-                                          5: { cout: 0 },
-                                        },
-                                        3: {
-                                          1: { cout: 0 },
-                                          2: { cout: 0 },
-                                          3: { cout: 0 },
-                                          4: { cout: 0 },
-                                          5: { cout: 0 },
-                                        },
-                                        4: {
-                                          1: { cout: 0 },
-                                          2: { cout: 0 },
-                                          3: { cout: 0 },
-                                          4: { cout: 0 },
-                                          5: { cout: 0 },
-                                        },
+                                  if (result.length === 0) {
+                                    jsonData = {
+                                      1: {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      },
+                                      2: {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      },
+                                      3: {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      },
+                                      4: {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
+                                      },
+                                    };
+                                  } else {
+                                    if (!inUse) {
+                                      jsonData["3"] = {
+                                        1: { cout: 0 },
+                                        2: { cout: 0 },
+                                        3: { cout: 0 },
+                                        4: { cout: 0 },
+                                        5: { cout: 0 },
                                       };
                                     } else {
-                                      if (!inUse) {
-                                        jsonData["3"] = {
-                                          1: { cout: 0 },
-                                          2: { cout: 0 },
-                                          3: { cout: 0 },
-                                          4: { cout: 0 },
-                                          5: { cout: 0 },
-                                        };
-                                      } else {
-                                        if (year === dateMax) {
-                                          nbPropsEnService =
-                                            nbPropsEnService + quantite;
-                                        }
-                                      }
-                                      for (let etape in jsonData) {
-                                        for (let critere in jsonData[etape]) {
-                                          jsonData[etape][critere].cout *=
-                                            quantite;
-                                        }
+                                      if (year === dateMax) {
+                                        nbPropsEnService =
+                                          nbPropsEnService + quantite;
                                       }
                                     }
-
-                                    impactItem[year][idItem] = jsonData;
-                                    //console.log(impactItem)
-                                    resolve();
+                                    for (let etape in jsonData) {
+                                      for (let critere in jsonData[etape]) {
+                                        jsonData[etape][critere].cout *=
+                                          quantite;
+                                      }
+                                    }
                                   }
-                                );
-                              })
-                            );
 
-                            Promise.all(promises)
-                              .then(() => {
-                                if (
-                                  idItem === userInv[userInv.length - 1] &&
-                                  year === dateMax
-                                ) {
-                                  resolve([impactItem, unite]);
-                                  console.log(
-                                    `bd request ${request} ${
-                                      data.user
-                                    } awsered in ${
-                                      (Date.now() - timer) / 1000
-                                    }s`
-                                  );
-                                  console.log(
-                                    `calcul for all items answered in ${
-                                      (Date.now() - requestEff) / 1000
-                                    }s`
-                                  );
+                                  impactItem[year][idItem] = jsonData;
+                                  //console.log(impactItem)
+                                  resolve();
                                 }
-                              })
-                              .catch((error) => {
-                                // Gérer les erreurs ici
-                                console.error(
-                                  "Une erreur s'est produite :",
-                                  error
+                              );
+                            })
+                          );
+
+                          Promise.all(promises)
+                            .then(() => {
+                              if (
+                                idItem === userInv[userInv.length - 1] &&
+                                year === dateMax
+                              ) {
+                                resolve([impactItem, unite]);
+
+                                console.timeEnd("calcul");
+
+                                console.log(
+                                  `bd request ${request} ${
+                                    data.user
+                                  } awsered in ${(Date.now() - timer) / 1000}s`
                                 );
-                              });
-                          })
-                          .catch((error) => {
-                            // Gérer les erreurs ici
-                            console.error("Une erreur s'est produite :", error);
-                          });
-                      });
-                    }
-                  })
-                  .catch((error) => {
-                    // Gérer les erreurs ici
-                    console.error("Une erreur s'est produite :", error);
-                  });
-              } else {
-                resolve("No push for this user");
-              }
-            })
-            .catch((error) => {
-              // Gérer les erreurs ici
-              console.error("Une erreur s'est produite :", error);
-            });
-        }, 1000);
+                                console.log(
+                                  `calcul for all items answered in ${
+                                    (Date.now() - requestEff) / 1000
+                                  }s`
+                                );
+                              }
+                            })
+                            .catch((error) => {
+                              // Gérer les erreurs ici
+                              console.error(
+                                "Une erreur s'est produite :",
+                                error
+                              );
+                            });
+                        })
+                        .catch((error) => {
+                          // Gérer les erreurs ici
+                          console.error("Une erreur s'est produite :", error);
+                        });
+                    });
+                  }
+                })
+                .catch((error) => {
+                  // Gérer les erreurs ici
+                  console.error("Une erreur s'est produite :", error);
+                });
+            } else {
+              resolve("No push for this user");
+            }
+          })
+          .catch((error) => {
+            // Gérer les erreurs ici
+            console.error("Une erreur s'est produite :", error);
+          });
 
         break;
       case "getRef": // OK
-        setTimeout(() => {
-          let refList = [];
+        let refList = [];
 
-          OPSIAN_db.query(
-            "SELECT nomReference FROM Reference_M;",
-            (err, result) => {
-              if (err) throw err;
-              //console.log(result);
-              refList = result.map((row) => row.nomReference);
-              resolve(refList);
-            }
-          );
+        console.time("getRef");
 
-          console.log(
-            `bd request ${request} awseredin ${(Date.now() - timer) / 1000}s`
-          );
-        }, 1000);
+        OPSIAN_db.query(
+          "SELECT nomReference FROM Reference_M;",
+          (err, result) => {
+            if (err) throw err;
+            //console.log(result);
+            refList = result.map((row) => row.nomReference);
+            resolve(refList);
+            console.timeEnd("getRef");
+          }
+        );
+
+        console.log(
+          `bd request ${request} awseredin ${(Date.now() - timer) / 1000}s`
+        );
+
         break;
       case "getUser": // OK
-        setTimeout(() => {
-          let userList = [];
+        console.time("getUser");
 
-          OPSIAN_db.query("SELECT email_hash FROM User_U;", (err, result) => {
-            if (err) throw err;
-            userList = result.map((row) => row.email_hash);
+        let userList = [];
 
-            resolve(userList);
-          });
-          console.log(
-            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-          );
-        }, 1000);
+        OPSIAN_db.query("SELECT email_hash FROM User_U;", (err, result) => {
+          if (err) throw err;
+          userList = result.map((row) => row.email_hash);
+
+          resolve(userList);
+          console.timeEnd("getUser");
+        });
+        console.log(
+          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+        );
+
         break;
       case "login": // à vérif sécu
-        setTimeout(() => {
-          let rejected = true;
-          let inBD = false;
-          let auth_token = null;
+        let rejected = true;
+        let inBD = false;
+        let auth_token = null;
 
-          OPSIAN_db.query(
-            `SELECT password_hash FROM User_U WHERE email_hash = "${data.mail}";`,
-            (err, result) => {
-              if (err) throw err;
-              if (result.length != 0) {
-                inBD = true;
-                if (
-                  bcrypt.compareSync(data.password, result[0].password_hash)
-                ) {
-                  rejected = false;
-                  auth_token = generateAuthToken(data.user, data.mail);
+        console.time("login");
 
-                  OPSIAN_db.query(
-                    `UPDATE User_U SET auth_token = '${bcrypt.hashSync(
-                      auth_token,
-                      bcrypt.genSaltSync(saltRounds)
-                    )}' WHERE email_hash = "${data.mail}";`,
-                    (err, result) => {
-                      if (err) throw err;
-                    }
-                  );
-                }
+        OPSIAN_db.query(
+          `SELECT password_hash FROM User_U WHERE email_hash = "${data.mail}";`,
+          (err, result) => {
+            if (err) throw err;
+            if (result.length != 0) {
+              inBD = true;
+              if (bcrypt.compareSync(data.password, result[0].password_hash)) {
+                rejected = false;
+                auth_token = generateAuthToken(data.user, data.mail);
+
+                OPSIAN_db.query(
+                  `UPDATE User_U SET auth_token = '${bcrypt.hashSync(
+                    auth_token,
+                    bcrypt.genSaltSync(saltRounds)
+                  )}' WHERE email_hash = "${data.mail}";`,
+                  (err, result) => {
+                    if (err) throw err;
+                    console.timeEnd("login");
+                  }
+                );
               }
-              resolve([rejected, inBD, auth_token]);
             }
-          );
-          console.log(
-            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-          );
-        }, 1000);
+            resolve([rejected, inBD, auth_token]);
+          }
+        );
+        console.log(
+          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+        );
+
         break;
       case "setUser": // OK
-        setTimeout(() => {
-          //console.log(data.user)
-          OPSIAN_db.query(
-            `INSERT INTO User_U (user, email_hash, password_hash, auth_token) 
+        console.time("setUser");
+        OPSIAN_db.query(
+          `INSERT INTO User_U (user, email_hash, password_hash, auth_token) 
             VALUES ('${data.user}', '${data.mail}', '${
-              data.password
-            }', '${bcrypt.hashSync(
-              data.auth_token,
-              bcrypt.genSaltSync(saltRounds)
-            )}');`,
-            (err, result) => {
-              if (err) throw err;
-              console.log(`=> SET user = ${data.user} OK `);
-              resolve(true);
-            }
-          );
+            data.password
+          }', '${bcrypt.hashSync(
+            data.auth_token,
+            bcrypt.genSaltSync(saltRounds)
+          )}');`,
+          (err, result) => {
+            if (err) throw err;
+            console.log(`=> SET user = ${data.user} OK `);
+            resolve(true);
+            console.timeEnd("setUser");
+          }
+        );
 
-          console.log(
-            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-          );
-        }, 1000);
+        console.log(
+          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+        );
+
         break;
       case "setUserPush": // OK
-        setTimeout(() => {
-          OPSIAN_db.query(
-            `INSERT INTO Push_U (inventaire,date, idUser) 
+        console.time("setUserPush");
+        OPSIAN_db.query(
+          `INSERT INTO Push_U (inventaire,date, idUser) 
             VALUES (
               ${data.type},
               '${data.date}', 
@@ -490,28 +498,29 @@ function bdRequest(request, data) {
               WHERE email_hash = '${data.user}')
             );
             `,
-            (err, result) => {
-              if (err) throw err;
-              console.log(`=> SET userPush = ${data.user}, ${data.date}  OK`);
-              resolve(true);
-            }
-          );
+          (err, result) => {
+            if (err) throw err;
+            console.log(`=> SET userPush = ${data.user}, ${data.date}  OK`);
+            resolve(true);
+            console.timeEnd("setUserPush");
+          }
+        );
 
-          console.log(
-            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-          );
-        }, 1000);
+        console.log(
+          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+        );
+
         break;
         3;
       case "setUserInv": // OK
-        setTimeout(() => {
-          data.inv.forEach((item) => {
-            let ref = item.type;
-            let dateAchat = item.dateDebut;
+        console.time("setUserInv");
+        data.inv.forEach((item) => {
+          let ref = item.type;
+          let dateAchat = item.dateDebut;
 
-            if (liste_reference.includes(ref)) {
-              OPSIAN_db.query(
-                `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference, quantité)
+          if (liste_reference.includes(ref)) {
+            OPSIAN_db.query(
+              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference, quantité)
                 VALUES (
                   '${dateAchat}',
                   (SELECT MAX(push.idPush)
@@ -525,15 +534,16 @@ function bdRequest(request, data) {
                   ${item.quantity}
                 )
               ;`,
-                (err, result) => {
-                  if (err) throw err;
-                  //console.log(`=> SET userInv = ${data.user}  OK`);
-                  resolve(true);
-                }
-              );
-            } else {
-              OPSIAN_db.query(
-                `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference,quantité)
+              (err, result) => {
+                if (err) throw err;
+                //console.log(`=> SET userInv = ${data.user}  OK`);
+                console.timeEnd("setUserInv");
+                resolve(true);
+              }
+            );
+          } else {
+            OPSIAN_db.query(
+              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference,quantité)
                 VALUES (
                   '${dateAchat}',
                   (SELECT MAX(push.idPush)
@@ -547,22 +557,24 @@ function bdRequest(request, data) {
                   ${item.quantity}
                 );
                 `,
-                (err, result) => {
-                  if (err) throw err;
-                  //console.log(`=> SET userInv = ${data.user}  OK`);
-                  resolve(true);
-                }
-              );
-            }
-          });
+              (err, result) => {
+                if (err) throw err;
+                //console.log(`=> SET userInv = ${data.user}  OK`);
+                console.timeEnd("setUserInv");
+                resolve(true);
+              }
+            );
+          }
+        });
 
-          console.log(
-            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-          );
-        }, 1000);
+        console.log(
+          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+        );
+
         break;
       case "computeCost": // OK
         setTimeout(() => {
+          console.time("computeCost");
           let etapeACV = null;
           let critere = null;
           let types = null;
@@ -687,6 +699,7 @@ function bdRequest(request, data) {
               Promise.all(promises)
                 .then((results) => {
                   // Traiter les résultats ici
+                  console.time("computeCost");
                   console.log(`=> BD updates costs`);
                   resolve(true);
                 })
@@ -702,36 +715,37 @@ function bdRequest(request, data) {
         }, 1000);
         break;
       case "areCostsComputed": // OK
-        setTimeout(() => {
-          OPSIAN_db.query(
-            // verifi si il y a au moins un cout null dans Type_M
-            `SELECT EXISTS(
+        console.time("areCostsComputed");
+        OPSIAN_db.query(
+          // verifi si il y a au moins un cout null dans Type_M
+          `SELECT EXISTS(
                 SELECT 1 
                 FROM Type_M 
                 WHERE cout IS NULL OR cout = '{}') AS 'isNullExists';`,
-            (err, result) => {
-              if (err) throw err;
-              // Si 'isNullExists' est 1, cela signifie qu'il y a au moins un champ NULL dans la colonne 'cout'
-              // Donc, nous retournons 'false'. Sinon, nous retournons 'true'.
-              const allNonNull = result[0].isNullExists === 0;
-              console.log(`=> ${allNonNull}`);
-              resolve(allNonNull);
-            }
-          );
-        }, 1000);
+          (err, result) => {
+            if (err) throw err;
+            // Si 'isNullExists' est 1, cela signifie qu'il y a au moins un champ NULL dans la colonne 'cout'
+            // Donc, nous retournons 'false'. Sinon, nous retournons 'true'.
+            const allNonNull = result[0].isNullExists === 0;
+            console.log(`=> ${allNonNull}`);
+            resolve(allNonNull);
+            console.timeEnd("areCostsComputed");
+          }
+        );
+
         break;
       case "authCheck": // à vérif sécu
-        setTimeout(() => {
-          OPSIAN_db.query(
-            `SELECT auth_token 
+        console.time("authCheck");
+        OPSIAN_db.query(
+          `SELECT auth_token 
             FROM User_U 
             WHERE email_hash = '${data.email}';`,
-            (err, result) => {
-              if (err) throw err;
-              resolve(result[0].auth_token);
-            }
-          );
-        }, 1000);
+          (err, result) => {
+            if (err) throw err;
+            resolve(result[0].auth_token);
+            console.timeEnd("authCheck");
+          }
+        );
         break;
     }
   });

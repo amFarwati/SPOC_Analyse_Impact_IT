@@ -400,12 +400,12 @@ function bdRequest(request, data) {
             //console.log(result);
             refList = result.map((row) => row.nomReference);
             resolve(refList);
-            console.timeEnd("getRef");
-          }
-        );
 
-        console.log(
-          `bd request ${request} awseredin ${(Date.now() - timer) / 1000}s`
+            console.timeEnd("getRef");
+            console.log(
+              `bd request ${request} awseredin ${(Date.now() - timer) / 1000}s`
+            );
+          }
         );
 
         break;
@@ -420,10 +420,10 @@ function bdRequest(request, data) {
 
           resolve(userList);
           console.timeEnd("getUser");
+          console.log(
+            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+          );
         });
-        console.log(
-          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-        );
 
         break;
       case "login": // à vérif sécu
@@ -450,16 +450,16 @@ function bdRequest(request, data) {
                   )}' WHERE email_hash = "${data.mail}";`,
                   (err, result) => {
                     if (err) throw err;
-                    console.timeEnd("login");
                   }
                 );
               }
             }
             resolve([rejected, inBD, auth_token]);
+            console.timeEnd("login");
+            console.log(
+              `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+            );
           }
-        );
-        console.log(
-          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
         );
 
         break;
@@ -477,12 +477,12 @@ function bdRequest(request, data) {
             if (err) throw err;
             console.log(`=> SET user = ${data.user} OK `);
             resolve(true);
-            console.timeEnd("setUser");
-          }
-        );
 
-        console.log(
-          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+            console.timeEnd("setUser");
+            console.log(
+              `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+            );
+          }
         );
 
         break;
@@ -502,14 +502,13 @@ function bdRequest(request, data) {
             if (err) throw err;
             console.log(`=> SET userPush = ${data.user}, ${data.date}  OK`);
             resolve(true);
+
             console.timeEnd("setUserPush");
+            console.log(
+              `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+            );
           }
         );
-
-        console.log(
-          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-        );
-
         break;
         3;
       case "setUserInv": // OK
@@ -537,7 +536,6 @@ function bdRequest(request, data) {
               (err, result) => {
                 if (err) throw err;
                 //console.log(`=> SET userInv = ${data.user}  OK`);
-                console.timeEnd("setUserInv");
                 resolve(true);
               }
             );
@@ -560,13 +558,14 @@ function bdRequest(request, data) {
               (err, result) => {
                 if (err) throw err;
                 //console.log(`=> SET userInv = ${data.user}  OK`);
-                console.timeEnd("setUserInv");
+
                 resolve(true);
               }
             );
           }
         });
 
+        console.timeEnd("setUserInv");
         console.log(
           `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
         );
@@ -780,17 +779,13 @@ app.put("/setInventory/:user/:token", async (req, res) => {
       let user = req.body.user;
       let inv = req.body.inventory;
       let type = req.body.type;
-      let userList = await bdRequest("getUser");
 
-      if (!userList.includes(user)) {
-        await bdRequest("setUser", { user: user });
-      }
       await bdRequest("setUserPush", {
         user: user,
         date: toMySQLDateFormat(dayjs()),
         type: type,
       });
-      liste_reference = await bdRequest("getRef");
+
       await bdRequest("setUserInv", { user: user, inv: inv });
 
       res.send(`BD updated with data for ${req.body.user}`);
@@ -894,87 +889,77 @@ app.get("/getImpact/:user/:type/:token", async (req, res) => {
   if (accepted) {
     let timer = Date.now();
     let type = req.params.type;
-    let userList = await bdRequest("getUser");
 
     console.log(`=> getImpact for ${user} type ${type}`);
 
-    if (user === undefined) {
-      res.send(`ERROR: the user is undefined`);
-    } else if (userList.includes(user)) {
-      if (!(await bdRequest("areCostsComputed"))) {
-        await bdRequest("computeCost");
-      }
-
-      bdRequest("getUserImpact", { user: user, type: type })
-        .then((result) => {
-          //console.log(result[0]);
-          if (result !== "No push for this user") {
-            let annualCost = {};
-            let annees = Object.keys(result[0]);
-            let items = Object.keys(result[0][annees[0]]);
-            let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
-            let critereList = Object.keys(
-              result[0][annees[0]][items[0]][etapeACVList[0]]
-            );
-
-            //console.log(annees, etapeACVList, result[0][annees[0]][items[0]]);
-
-            let formatTimer = Date.now();
-
-            annees.forEach((annee) => {
-              let cost = {
-                FABRICATION: [0, 0, 0, 0, 0],
-                DISTRIBUTION: [0, 0, 0, 0, 0],
-                UTILISATION: [0, 0, 0, 0, 0],
-                FIN_DE_VIE: [0, 0, 0, 0, 0],
-              };
-
-              let resEtapeACVList = Object.keys(cost);
-              items.forEach((item) => {
-                for (let i = 0; i < etapeACVList.length; i++) {
-                  for (let j = 0; j < critereList.length; j++) {
-                    let cout =
-                      result[0][annee][item][etapeACVList[i]][critereList[j]]
-                        .cout;
-                    cost[resEtapeACVList[i]][j] +=
-                      cout === undefined ? 0 : cout;
-                  }
-                }
-              });
-
-              annualCost[annee] = cost;
-            });
-
-            console.log(
-              `temps formatage données ${(Date.now() - formatTimer) / 1000}`
-            );
-
-            res.json({
-              cost: annualCost,
-              unite: unite,
-              nbItem: nbProps,
-              nbItemEnService: nbPropsEnService,
-            });
-            console.log(
-              `getImpact for ${user} answered in ${
-                (Date.now() - timer) / 1000
-              }s`
-            );
-          } else {
-            res.send(`No push for this user`);
-          }
-        })
-        .catch((error) => {
-          console.log(`Error computing Impact: ${error}`);
-          res.send(
-            `ERROR: the server encounting difficulties during computing impact`
-          );
-        });
-    } else {
-      res.send(`ERROR: the user ${user} has not been found in the BD`);
+    if (!(await bdRequest("areCostsComputed"))) {
+      await bdRequest("computeCost");
     }
+
+    bdRequest("getUserImpact", { user: user, type: type })
+      .then((result) => {
+        //console.log(result[0]);
+        if (result !== "No push for this user") {
+          let annualCost = {};
+          let annees = Object.keys(result[0]);
+          let items = Object.keys(result[0][annees[0]]);
+          let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
+          let critereList = Object.keys(
+            result[0][annees[0]][items[0]][etapeACVList[0]]
+          );
+
+          //console.log(annees, etapeACVList, result[0][annees[0]][items[0]]);
+
+          let formatTimer = Date.now();
+
+          annees.forEach((annee) => {
+            let cost = {
+              FABRICATION: [0, 0, 0, 0, 0],
+              DISTRIBUTION: [0, 0, 0, 0, 0],
+              UTILISATION: [0, 0, 0, 0, 0],
+              FIN_DE_VIE: [0, 0, 0, 0, 0],
+            };
+
+            let resEtapeACVList = Object.keys(cost);
+            items.forEach((item) => {
+              for (let i = 0; i < etapeACVList.length; i++) {
+                for (let j = 0; j < critereList.length; j++) {
+                  let cout =
+                    result[0][annee][item][etapeACVList[i]][critereList[j]]
+                      .cout;
+                  cost[resEtapeACVList[i]][j] += cout === undefined ? 0 : cout;
+                }
+              }
+            });
+
+            annualCost[annee] = cost;
+          });
+
+          console.log(
+            `temps formatage données ${(Date.now() - formatTimer) / 1000}`
+          );
+
+          res.json({
+            cost: annualCost,
+            unite: unite,
+            nbItem: nbProps,
+            nbItemEnService: nbPropsEnService,
+          });
+          console.log(
+            `getImpact for ${user} answered in ${(Date.now() - timer) / 1000}s`
+          );
+        } else {
+          res.send(`No push for this user`);
+        }
+      })
+      .catch((error) => {
+        console.log(`Error computing Impact: ${error}`);
+        res.send(
+          `ERROR: the server encounting difficulties during computing impact`
+        );
+      });
   } else {
-    res.send(`ERROR: the auth token is invalid`);
+    res.send(`ERROR: the auth token is invalid OR user not found`);
   }
 });
 

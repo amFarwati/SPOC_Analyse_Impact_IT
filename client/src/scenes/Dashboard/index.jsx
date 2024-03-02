@@ -93,7 +93,7 @@ function Dashboard({
     let data = { type: 1 };
 
     axios
-      .get(`${baseUrl}/getImpact/${user}/${data.type}/${token}`, {
+      .get(`${baseUrl}/getLastImpact/${user}/${data.type}/${token}`, {
         withCredentials: true,
       })
       .then((res) => {

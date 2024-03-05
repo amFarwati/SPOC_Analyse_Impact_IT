@@ -753,7 +753,10 @@ function bdRequest(request, data) {
 
 // Middleware pour activer CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://insa-numimpact-01.insa-lyon.fr"
+  );
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"

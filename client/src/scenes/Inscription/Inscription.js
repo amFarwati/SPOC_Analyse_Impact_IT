@@ -54,7 +54,7 @@ const Inscription = ({
     console.log(`inscription de ${mail} avec le mot de passe ${password}`);
     setLogin(mail);
 
-    console.log(`/setUser server_URL ${mail} =>`);
+    console.log(`/setUser ${server_URL} ${mail} =>`);
     let data = {
       mail: mail,
       password: password,

@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import yargs from "yargs";
 import dayjs from "dayjs";
 import bcrypt from "bcryptjs";
+import cors from "cors";
 import { v4 as uuidv4 } from "uuid";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
@@ -29,9 +30,9 @@ const port = argv.port;
 const saltRounds = 10;
 
 const OPSIAN_db = mysql.createConnection({
-  //user: "root",
+  user: "root",
   host: "localhost",
-  user: "numuser",
+  //user: "numuser",
   password: "spocBDD",
   database: "opsian",
   //database: "SPOC_Analyse_Impact_IT",
@@ -759,6 +760,8 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });*/
+
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

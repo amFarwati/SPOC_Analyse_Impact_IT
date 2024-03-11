@@ -9,9 +9,6 @@ import { v4 as uuidv4 } from "uuid";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
 import { hideBin } from "yargs/helpers";
-
-console.log("server test opti");
-
 const argv = yargs(hideBin(process.argv))
   .options({
     port: {
@@ -751,9 +748,9 @@ function bdRequest(request, data) {
   });
 }
 
-// Middleware pour activer CORS
+/*// Middleware pour activer CORS
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header("Access-Control-Allow-Origin", "https://opsian.insa-lyon.fr");
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept"
@@ -761,7 +758,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
   res.header("Access-Control-Allow-Credentials", "true");
   next();
-});
+});*/
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -1034,5 +1031,5 @@ app.get("/areCostsComputed", async (req, res) => {
 console.log(`Server try run on port ${port}`);
 
 app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
+  console.log(`Server is running on port ${port}.`);
 });

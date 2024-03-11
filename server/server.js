@@ -26,6 +26,10 @@ dayjs.extend(customParseFormat);
 const app = express();
 const port = argv.port;
 
+//const urlServer = `http://localhost`;
+const urlServer = `https://opsian.insa-lyon.fr`;
+
+
 // Définir le facteur de coût
 const saltRounds = 10;
 
@@ -43,13 +47,17 @@ OPSIAN_db.connect(function (err) {
   console.log("Connecté à la base de données MySQL OPSIAN!");
 });
 
-var dateMin = null;
-var dateMax = null;
-var nbProps = null;
-var nbPropsEnService = null;
-var unite = null;
+let dateMin = null;
+let dateMax = null;
+let nbProps = null;
+let nbPropsEnService = null;
+let unite = null;
 
-var liste_reference = null;
+let urlResponse = null;
+
+console.log(urlResponse);
+
+let liste_reference = null;
 
 //fonction conversion date au format mySQL
 function toMySQLDateFormat(date) {
@@ -761,7 +769,18 @@ app.use((req, res, next) => {
   next();
 });*/
 
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (origin.startsWith(urlServer)) {
+        callback(null, true)
+      } else {
+        callback(new Error('Not allowed by CORS'))
+      }
+    },
+    credentials:true
+  })
+);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -769,6 +788,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //requête setInventory (à check secu multi user)
 app.put("/setInventory/:user/:token", async (req, res) => {
   try {
+    urlResponse = req.url;
     let user = req.params.user;
     let token = decodeURIComponent(decodeURIComponent(req.params.token));
     let accepted = await authCheck(user, token);
@@ -809,6 +829,8 @@ app.put("/setInventory/:user/:token", async (req, res) => {
 app.put("/setUser", async (req, res) => {
   try {
     console.log(`=> setUser for ${req.body.name}`);
+
+    urlResponse = req.url;
 
     let user_name = req.body.name;
     let user_mail = req.body.mail;
@@ -853,6 +875,7 @@ app.put("/setUser", async (req, res) => {
 //requête login (à check secu multi user)
 app.put("/login", async (req, res) => {
   try {
+    urlResponse = req.url;
     let user_mail = req.body.mail;
     let user_password = req.body.password;
 
@@ -886,101 +909,110 @@ app.put("/login", async (req, res) => {
 
 //requête getImpact (à check secu multi user)
 app.get("/getImpact/:user/:type/:token", async (req, res) => {
-  let user = req.params.user;
-  let token = decodeURIComponent(req.params.token);
-  let accepted = await authCheck(user, token);
-  console.log(`=> getImpact for ${user} accepted ${accepted}`);
+  try {
+    urlResponse = req.url;
+    let user = req.params.user;
+    let token = decodeURIComponent(req.params.token);
+    let accepted = await authCheck(user, token);
+    console.log(`=> getImpact for ${user} accepted ${accepted}`);
 
-  if (accepted) {
-    let timer = Date.now();
-    let type = req.params.type;
-    let userList = await bdRequest("getUser");
+    if (accepted) {
+      let timer = Date.now();
+      let type = req.params.type;
+      let userList = await bdRequest("getUser");
 
-    console.log(`=> getImpact for ${user} type ${type}`);
+      console.log(`=> getImpact for ${user} type ${type}`);
 
-    if (user === undefined) {
-      res.send(`ERROR: the user is undefined`);
-    } else if (userList.includes(user)) {
-      if (!(await bdRequest("areCostsComputed"))) {
-        await bdRequest("computeCost");
-      }
+      if (user === undefined) {
+        res.send(`ERROR: the user is undefined`);
+      } else if (userList.includes(user)) {
+        if (!(await bdRequest("areCostsComputed"))) {
+          await bdRequest("computeCost");
+        }
 
-      bdRequest("getUserImpact", { user: user, type: type })
-        .then((result) => {
-          //console.log(result[0]);
-          if (result !== "No push for this user") {
-            let annualCost = {};
-            let annees = Object.keys(result[0]);
-            let items = Object.keys(result[0][annees[0]]);
-            let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
-            let critereList = Object.keys(
-              result[0][annees[0]][items[0]][etapeACVList[0]]
-            );
+        bdRequest("getUserImpact", { user: user, type: type })
+          .then((result) => {
+            //console.log(result[0]);
+            if (result !== "No push for this user") {
+              let annualCost = {};
+              let annees = Object.keys(result[0]);
+              let items = Object.keys(result[0][annees[0]]);
+              let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
+              let critereList = Object.keys(
+                result[0][annees[0]][items[0]][etapeACVList[0]]
+              );
 
-            //console.log(annees, etapeACVList, result[0][annees[0]][items[0]]);
+              //console.log(annees, etapeACVList, result[0][annees[0]][items[0]]);
 
-            let formatTimer = Date.now();
+              let formatTimer = Date.now();
 
-            annees.forEach((annee) => {
-              let cost = {
-                FABRICATION: [0, 0, 0, 0, 0],
-                DISTRIBUTION: [0, 0, 0, 0, 0],
-                UTILISATION: [0, 0, 0, 0, 0],
-                FIN_DE_VIE: [0, 0, 0, 0, 0],
-              };
+              annees.forEach((annee) => {
+                let cost = {
+                  FABRICATION: [0, 0, 0, 0, 0],
+                  DISTRIBUTION: [0, 0, 0, 0, 0],
+                  UTILISATION: [0, 0, 0, 0, 0],
+                  FIN_DE_VIE: [0, 0, 0, 0, 0],
+                };
 
-              let resEtapeACVList = Object.keys(cost);
-              items.forEach((item) => {
-                for (let i = 0; i < etapeACVList.length; i++) {
-                  for (let j = 0; j < critereList.length; j++) {
-                    let cout =
-                      result[0][annee][item][etapeACVList[i]][critereList[j]]
-                        .cout;
-                    cost[resEtapeACVList[i]][j] +=
-                      cout === undefined ? 0 : cout;
+                let resEtapeACVList = Object.keys(cost);
+                items.forEach((item) => {
+                  for (let i = 0; i < etapeACVList.length; i++) {
+                    for (let j = 0; j < critereList.length; j++) {
+                      let cout =
+                        result[0][annee][item][etapeACVList[i]][critereList[j]]
+                          .cout;
+                      cost[resEtapeACVList[i]][j] +=
+                        cout === undefined ? 0 : cout;
+                    }
                   }
-                }
+                });
+
+                annualCost[annee] = cost;
               });
 
-              annualCost[annee] = cost;
-            });
+              console.log(
+                `temps formatage données ${(Date.now() - formatTimer) / 1000}`
+              );
 
-            console.log(
-              `temps formatage données ${(Date.now() - formatTimer) / 1000}`
+              res.json({
+                cost: annualCost,
+                unite: unite,
+                nbItem: nbProps,
+                nbItemEnService: nbPropsEnService,
+              });
+              console.log(
+                `getImpact for ${user} answered in ${
+                  (Date.now() - timer) / 1000
+                }s`
+              );
+            } else {
+              res.send(`No push for this user`);
+            }
+          })
+          .catch((error) => {
+            console.log(`Error computing Impact: ${error}`);
+            res.send(
+              `ERROR: the server encounting difficulties during computing impact`
             );
-
-            res.json({
-              cost: annualCost,
-              unite: unite,
-              nbItem: nbProps,
-              nbItemEnService: nbPropsEnService,
-            });
-            console.log(
-              `getImpact for ${user} answered in ${
-                (Date.now() - timer) / 1000
-              }s`
-            );
-          } else {
-            res.send(`No push for this user`);
-          }
-        })
-        .catch((error) => {
-          console.log(`Error computing Impact: ${error}`);
-          res.send(
-            `ERROR: the server encounting difficulties during computing impact`
-          );
-        });
+          });
+      } else {
+        res.send(`ERROR: the user ${user} has not been found in the BD`);
+      }
     } else {
-      res.send(`ERROR: the user ${user} has not been found in the BD`);
+      res.send(`ERROR: the auth token is invalid`);
     }
-  } else {
-    res.send(`ERROR: the auth token is invalid`);
+  } catch (error) {
+    console.error(`Error getting ref list: ${error}`);
+    res
+      .status(500)
+      .send("ERROR: The server encountered difficulties getting the type list");
   }
 });
 
 //requête getRefList (à check secu multi user)
 app.get("/getRefList/:user/:token", async (req, res) => {
   try {
+    urlResponse = req.url;
     console.log("=> getRefList");
 
     let user = req.params.user;
@@ -1005,6 +1037,7 @@ app.get("/getRefList/:user/:token", async (req, res) => {
 //requête computeCost (fini) /!\ pas d'implémentation dans front, que maintenance admin (wget <url>:<port>/computeCost par exemple)
 app.get("/computeCost", async (req, res) => {
   try {
+    urlResponse = req.url;
     console.log("computeCost");
     await bdRequest("=> computeCost");
     res.send(`BD updates costs `);
@@ -1019,6 +1052,7 @@ app.get("/computeCost", async (req, res) => {
 //requête areCostsComputed (à faire) /!\ pas d'implémentation dans front, que maintenance admin (wget <url>:<port>/areCostsComputed par exemple)
 app.get("/areCostsComputed", async (req, res) => {
   try {
+    urlResponse = req.url;
     console.log("=> areCostsComputed");
     let areCostsComputed = await bdRequest("areCostsComputed");
     console.log(areCostsComputed);

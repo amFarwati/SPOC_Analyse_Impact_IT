@@ -21,14 +21,7 @@ else
     echo "MySQL est déjà installé."
 fi
 
-# Installation de git
-if ! command -v git &> /dev/null
-then
-    echo "Git n'est pas installé. Installation en cours..."
-    sudo apt install -y git
-else
-    echo "Git est déjà installé."
-fi
+
 
 # Configuration de MySQL
 echo "Configuration de MySQL en cours..."

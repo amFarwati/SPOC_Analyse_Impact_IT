@@ -260,7 +260,7 @@ function Item({
       gridTemplateColumns="repeat(12,1fr)"
       gridTemplateRows="repeat(12,1fr)"
       gap="15px"
-      margin="0 20px 0 20px"
+      margin="20px 20px 0 20px"
       height="83vh"
     >
       <Box
@@ -354,13 +354,8 @@ function Item({
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
-            <Box
-              mt="25px"
-              p="0 30px"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
+            <br />
+            <Box p="0 30px">
               <Typography
                 variant="h5"
                 fontWeight="600"
@@ -406,22 +401,15 @@ function Item({
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
-            <Box
-              mt="25px"
-              p="0 30px"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="600"
-                  color={colors.grey[100]}
-                >
-                  Répartition
-                </Typography>
-              </Box>
+            <br />
+            <Box p="0 30px">
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                color={colors.grey[100]}
+              >
+                Répartition
+              </Typography>
             </Box>
             {onLoad ? (
               <Box
@@ -433,7 +421,7 @@ function Item({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <>
+              <Box height="80%">
                 {
                   <BarchartACV
                     unite={unite}
@@ -470,7 +458,7 @@ function Item({
                     color={chartColor}
                   />
                   */}
-              </>
+              </Box>
             )}
           </Box>
           <Box
@@ -479,22 +467,15 @@ function Item({
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
-            <Box
-              mt="25px"
-              p="0 30px"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="600"
-                  color={colors.grey[100]}
-                >
-                  Paramétrage
-                </Typography>
-              </Box>
+            <br />
+            <Box p="0 30px">
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                color={colors.grey[100]}
+              >
+                Paramètrage
+              </Typography>
             </Box>
             {onLoad ? (
               <Box
@@ -506,8 +487,21 @@ function Item({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <Box height="80%" mt="25px" p="0 30px">
-                <Stack spacing={1}>
+              <Box
+                height="80%"
+                mt="25px"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Box
+                  height="80%"
+                  width="95%"
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="space-around"
+                  alignItems="center"
+                >
                   <Box width="100%">
                     <FormControl fullWidth>
                       <InputLabel id="demo-simple-select-label">
@@ -608,7 +602,7 @@ function Item({
                       Nombre de matériel IT En Service : {nbItemEnService}
                     </Typography>
                   </Box>
-                </Stack>
+                </Box>
               </Box>
             )}
           </Box>

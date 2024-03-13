@@ -128,120 +128,122 @@ function Linechart({
   };
 
   return (
-    <Box Box height="100%" width="100%" ml={4} mb={4}>
+    <Box Box height="100%" width="95%" >
       <Box display="flex" ml={4} alignItems="center">
         {infoCritere()}
         <Typography variant="h5">{infoACV()}</Typography>
       </Box>
-      <ResponsiveLine
-        data={data.length === 1 ? data : [data[critere][etapeACV]]}
-        margin={{ top: 0, right: 90, bottom: 80, left: 60 }}
-        xScale={{ type: "point" }}
-        yScale={{
-          type: "linear",
-          min: "0",
-          max: "auto",
-          stacked: true,
-          reverse: false,
-        }}
-        yFormat=" >-.2f"
-        colors={color[etapeACV]}
-        curve="monotoneX"
-        axisTop={null}
-        axisRight={null}
-        axisBottom={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-        }}
-        axisLeft={{
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-        }}
-        tooltip={(tooltip) => {
-          return (
-            <div
-              style={{
-                background: colors.grey[800], // Changer cette couleur en fonction de vos besoins
-                padding: "9px",
-                borderRadius: "3px",
-                boxShadow: "0 2px 5px rgba(0, 0, 0, 0.15)",
-              }}
-            >
-              <strong>{tooltip.point.serieId}</strong>
-              <br />
-              <span style={{ color: tooltip.point.serieColor }}>
-                {tooltip.point.data.y}
-              </span>
-              <br />
-              {tooltip.point.data.x}
-            </div>
-          );
-        }}
-        pointSize={10}
-        pointColor={{ theme: "background" }}
-        pointBorderWidth={2}
-        pointBorderColor={{ from: "serieColor" }}
-        pointLabelYOffset={0}
-        useMesh={true}
-        theme={{
-          text: {
-            fill: colors.grey[100],
-            fontSize: "14px",
-          },
-          axis: {
-            domain: {
-              line: {
-                stroke: colors.grey[100],
-              },
-            },
-            ticks: {
-              line: {
-                stroke: colors.grey[100],
-                strokeWidth: 1,
-              },
-              text: {
-                fill: colors.grey[100],
-                fontSize: "15px",
-              },
-            },
-          },
-          legends: {
+      <Box height="80%">
+        <ResponsiveLine
+          data={data.length === 1 ? data : [data[critere][etapeACV]]}
+          margin={{ top: 20, right: 50, bottom: 30, left: 50 }}
+          xScale={{ type: "point" }}
+          yScale={{
+            type: "linear",
+            min: "0",
+            max: "auto",
+            stacked: true,
+            reverse: false,
+          }}
+          yFormat=" >-.2f"
+          colors={color[etapeACV]}
+          curve="monotoneX"
+          axisTop={null}
+          axisRight={null}
+          axisBottom={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+          }}
+          axisLeft={{
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+          }}
+          tooltip={(tooltip) => {
+            return (
+              <div
+                style={{
+                  background: colors.grey[800], // Changer cette couleur en fonction de vos besoins
+                  padding: "9px",
+                  borderRadius: "3px",
+                  boxShadow: "0 2px 5px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <strong>{tooltip.point.serieId}</strong>
+                <br />
+                <span style={{ color: tooltip.point.serieColor }}>
+                  {tooltip.point.data.y}
+                </span>
+                <br />
+                {tooltip.point.data.x}
+              </div>
+            );
+          }}
+          pointSize={10}
+          pointColor={{ theme: "background" }}
+          pointBorderWidth={2}
+          pointBorderColor={{ from: "serieColor" }}
+          pointLabelYOffset={0}
+          useMesh={true}
+          theme={{
             text: {
               fill: colors.grey[100],
-              fontSize: "18px",
+              fontSize: "14px",
             },
-          },
-        }}
-        legends={[
-          {
-            anchor: "bottom-right",
-            direction: "column",
-            justify: false,
-            translateX: -60,
-            translateY: -300,
-            itemsSpacing: 0,
-            itemDirection: "left-to-right",
-            itemWidth: 80,
-            itemHeight: 20,
-            itemOpacity: 0.75,
-            symbolSize: 12,
-            symbolShape: "circle",
-            symbolBorderColor: "rgba(0, 0, 0.5)",
-            itemTextColor: colors.grey[100],
-            effects: [
-              {
-                on: "hover",
-                style: {
-                  itemBackground: "rgba(0, 0, 0, .03)",
-                  itemOpacity: 1,
+            axis: {
+              domain: {
+                line: {
+                  stroke: colors.grey[100],
                 },
               },
-            ],
-          },
-        ]}
-      />
+              ticks: {
+                line: {
+                  stroke: colors.grey[100],
+                  strokeWidth: 1,
+                },
+                text: {
+                  fill: colors.grey[100],
+                  fontSize: "15px",
+                },
+              },
+            },
+            legends: {
+              text: {
+                fill: colors.grey[100],
+                fontSize: "18px",
+              },
+            },
+          }}
+          legends={[
+            {
+              anchor: "bottom-right",
+              direction: "column",
+              justify: false,
+              translateX: -60,
+              translateY: -300,
+              itemsSpacing: 0,
+              itemDirection: "left-to-right",
+              itemWidth: 80,
+              itemHeight: 20,
+              itemOpacity: 0.75,
+              symbolSize: 12,
+              symbolShape: "circle",
+              symbolBorderColor: "rgba(0, 0, 0.5)",
+              itemTextColor: colors.grey[100],
+              effects: [
+                {
+                  on: "hover",
+                  style: {
+                    itemBackground: "rgba(0, 0, 0, .03)",
+                    itemOpacity: 1,
+                  },
+                },
+              ],
+            },
+          ]}
+        />
+      </Box>
     </Box>
   );
 }

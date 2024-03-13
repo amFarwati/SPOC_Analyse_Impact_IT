@@ -33,7 +33,7 @@ function Barchart({
 
   var data = [
     {
-      criteres: "CO2",
+      criteres: "      ",
       Fabrication: parseInt(fabrication[0]),
       FabricationColor: "hsl(229, 70%, 50%)",
       Distribution: parseInt(distribution[0]),
@@ -44,7 +44,7 @@ function Barchart({
       "Fin de vieColor": "hsl(340, 70%, 50%)",
     },
     {
-      criteres: "Particules fines",
+      criteres: "     ",
       Fabrication: parseInt(fabrication[1] * 10000000),
       FabricationColor: "hsl(307, 70%, 50%)",
       Distribution: parseInt(distribution[1] * 10000000),
@@ -55,7 +55,7 @@ function Barchart({
       "Fin de vieColor": "hsl(275, 70%, 50%)",
     },
     {
-      criteres: "Radiations",
+      criteres: " ",
       Fabrication: parseInt(fabrication[2]),
       FabricationColor: "hsl(72, 70%, 50%)",
       Distribution: parseInt(distribution[2]),
@@ -66,7 +66,7 @@ function Barchart({
       "Fin de vieColor": "hsl(256, 70%, 50%)",
     },
     {
-      criteres: "Acidification",
+      criteres: "  ",
       Fabrication: parseInt(fabrication[3] * 100),
       FabricationColor: "hsl(257, 70%, 50%)",
       Distribution: parseInt(distribution[3] * 100),
@@ -77,7 +77,7 @@ function Barchart({
       "Fin de vieColor": "hsl(9, 70%, 50%)",
     },
     {
-      criteres: "Métaux",
+      criteres: "   ",
       Fabrication: parseInt(fabrication[4] * 10000),
       FabricationColor: "hsl(190, 70%, 50%)",
       Distribution: parseInt(distribution[4] * 10000),
@@ -135,7 +135,7 @@ function Barchart({
           }}
           keys={["Fabrication", "Distribution", "Utilisation", "Fin de vie"]}
           indexBy="criteres"
-          margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+          margin={{ top: 10, right: 130, bottom: 10, left: 70 }}
           padding={0.1}
           indexScale={{ type: "band", round: true }}
           colors={color}

@@ -128,7 +128,7 @@ function BarchartACV({
         {infoCritere()}
         <Typography variant="h5">{annee}</Typography>
       </Box>
-      <Box height="50%">
+      <Box height="75%">
         <ResponsiveBar
           data={data}
           valueScale={{ type: graph_Type }}
@@ -171,7 +171,7 @@ function BarchartACV({
           }}
           keys={["Fabrication", "Distribution", "Utilisation", "Fin de vie"]}
           indexBy="criteres"
-          margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
+          margin={{ top: 0, right: 130, bottom: 50, left: 60 }}
           padding={0.1}
           indexScale={{ type: "band", round: true }}
           colors={color}
@@ -220,7 +220,7 @@ function BarchartACV({
           legends={[
             {
               dataFrom: "keys",
-              anchor: "bottom-right",
+              anchor: "right",
               direction: "column",
               justify: false,
               translateX: 110,

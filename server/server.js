@@ -26,8 +26,8 @@ dayjs.extend(customParseFormat);
 const app = express();
 const port = argv.port;
 
-//const urlServer = `http://localhost`;
-const urlServer = `https://opsian.insa-lyon.fr`;
+const urlServer = `http://localhost`;
+//const urlServer = `https://opsian.insa-lyon.fr`;
 
 
 // Définir le facteur de coût

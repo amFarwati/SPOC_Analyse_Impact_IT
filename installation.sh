@@ -1,15 +1,17 @@
 echo "Installation en cours"
+
+# Mise à jour des paquets
 sudo apt update 
 
-sudo apt install nodejs 
+# Installation de Node.js et npm
+if ! command -v node &> /dev/null
+then
+    echo "Node.js n'est pas installé. Installation en cours..."
+    sudo apt install -y nodejs npm
+else
+    echo "Node.js est déjà installé."
+fi
 
-<<<<<<< Updated upstream
-apt install mysql 
-./Base_de_donnees/MontageBD.sh
-
-
-cd ./server 
-=======
 # Installation de MySQL
 if ! command -v mysql &> /dev/null
 then
@@ -35,9 +37,11 @@ echo "Configuration de MySQL terminée"
 
 # Installation dépendances server
 cd server
->>>>>>> Stashed changes
 npm install
 npm install redaxios
 
+# Installation dépendances client
 cd ../client
 npm install
+
+echo "Installation terminée"

@@ -1,8 +1,8 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { useTheme } from "@mui/material";
+import { Typography, useTheme } from "@mui/material";
 import { ResponsiveBar } from "@nivo/bar";
-import { tokens } from "../theme";
+import { tokens } from "../theme.js";
 import InfoButton from "./InfoButton.jsx";
 import AirIcon from "@mui/icons-material/Air";
 import MasksIcon from "@mui/icons-material/Masks";
@@ -10,19 +10,17 @@ import WifiIcon from "@mui/icons-material/Wifi";
 import WaterIcon from "@mui/icons-material/Water";
 import FactoryIcon from "@mui/icons-material/Factory";
 
-function Barchart({
-  isDashboard = false,
-  unite,
+function BarchartACV({
   finDeVie,
   usage,
   fabrication,
   distribution,
   annee,
-  setCritere,
+  critere,
   color,
 }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [graph_Type, setGraphType] = React.useState("symlog");
+  const [graph_Type, setGraphType] = React.useState("linear");
 
   const handleClick = (event) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
@@ -31,74 +29,112 @@ function Barchart({
   const open = Boolean(anchorEl);
   const id = open ? "simple-popper" : undefined;
 
+  const iconSize = "40px";
+
+  var total =
+    fabrication[critere] +
+    distribution[critere] +
+    usage[critere] +
+    finDeVie[critere];
+
   var data = [
     {
-      criteres: "CO2",
-      Fabrication: parseInt(fabrication[0]),
+      criteres: "%",
+      Fabrication:
+        fabrication[critere] === undefined
+          ? 0
+          : parseInt((fabrication[critere] * 10000) / total) / 100,
       FabricationColor: "hsl(229, 70%, 50%)",
-      Distribution: parseInt(distribution[0]),
+      Distribution:
+        distribution[critere] === undefined
+          ? 0
+          : parseInt((distribution[critere] * 10000) / total) / 100,
       DistributionColor: "hsl(296, 70%, 50%)",
-      Utilisation: parseInt(usage[0]),
+      Utilisation:
+        usage[critere] === undefined
+          ? 0
+          : parseInt((usage[critere] * 10000) / total) / 100,
       UtilisationColor: "hsl(97, 70%, 50%)",
-      "Fin de vie": parseInt(finDeVie[0]),
+      "Fin de vie":
+        finDeVie[critere] === undefined
+          ? 0
+          : parseInt((finDeVie[critere] * 10000) / total) / 100,
       "Fin de vieColor": "hsl(340, 70%, 50%)",
     },
-    {
-      criteres: "Particules fines",
-      Fabrication: parseInt(fabrication[1] * 10000000),
-      FabricationColor: "hsl(307, 70%, 50%)",
-      Distribution: parseInt(distribution[1] * 10000000),
-      DistributionColor: "hsl(111, 70%, 50%)",
-      Utilisation: parseInt(usage[1] * 10000000),
-      UtilisationColor: "hsl(273, 70%, 50%)",
-      "Fin de vie": parseInt(finDeVie[1] * 10000000),
-      "Fin de vieColor": "hsl(275, 70%, 50%)",
-    },
-    {
-      criteres: "Radiations",
-      Fabrication: parseInt(fabrication[2]),
-      FabricationColor: "hsl(72, 70%, 50%)",
-      Distribution: parseInt(distribution[2]),
-      DistributionColor: "hsl(96, 70%, 50%)",
-      Utilisation: parseInt(usage[2]),
-      UtilisationColor: "hsl(106, 70%, 50%)",
-      "Fin de vie": parseInt(finDeVie[2]),
-      "Fin de vieColor": "hsl(256, 70%, 50%)",
-    },
-    {
-      criteres: "Acidification",
-      Fabrication: parseInt(fabrication[3] * 100),
-      FabricationColor: "hsl(257, 70%, 50%)",
-      Distribution: parseInt(distribution[3] * 100),
-      DistributionColor: "hsl(326, 70%, 50%)",
-      Utilisation: parseInt(usage[3] * 100),
-      UtilisationColor: "hsl(110, 70%, 50%)",
-      "Fin de vie": parseInt(finDeVie[3] * 100),
-      "Fin de vieColor": "hsl(9, 70%, 50%)",
-    },
-    {
-      criteres: "Métaux",
-      Fabrication: parseInt(fabrication[4] * 10000),
-      FabricationColor: "hsl(190, 70%, 50%)",
-      Distribution: parseInt(distribution[4] * 10000),
-      DistributionColor: "hsl(325, 70%, 50%)",
-      Utilisation: parseInt(usage[4] * 10000),
-      UtilisationColor: "hsl(54, 70%, 50%)",
-      "Fin de vie": parseInt(finDeVie[4] * 10000),
-      "Fin de vieColor": "hsl(285, 70%, 50%)",
-    },
   ];
+
+  const infoCritere = () => {
+    let res = null;
+
+    switch (critere) {
+      case 0:
+        res = (
+          <InfoButton
+            title={<AirIcon style={{ fontSize: iconSize }} />}
+            info={`Changement Climatique`}
+          />
+        );
+        break;
+      case 1:
+        res = (
+          <InfoButton
+            title={<MasksIcon style={{ fontSize: iconSize }} />}
+            info={`Particules fines`}
+          />
+        );
+        break;
+      case 2:
+        res = (
+          <InfoButton
+            title={<WifiIcon style={{ fontSize: iconSize }} />}
+            info={`Radiations ionisantes`}
+          />
+        );
+        break;
+      case 3:
+        res = (
+          <InfoButton
+            title={<WaterIcon style={{ fontSize: iconSize }} />}
+            info={`Acidification`}
+          />
+        );
+        break;
+      case 4:
+        res = (
+          <InfoButton
+            title={<FactoryIcon style={{ fontSize: iconSize }} />}
+            info={`Usage des ressources\n(mineraux et metaux)`}
+          />
+        );
+        break;
+      default:
+        res = (
+          <InfoButton
+            title={<AirIcon style={{ fontSize: iconSize }} />}
+            info={`Changement Climatique`}
+          />
+        );
+        break;
+    }
+    return res;
+  };
 
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   return (
     <Box height="100%" width="100%" display="flex" flexDirection="column">
-      <Box height="85%">
+      <Box display="flex" ml={4} alignItems="center">
+        {infoCritere()}
+        <Typography variant="h5">{annee}</Typography>
+      </Box>
+      <Box height="50%">
         <ResponsiveBar
           data={data}
           valueScale={{ type: graph_Type }}
-          groupMode="grouped"
+          groupMode="stacked"
+          layout="horizontal"
+          maxValue={100}
           theme={{
             text: {
               fill: colors.grey[100],
@@ -129,7 +165,7 @@ function Barchart({
             legends: {
               text: {
                 fill: colors.grey[100],
-                fontSize: "18px",
+                fontSize: "0.9vw",
               },
             },
           }}
@@ -167,22 +203,15 @@ function Barchart({
           axisRight={null}
           axisBottom={{
             tickSize: 5,
+            tickValues: 1,
             tickPadding: 5,
             tickRotation: 0,
+            legend: "répartition (%)",
+            legendPosition: "middle",
             legendOffset: 32,
             truncateTickAt: 0,
           }}
-          axisLeft={{
-            tickSize: 5,
-            tickValues: 3,
-            tickPadding: 5,
-            tickRotation: -45,
-            legend: "impact",
-            legendPosition: "middle",
-            legendOffset: -40,
-            truncateTickAt: 0,
-          }}
-          labelSkipWidth={12}
+          labelSkipWidth={30}
           labelSkipHeight={12}
           labelTextColor={{
             from: "color",
@@ -196,9 +225,9 @@ function Barchart({
               justify: false,
               translateX: 110,
               translateY: 0,
-              itemsSpacing: 10,
+              itemsSpacing: 14,
               itemWidth: 100,
-              itemHeight: 10,
+              itemHeight: 3,
               itemDirection: "left-to-right",
               itemOpacity: 0.85,
               symbolSize: 10,
@@ -219,41 +248,8 @@ function Barchart({
           }
         />
       </Box>
-        <Box
-          display="flex"
-          justifyContent="space-around"
-          alignItems="center"
-          ml={9}
-          mr={18}
-        >
-          <InfoButton
-            onChange={() => setCritere(0)}
-            title={<AirIcon style={{ fontSize: "5vh" }} />}
-            info={`Changement Climatique\n${unite[0]}`}
-          />
-          <InfoButton
-            onChange={() => setCritere(1)}
-            title={<MasksIcon style={{ fontSize: "5vh" }} />}
-            info={`Particules fines\n*e10-7 ${unite[1]}`}
-          />
-          <InfoButton
-            onChange={() => setCritere(2)}
-            title={<WifiIcon style={{ fontSize: "5vh" }} />}
-            info={`Radiations ionisantes\n${unite[2]}`}
-          />
-          <InfoButton
-            onChange={() => setCritere(3)}
-            title={<WaterIcon style={{ fontSize: "5vh" }} />}
-            info={`Acidification\n*e10-2 ${unite[3]}`}
-          />
-          <InfoButton
-            onChange={() => setCritere(4)}
-            title={<FactoryIcon style={{ fontSize: "5vh" }} />}
-            info={`Usage des ressources\n(mineraux et metaux)\n*e10-7 ${unite[4]}`}
-          />
-        </Box>
     </Box>
   );
 }
 
-export default Barchart;
+export default BarchartACV;

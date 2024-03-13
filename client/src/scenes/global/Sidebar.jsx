@@ -54,6 +54,7 @@ function Sidebar({ user, serveur, setIsDeconnected }) {
         "& .pro-menu-item.active": {
           color: "#6870fa !important",
         },
+        
       }}
     >
       <ProSidebar collapsed={isCollapsed}>
@@ -117,7 +118,7 @@ function Sidebar({ user, serveur, setIsDeconnected }) {
           )}
 
           {/* MENU ITEM */}
-          <Box paddingLeft={isCollapsed ? undefined : "10%"}>
+          <Box justifyContent="center" alignContent="center">
             <Item
               title="Accueil"
               to="/accueil"

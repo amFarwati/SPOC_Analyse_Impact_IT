@@ -1,0 +1,19 @@
+.container{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+    padding-right: 10px;
+    margin-bottom: 18px;
+}
+
+.container .left{
+    display:flex;
+    padding-left: 10px;
+}
+
+.container .right{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+

@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
 import { hideBin } from "yargs/helpers";
+import cors from "cors";
 
 console.log("server test opti");
 
@@ -45,13 +46,13 @@ OPSIAN_db.connect(function (err) {
   console.log("Connecté à la base de données MySQL OPSIAN!");
 });
 
-var dateMin = null;
-var dateMax = null;
-var nbProps = null;
-var nbPropsEnService = null;
-var unite = null;
+let dateMin = null;
+let dateMax = null;
+let nbProps = null;
+let nbPropsEnService = null;
+let unite = null;
 
-var liste_reference = null;
+let liste_reference = null;
 
 //fonction conversion date au format mySQL
 function toMySQLDateFormat(date) {
@@ -836,6 +837,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

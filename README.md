@@ -20,11 +20,12 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
 
 ## Installation
 
-Prérequis : avoir docker desktop
+Prérequis : avoir Ubuntu 22.04
 
 1. Installer git et cloner le repository
 
 ```bash
+sudo apt update
 # Installation de git
 if ! command -v git &> /dev/null
 then

@@ -21,22 +21,6 @@ else
     echo "MySQL est déjà installé."
 fi
 
-# Installation de git
-if ! command -v git &> /dev/null
-then
-    echo "Git n'est pas installé. Installation en cours..."
-    sudo apt install -y git
-else
-    echo "Git est déjà installé."
-fi
-
-# Clonage du projet à partir de GitHub
-git clone https://github.com/amFarwati/SPOC_Analyse_Impact_IT
-
-
-# Installation des dépendances du projet
-cd GitHub/SPOC_Analyse_Impact_IT
-
 # Configuration de MySQL
 echo "Configuration de MySQL en cours..."
 bash ./Base_de_donnees/MontageBD.sh

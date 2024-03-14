@@ -20,11 +20,22 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
 
 ## Installation
 
-Prérequis : avoir docker desktop
+Prérequis : avoir Ubuntu 22.04
 
-1. Cloner le repository
+1. Installer git et cloner le repository
 
 ```bash
+sudo apt update
+# Installation de git
+if ! command -v git &> /dev/null
+then
+    echo "Git n'est pas installé. Installation en cours..."
+    sudo apt install -y git
+else
+    echo "Git est déjà installé."
+fi
+
+
 git clone https://github.com/amFarwati/SPOC_Analyse_Impact_IT.git
 ```
 
@@ -34,14 +45,18 @@ git clone https://github.com/amFarwati/SPOC_Analyse_Impact_IT.git
 cd <votre_chemin>/Github/SPOC_Analyse_Impact_IT
 ```
 
-3. Lancer le 'docker-compose'
+3. Lancer le script d'installation
 
 ```bash
-docker-compose -d --build  #par défaut
-docker compose -d --build  #si la première commande ne marche pas
+./installation.sh
 ```
 
-L'installation des images et la mise en place de l'outil risque de prendre du temps la première fois (environ 5min).
+L'installation et la mise en place de l'outil risque de prendre quelques minutes.
+Pour finir vous pouvez lancer le script de lancement pour démarrer le projet :
+
+```bash
+./lancement.sh
+```
 
 ## Utilisation
 

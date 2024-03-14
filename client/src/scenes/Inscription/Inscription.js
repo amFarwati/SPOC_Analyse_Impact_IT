@@ -108,7 +108,7 @@ const Inscription = ({
     <Container
       style={{
         display: "flex",
-        height: "100vh",
+        height: "80%",
         justifyContent: "center",
         alignItems: "center",
       }}

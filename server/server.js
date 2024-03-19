@@ -31,6 +31,7 @@ const port = argv.port;
 
 // Définir le facteur de coût
 const saltRounds = 10;
+const urlServer = "http://localhost:3000";
 
 const OPSIAN_db = mysql.createConnection({
   user: "root",
@@ -827,7 +828,7 @@ function formatageImpact(result) {
 }
 
 // Middleware pour activer CORS
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header(
     "Access-Control-Allow-Headers",
@@ -837,6 +838,20 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
+*/
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (origin.startsWith(urlServer)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 
 app.use(bodyParser.json());

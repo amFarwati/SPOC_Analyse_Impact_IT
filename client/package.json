@@ -45,6 +45,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "homepage": "http://opsian.net:3000/",
   "eslintConfig": {
     "extends": [
       "react-app",

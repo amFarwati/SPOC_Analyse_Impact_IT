@@ -1,9 +1,0 @@
-.item{
-    margin : 20px;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    height: 70px;
-}

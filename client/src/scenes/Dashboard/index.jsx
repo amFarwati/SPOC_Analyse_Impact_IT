@@ -68,7 +68,7 @@ function Dashboard({
   const [isUpload, setIsUpload] = useState(false);
   const [open, setOpen] = useState(false);
 
-  token = encodeURIComponent (token);
+  token = encodeURIComponent(token);
 
   const chartColor = [
     "#329D9C",
@@ -93,17 +93,17 @@ function Dashboard({
     let data = { type: 1 };
 
     axios
-      .get(`${baseUrl}/getImpact/${user}/${data.type}/${token}`, {
+      .get(`${baseUrl}/getLastImpact/${user}/${data.type}/${token}`, {
         withCredentials: true,
       })
       .then((res) => {
         // Vérification si la requête a réussi (statut 200-299)
         if (!res.ok) {
           throw new Error(`Erreur HTTP! Statut: ${res.status}`);
-        }else if(res.data === `No push for this user`){
+        } else if (res.data === `No push for this user`) {
           setOpen(true);
           setOnLoad(null);
-        }else{
+        } else {
           // Manipulation des données
           console.log(res.data);
 
@@ -195,90 +195,85 @@ function Dashboard({
 
   return (
     <User_Context.Provider value={[userParc, setUserParc, user]}>
-      <Box ml={2} mr={2} height="auto">
+      <Box ml={2} mr={2} height="86vh">
         <AlertDialog
           msg="Veuillez charger une premiere fois un inventaire"
           open={open}
           setOpen={setOpen}
         />
-        {onLoad ? (
-          <></>
-        ) : (
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              width={1000}
-            >
-              <InputFileUpload setIsUpload={setIsUpload} />
-              <Button
-                component="label"
-                sx={{
-                  backgroundColor: colors.blueAccent[800],
-                  color: colors.grey[100],
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  padding: "10px 20px",
-                }}
-                onClick={handleImpactRequest}
-                startIcon={<RestartAltRoundedIcon sx={{ mr: "10px" }} />}
-              >
-                Charger le dernier inventaire
-              </Button>
-              <Button
-                component="label"
-                sx={{
-                  backgroundColor: colors.greenAccent[700],
-                  color: colors.grey[100],
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  padding: "10px 20px",
-                }}
-                startIcon={<DownloadOutlinedIcon sx={{ mr: "10px" }} />}
-                onClick={() => window.open("./Modèle_de_demo.ods", "_blank")}
-                title="Téléchargement d'un modèle de demo"
-              >
-                Modèle de démo
-              </Button>
-            </Box>
-          </Box>
-        )}
+
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header title="DASHBOARD" subtitle="Bienvenue sur votre Dashboard" />
+          {onLoad ? (
+            <></>
+          ) : (
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <InputFileUpload setIsUpload={setIsUpload} />
+                <Button
+                  component="label"
+                  sx={{
+                    backgroundColor: colors.blueAccent[800],
+                    color: colors.grey[100],
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    padding: "10px 20px",
+                  }}
+                  onClick={handleImpactRequest}
+                  startIcon={<RestartAltRoundedIcon sx={{ mr: "10px" }} />}
+                >
+                  Charger le dernier inventaire
+                </Button>
+                <Button
+                  component="label"
+                  sx={{
+                    backgroundColor: colors.greenAccent[700],
+                    color: colors.grey[100],
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    padding: "10px 20px",
+                  }}
+                  startIcon={<DownloadOutlinedIcon sx={{ mr: "10px" }} />}
+                  onClick={() => window.open("./Modèle_de_demo.ods", "_blank")}
+                  title="Téléchargement d'un modèle de demo"
+                >
+                  Modèle de démo
+                </Button>
+              </Box>
+            </Box>
+          )}
         </Box>
+        <br />
 
         {/*GRID and charts*/}
         <Box
           display="grid"
           gridTemplateColumns="repeat(12,1fr)"
-          gridAutoRows="100px"
-          gap="20px"
-          mt="20px"
+          gridTemplateRows="repeat(12,1fr)"
+          gap="15px"
+          margin="0 20px 0 20px"
+          height="90%"
         >
           {/*ROW 1*/}
           <Box
             gridColumn="span 4"
-            gridRow="span 4"
+            gridRow="span 7"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
-            <Box
-              mt="25px"
-              p="0 30px"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="600"
-                  color={colors.grey[100]}
-                >
-                  Répartition
-                </Typography>
-              </Box>
+            <br />
+            <Box p="0 30px">
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                color={colors.grey[100]}
+              >
+                Répartition
+              </Typography>
             </Box>
             {onLoad === null ? (
               <Box
@@ -287,7 +282,7 @@ function Dashboard({
                 height="89%"
                 width="100%"
               >
-                <Skeleton variant="circular" width={400} height={400} />
+                <Skeleton variant="circular" width={200} height={200} />
               </Box>
             ) : onLoad ? (
               <Box
@@ -299,7 +294,7 @@ function Dashboard({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <Box height="89%">
+              <Box height="80%">
                 <Piechart
                   unite={unite}
                   finDeVie={fin}
@@ -321,51 +316,33 @@ function Dashboard({
           </Box>
           <Box
             gridColumn="span 8"
-            gridRow="span 5"
+            gridRow="span 7"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
-            <Box
-              mt="25px"
-              p="0 30px"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="600"
-                  color={colors.grey[100]}
-                >
-                  EtapeACV
-                </Typography>
-              </Box>
-              {/*<Box>
-                  <IconButton>
-                    <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
-                  </IconButton>
-                </Box>*/}
+            <br />
+            <Box p="0 30px">
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                color={colors.grey[100]}
+              >
+                Etape ACV
+              </Typography>
             </Box>
             {onLoad === null ? (
-              <Box height="70%">
-                <Box height="70%" justifyContent="center" display="flex">
-                  <Skeleton variant="rounded" width="95%" height="100%" />
-                </Box>
-                <Box
-                  display="flex"
-                  justifyContent="space-around"
-                  alignItems="center"
-                  ml={8}
-                  mr={18}
-                  mt={2}
-                >
-                  <Skeleton variant="circular" width={90} height={90} />
-                  <Skeleton variant="circular" width={90} height={90} />
-                  <Skeleton variant="circular" width={90} height={90} />
-                  <Skeleton variant="circular" width={90} height={90} />
-                  <Skeleton variant="circular" width={90} height={90} />
-                </Box>
+              <Box
+                height="75%"
+                justifyContent="center"
+                alignItems="center"
+                display="flex"
+                flexDirection="column"
+                mb="20px"
+              >
+                <br />
+                <Skeleton variant="rounded" width="95%" height="80%" />
+                <br />
+                <Skeleton variant="rounded" width="95%" height="20%" />
               </Box>
             ) : onLoad ? (
               <Box
@@ -377,7 +354,7 @@ function Dashboard({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <Box height="70%">
+              <Box height="80%">
                 <Barchart
                   isDashboard={true}
                   unite={unite}
@@ -399,123 +376,40 @@ function Dashboard({
             )}
           </Box>
           <Box
-            gridColumn="span 4"
-            gridRow="span 4"
+            gridColumn="span 3"
+            gridRow="span 5"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
-            <Box
-              mt="25px"
-              p="0 30px"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="600"
-                  color={colors.grey[100]}
-                >
-                  Descriptif
-                </Typography>
-              </Box>
-              {/*<Box>
-                  <IconButton>
-                    <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
-                  </IconButton>
-                </Box>*/}
+            <br />
+            <Box p="0 30px">
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                color={colors.grey[100]}
+              >
+                Paramètrage
+              </Typography>
             </Box>
+
             {onLoad === null ? (
               <>
-                <Box display="flex" flexDirection="column" m={4}>
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  flexDirection="column"
+                >
                   <Stack spacing={1}>
-                    <Box>
-                      <Stack spacing={1}>
-                        <Skeleton variant="rounded">
-                          <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">
-                              Critère
-                            </InputLabel>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              label="Critere"
-                              defaultValue={0}
-                            >
-                              <MenuItem
-                                value={0}
-                                onClick={() => {
-                                  setCritere(0);
-                                }}
-                              >
-                                <AirIcon /> Changement climatique{" "}
-                              </MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Skeleton>
-                        <Skeleton variant="rounded">
-                          <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">
-                              Critère
-                            </InputLabel>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              label="Critere"
-                              defaultValue={0}
-                            >
-                              <MenuItem
-                                value={0}
-                                onClick={() => {
-                                  setCritere(0);
-                                }}
-                              >
-                                <AirIcon /> Changement climatique{" "}
-                              </MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Skeleton>
-                        <Skeleton variant="rounded">
-                          <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">
-                              Critère
-                            </InputLabel>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              label="Critere"
-                              defaultValue={0}
-                            >
-                              <MenuItem
-                                value={0}
-                                onClick={() => {
-                                  setCritere(0);
-                                }}
-                              >
-                                <AirIcon /> Changement climatique{" "}
-                              </MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Skeleton>
-                      </Stack>
-                    </Box>
-                    <Box>
-                      <Stack spacing={1} width="100%">
-                        <Skeleton variant="rounded" width="100%">
-                          <Typography>.</Typography>
-                        </Skeleton>
-                        <Skeleton variant="rounded" width="100%">
-                          <Typography>.</Typography>
-                        </Skeleton>
-                        <Skeleton variant="rounded" width="100%">
-                          <Typography>.</Typography>
-                        </Skeleton>
-                        <Skeleton variant="rounded" width="100%">
-                          <Typography>.</Typography>
-                        </Skeleton>
-                      </Stack>
-                    </Box>
+                    <Skeleton variant="rounded" height="50px" />
+                    <Skeleton variant="rounded" height="50px" />
+                    <Skeleton variant="rounded" height="50px" />
+                    <br />
+                    <Skeleton variant="rounded" width="100%">
+                      <Typography>.</Typography>
+                    </Skeleton>
+                    <Skeleton variant="rounded" width="100%">
+                      <Typography>.</Typography>
+                    </Skeleton>
                   </Stack>
                 </Box>
               </>
@@ -529,214 +423,202 @@ function Dashboard({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <>
-                <Box height="80%" mt="25px" p="0 30px">
-                  <Stack spacing={1}>
-                    <Box width="50%">
-                      <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Critère
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Critere"
-                          defaultValue={0}
-                          value={critere}
+              <Box
+                height="90%"
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Box
+                  display="flex"
+                  justifyContent="space-around"
+                  alignItems="center"
+                  height="90%"
+                  width="95%"
+                  flexDirection="column"
+                >
+                  <Box width="100%">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Critère
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Critere"
+                        defaultValue={0}
+                        value={critere}
+                      >
+                        <MenuItem
+                          value={0}
+                          onClick={() => {
+                            setCritere(0);
+                          }}
                         >
-                          <MenuItem
-                            value={0}
-                            onClick={() => {
-                              setCritere(0);
-                            }}
-                          >
-                            <AirIcon /> Changement climatique{" "}
-                          </MenuItem>
-                          <MenuItem
-                            value={1}
-                            onClick={() => {
-                              setCritere(1);
-                            }}
-                          >
-                            <MasksIcon /> Particules fines
-                          </MenuItem>
-                          <MenuItem
-                            value={2}
-                            onClick={() => {
-                              setCritere(2);
-                            }}
-                          >
-                            <WifiIcon /> Radiation ionisante
-                          </MenuItem>
-                          <MenuItem
-                            value={3}
-                            onClick={() => {
-                              setCritere(3);
-                            }}
-                          >
-                            <WaterIcon /> Acidification
-                          </MenuItem>
-                          <MenuItem
-                            value={4}
-                            onClick={() => {
-                              setCritere(4);
-                            }}
-                          >
-                            <FactoryIcon /> Usage des ressources (mineraux et
-                            metaux)
-                          </MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Box>
-                    <Box width="50%">
-                      <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Etape ACV
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Etape_ACV"
-                          defaultValue={0}
-                          value={etape}
+                          <AirIcon /> Changement climatique{" "}
+                        </MenuItem>
+                        <MenuItem
+                          value={1}
+                          onClick={() => {
+                            setCritere(1);
+                          }}
                         >
-                          <MenuItem
-                            value={0}
-                            onClick={() => {
-                              setEtape(0);
-                            }}
-                          >
-                            {" "}
-                            Fabrication{" "}
-                          </MenuItem>
-                          <MenuItem
-                            value={1}
-                            onClick={() => {
-                              setEtape(1);
-                            }}
-                          >
-                            {" "}
-                            Distribution
-                          </MenuItem>
-                          <MenuItem
-                            value={2}
-                            onClick={() => {
-                              setEtape(2);
-                            }}
-                          >
-                            {" "}
-                            Usage
-                          </MenuItem>
-                          <MenuItem
-                            value={3}
-                            onClick={() => {
-                              setEtape(3);
-                            }}
-                          >
-                            {" "}
-                            Fin de vie
-                          </MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Box>
-                    <Box width="50%">
-                      <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">
-                          Année
-                        </InputLabel>
-                        <Select
-                          labelId="demo-simple-select-label"
-                          id="demo-simple-select"
-                          label="Année"
-                          defaultValue={Object.keys(annualCost).length - 1}
+                          <MasksIcon /> Particules fines
+                        </MenuItem>
+                        <MenuItem
+                          value={2}
+                          onClick={() => {
+                            setCritere(2);
+                          }}
                         >
-                          {Object.keys(annualCost).map((an) => {
-                            return (
-                              <MenuItem
-                                value={Object.keys(annualCost).indexOf(an)}
-                                onClick={() => {
-                                  setAnnee(an);
-                                }}
-                              >
-                                {" "}
-                                {an}{" "}
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
-                      </FormControl>
-                    </Box>
-                    <Box>
-                      <Typography
-                        variant="h5"
-                        fontWeight="600"
-                        color={colors.grey[100]}
+                          <WifiIcon /> Radiation ionisante
+                        </MenuItem>
+                        <MenuItem
+                          value={3}
+                          onClick={() => {
+                            setCritere(3);
+                          }}
+                        >
+                          <WaterIcon /> Acidification
+                        </MenuItem>
+                        <MenuItem
+                          value={4}
+                          onClick={() => {
+                            setCritere(4);
+                          }}
+                        >
+                          <FactoryIcon /> Usage des ressources (mineraux et
+                          metaux)
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box width="100%">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Etape ACV
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Etape_ACV"
+                        defaultValue={0}
+                        value={etape}
                       >
-                        Nombre de matériel IT :{" "}
-                      </Typography>
-                      <Typography
-                        variant="h5"
-                        fontWeight="400"
-                        color={colors.grey[100]}
+                        <MenuItem
+                          value={0}
+                          onClick={() => {
+                            setEtape(0);
+                          }}
+                        >
+                          {" "}
+                          Fabrication{" "}
+                        </MenuItem>
+                        <MenuItem
+                          value={1}
+                          onClick={() => {
+                            setEtape(1);
+                          }}
+                        >
+                          {" "}
+                          Distribution
+                        </MenuItem>
+                        <MenuItem
+                          value={2}
+                          onClick={() => {
+                            setEtape(2);
+                          }}
+                        >
+                          {" "}
+                          Usage
+                        </MenuItem>
+                        <MenuItem
+                          value={3}
+                          onClick={() => {
+                            setEtape(3);
+                          }}
+                        >
+                          {" "}
+                          Fin de vie
+                        </MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box width="100%">
+                    <FormControl fullWidth>
+                      <InputLabel id="demo-simple-select-label">
+                        Année
+                      </InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        label="Année"
+                        defaultValue={Object.keys(annualCost).length - 1}
                       >
-                        {nbItem}
-                      </Typography>
-                    </Box>
-                    <Box>
-                      <Typography
-                        variant="h5"
-                        fontWeight="600"
-                        color={colors.grey[100]}
-                      >
-                        Nombre de matériel IT En Service :{" "}
-                      </Typography>
-                      <Typography
-                        variant="h5"
-                        fontWeight="400"
-                        color={colors.grey[100]}
-                      >
-                        {nbItemEnService}
-                      </Typography>
-                    </Box>
-                  </Stack>
+                        {Object.keys(annualCost).map((an) => {
+                          return (
+                            <MenuItem
+                              value={Object.keys(annualCost).indexOf(an)}
+                              onClick={() => {
+                                setAnnee(an);
+                              }}
+                            >
+                              {" "}
+                              {an}{" "}
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box>
+                    <Typography
+                      variant="h5"
+                      fontWeight="600"
+                      color={colors.grey[100]}
+                    >
+                      Nombre de matériel IT : {nbItem}
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography
+                      variant="h5"
+                      fontWeight="600"
+                      color={colors.grey[100]}
+                    >
+                      Nombre de matériel IT En Service : {nbItemEnService}
+                    </Typography>
+                  </Box>
                 </Box>
-              </>
+              </Box>
             )}
           </Box>
           <Box
-            gridColumn="span 8"
-            gridRow="span 3"
+            gridColumn="span 9"
+            gridRow="span 5"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
-            <Box
-              mt="25px"
-              p="0 30px"
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <Box>
-                <Typography
-                  variant="h5"
-                  fontWeight="600"
-                  color={colors.grey[100]}
-                >
-                  Suivi
-                </Typography>
-              </Box>
-              {/*  <Box>
-                  <IconButton>
-                    <DownloadOutlinedIcon sx={{fontSize:"26px", color:colors.greenAccent[500]}}/>
-                  </IconButton>
-          </Box>*/}
+            <br />
+            <Box p="0 30px">
+              <Typography
+                variant="h5"
+                fontWeight="600"
+                color={colors.grey[100]}
+              >
+                Suivi
+              </Typography>
             </Box>
             {onLoad === null ? (
-              <>
-                <Box justifyContent="center" display="flex" m={4}>
-                  <Skeleton variant="rounded" width="100%" height={230} />
-                </Box>
-              </>
+              <Box
+                height="80%"
+                justifyContent="center"
+                alignItems="center"
+                display="flex"
+                flexDirection="column"
+              >
+                <Skeleton variant="rounded" height="95%" width="95%" />
+              </Box>
             ) : onLoad ? (
               <Box
                 display="flex"
@@ -747,7 +629,13 @@ function Dashboard({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <Box height="80%" width="98%">
+              <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="80%"
+                width="100%"
+              >
                 <Linechart
                   isDashboard={true}
                   annualCost={annualCost}

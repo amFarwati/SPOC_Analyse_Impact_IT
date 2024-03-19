@@ -9,6 +9,10 @@ import { v4 as uuidv4 } from "uuid";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
 import { hideBin } from "yargs/helpers";
+import cors from "cors";
+
+console.log("server test opti");
+
 const argv = yargs(hideBin(process.argv))
   .options({
     port: {
@@ -27,6 +31,7 @@ const port = argv.port;
 
 // Définir le facteur de coût
 const saltRounds = 10;
+const urlServer = "http://localhost:3000";
 
 const OPSIAN_db = mysql.createConnection({
   //user: "root",
@@ -42,13 +47,13 @@ OPSIAN_db.connect(function (err) {
   console.log("Connecté à la base de données MySQL OPSIAN!");
 });
 
-var dateMin = null;
-var dateMax = null;
-var nbProps = null;
-var nbPropsEnService = null;
-var unite = null;
+let dateMin = null;
+let dateMax = null;
+let nbProps = null;
+let nbPropsEnService = null;
+let unite = null;
 
-var liste_reference = null;
+let liste_reference = null;
 
 //fonction conversion date au format mySQL
 function toMySQLDateFormat(date) {
@@ -340,7 +345,30 @@ function bdRequest(request, data) {
                                 idItem === userInv[userInv.length - 1] &&
                                 year === dateMax
                               ) {
-                                resolve([impactItem, unite]);
+                                let annualCost = formatageImpact([
+                                  impactItem,
+                                  unite,
+                                ]);
+
+                                let res = {
+                                  cost: annualCost,
+                                  unite: unite,
+                                  nbItem: nbProps,
+                                  nbItemEnService: nbPropsEnService,
+                                };
+
+                                resolve(res);
+
+                                OPSIAN_db.query(
+                                  // met à jour le cout du type
+                                  `UPDATE Push_U 
+                                SET cout = '${JSON.stringify(res)}' 
+                                WHERE idPush = ${idPush};`,
+                                  (err, result) => {
+                                    if (err) throw err;
+                                    resolve(true);
+                                  }
+                                );
 
                                 console.timeEnd("calcul");
 
@@ -397,12 +425,12 @@ function bdRequest(request, data) {
             //console.log(result);
             refList = result.map((row) => row.nomReference);
             resolve(refList);
-            console.timeEnd("getRef");
-          }
-        );
 
-        console.log(
-          `bd request ${request} awseredin ${(Date.now() - timer) / 1000}s`
+            console.timeEnd("getRef");
+            console.log(
+              `bd request ${request} awseredin ${(Date.now() - timer) / 1000}s`
+            );
+          }
         );
 
         break;
@@ -417,10 +445,10 @@ function bdRequest(request, data) {
 
           resolve(userList);
           console.timeEnd("getUser");
+          console.log(
+            `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+          );
         });
-        console.log(
-          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-        );
 
         break;
       case "login": // à vérif sécu
@@ -447,16 +475,16 @@ function bdRequest(request, data) {
                   )}' WHERE email_hash = "${data.mail}";`,
                   (err, result) => {
                     if (err) throw err;
-                    console.timeEnd("login");
                   }
                 );
               }
             }
             resolve([rejected, inBD, auth_token]);
+            console.timeEnd("login");
+            console.log(
+              `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+            );
           }
-        );
-        console.log(
-          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
         );
 
         break;
@@ -474,12 +502,12 @@ function bdRequest(request, data) {
             if (err) throw err;
             console.log(`=> SET user = ${data.user} OK `);
             resolve(true);
-            console.timeEnd("setUser");
-          }
-        );
 
-        console.log(
-          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+            console.timeEnd("setUser");
+            console.log(
+              `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+            );
+          }
         );
 
         break;
@@ -499,14 +527,13 @@ function bdRequest(request, data) {
             if (err) throw err;
             console.log(`=> SET userPush = ${data.user}, ${data.date}  OK`);
             resolve(true);
+
             console.timeEnd("setUserPush");
+            console.log(
+              `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
+            );
           }
         );
-
-        console.log(
-          `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
-        );
-
         break;
         3;
       case "setUserInv": // OK
@@ -534,7 +561,6 @@ function bdRequest(request, data) {
               (err, result) => {
                 if (err) throw err;
                 //console.log(`=> SET userInv = ${data.user}  OK`);
-                console.timeEnd("setUserInv");
                 resolve(true);
               }
             );
@@ -557,13 +583,14 @@ function bdRequest(request, data) {
               (err, result) => {
                 if (err) throw err;
                 //console.log(`=> SET userInv = ${data.user}  OK`);
-                console.timeEnd("setUserInv");
+
                 resolve(true);
               }
             );
           }
         });
 
+        console.timeEnd("setUserInv");
         console.log(
           `bd request ${request} awsered in ${(Date.now() - timer) / 1000}s`
         );
@@ -744,11 +771,64 @@ function bdRequest(request, data) {
           }
         );
         break;
+      case "getLastImpact": // à check
+        console.time("getLastImpact");
+
+        OPSIAN_db.query(
+          `SELECT cout 
+          FROM Push_U
+          JOIN User_U ON Push_U.idUser = User_U.idUser
+          WHERE User_U.email_hash = '${data.user}'
+          AND Push_U.idPush = (SELECT MAX(idPush) FROM Push_U WHERE Push_U.inventaire = ${data.type});`,
+          (err, result) => {
+            if (err) throw err;
+
+            let res  = JSON.parse(result[0].cout);
+            resolve(res);
+            console.timeEnd("getLastImpact");
+          }
+        );
+        break;
     }
   });
 }
+
+function formatageImpact(result) {
+  let annualCost = {};
+  let annees = Object.keys(result[0]);
+  let items = Object.keys(result[0][annees[0]]);
+  let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
+  let critereList = Object.keys(
+    result[0][annees[0]][items[0]][etapeACVList[0]]
+  );
+
+  annees.forEach((annee) => {
+    let cost = {
+      FABRICATION: [0, 0, 0, 0, 0],
+      DISTRIBUTION: [0, 0, 0, 0, 0],
+      UTILISATION: [0, 0, 0, 0, 0],
+      FIN_DE_VIE: [0, 0, 0, 0, 0],
+    };
+
+    let resEtapeACVList = Object.keys(cost);
+    items.forEach((item) => {
+      for (let i = 0; i < etapeACVList.length; i++) {
+        for (let j = 0; j < critereList.length; j++) {
+          let cout =
+            result[0][annee][item][etapeACVList[i]][critereList[j]].cout;
+          cost[resEtapeACVList[i]][j] += cout === undefined ? 0 : cout;
+        }
+      }
+    });
+
+    annualCost[annee] = cost;
+  });
+
+  return annualCost;
+}
+
 // Middleware pour activer CORS
-app.use((req, res, next) => {
+/*app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header(
     "Access-Control-Allow-Headers",
@@ -758,17 +838,21 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
-/*// Middleware pour activer CORS
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://opsian.insa-lyon.fr");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});*/
+*/
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (origin.startsWith(urlServer)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -787,17 +871,15 @@ app.put("/setInventory/:user/:token", async (req, res) => {
       let user = req.body.user;
       let inv = req.body.inventory;
       let type = req.body.type;
-      let userList = await bdRequest("getUser");
 
-      if (!userList.includes(user)) {
-        await bdRequest("setUser", { user: user });
-      }
+      liste_reference = await bdRequest("getRef");
+
       await bdRequest("setUserPush", {
         user: user,
         date: toMySQLDateFormat(dayjs()),
         type: type,
       });
-      liste_reference = await bdRequest("getRef");
+
       await bdRequest("setUserInv", { user: user, inv: inv });
 
       res.send(`BD updated with data for ${req.body.user}`);
@@ -901,87 +983,74 @@ app.get("/getImpact/:user/:type/:token", async (req, res) => {
   if (accepted) {
     let timer = Date.now();
     let type = req.params.type;
-    let userList = await bdRequest("getUser");
 
     console.log(`=> getImpact for ${user} type ${type}`);
 
-    if (user === undefined) {
-      res.send(`ERROR: the user is undefined`);
-    } else if (userList.includes(user)) {
-      if (!(await bdRequest("areCostsComputed"))) {
-        await bdRequest("computeCost");
-      }
-
-      bdRequest("getUserImpact", { user: user, type: type })
-        .then((result) => {
-          //console.log(result[0]);
-          if (result !== "No push for this user") {
-            let annualCost = {};
-            let annees = Object.keys(result[0]);
-            let items = Object.keys(result[0][annees[0]]);
-            let etapeACVList = Object.keys(result[0][annees[0]][items[0]]);
-            let critereList = Object.keys(
-              result[0][annees[0]][items[0]][etapeACVList[0]]
-            );
-
-            //console.log(annees, etapeACVList, result[0][annees[0]][items[0]]);
-
-            let formatTimer = Date.now();
-
-            annees.forEach((annee) => {
-              let cost = {
-                FABRICATION: [0, 0, 0, 0, 0],
-                DISTRIBUTION: [0, 0, 0, 0, 0],
-                UTILISATION: [0, 0, 0, 0, 0],
-                FIN_DE_VIE: [0, 0, 0, 0, 0],
-              };
-
-              let resEtapeACVList = Object.keys(cost);
-              items.forEach((item) => {
-                for (let i = 0; i < etapeACVList.length; i++) {
-                  for (let j = 0; j < critereList.length; j++) {
-                    let cout =
-                      result[0][annee][item][etapeACVList[i]][critereList[j]]
-                        .cout;
-                    cost[resEtapeACVList[i]][j] +=
-                      cout === undefined ? 0 : cout;
-                  }
-                }
-              });
-
-              annualCost[annee] = cost;
-            });
-
-            console.log(
-              `temps formatage données ${(Date.now() - formatTimer) / 1000}`
-            );
-
-            res.json({
-              cost: annualCost,
-              unite: unite,
-              nbItem: nbProps,
-              nbItemEnService: nbPropsEnService,
-            });
-            console.log(
-              `getImpact for ${user} answered in ${
-                (Date.now() - timer) / 1000
-              }s`
-            );
-          } else {
-            res.send(`No push for this user`);
-          }
-        })
-        .catch((error) => {
-          console.log(`Error computing Impact: ${error}`);
-          res.send(
-            `ERROR: the server encounting difficulties during computing impact`
-          );
-        });
-    } else {
-      res.send(`ERROR: the user ${user} has not been found in the BD`);
+    if (!(await bdRequest("areCostsComputed"))) {
+      await bdRequest("computeCost");
     }
+
+    bdRequest("getUserImpact", { user: user, type: type })
+      .then((result) => {
+        //console.log(result[0]);
+        if (result !== "No push for this user") {
+          res.json(result);
+          console.log(result);
+          console.log(
+            `getImpact for ${user} answered in ${(Date.now() - timer) / 1000}s`
+          );
+        } else {
+          res.send(`No push for this user`);
+        }
+      })
+      .catch((error) => {
+        console.log(`Error computing Impact: ${error}`);
+        res.send(
+          `ERROR: the server encounting difficulties during computing impact`
+        );
+      });
   } else {
-    res.send(`ERROR: the auth token is invalid`);
+    res.send(`ERROR: the auth token is invalid OR user not found`);
+  }
+});
+
+app.get("/getLastImpact/:user/:type/:token", async (req, res) => {
+  let user = req.params.user;
+  let token = decodeURIComponent(req.params.token);
+  let accepted = await authCheck(user, token);
+  console.log(`=> getImpact for ${user} accepted ${accepted}`);
+
+  if (accepted) {
+    let timer = Date.now();
+    let type = req.params.type;
+
+    console.log(`=> getImpact for ${user} type ${type}`);
+
+    if (!(await bdRequest("areCostsComputed"))) {
+      await bdRequest("computeCost");
+    }
+
+    bdRequest("getLastImpact", { user: user, type: type })
+      .then((result) => {
+        //console.log(result[0]);
+        if (result !== "No push for this user") {
+          res.json(result);
+          console.log(result);
+          console.log(
+            `getLastImpact for ${user} answered in ${(Date.now() - timer) / 1000}s`
+          );
+        } else {
+          res.send(`No push for this user`);
+        }
+      })
+      .catch((error) => {
+        console.log(`Error computing LastImpact: ${error}`);
+        res.send(
+          `ERROR: the server encounting difficulties during computing LastImpact`
+        );
+      });
+  } else {
+    res.send(`ERROR: the auth token is invalid OR user not found`);
   }
 });
 

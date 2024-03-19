@@ -34,12 +34,12 @@ const saltRounds = 10;
 const urlServer = "http://localhost:3000";
 
 const OPSIAN_db = mysql.createConnection({
-  //user: "root",
-  host: "mysql-db",
-  user: "numuser",
+  user: "root",
+  //host: "mysql-db",
+  host: "localhost",
+  //user: "numuser",
   password: "spocBDD",
   database: "opsian",
-  //database: "SPOC_Analyse_Impact_IT",
 });
 
 OPSIAN_db.connect(function (err) {

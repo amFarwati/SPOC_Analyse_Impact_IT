@@ -136,7 +136,7 @@ function Linechart({
       <Box height="80%">
         <ResponsiveLine
           data={data.length === 1 ? data : [data[critere][etapeACV]]}
-          margin={{ top: 20, right: 50, bottom: 30, left: 50 }}
+          margin={{ top: 20, right: 50, bottom: 30, left: 60 }}
           xScale={{ type: "point" }}
           yScale={{
             type: "linear",

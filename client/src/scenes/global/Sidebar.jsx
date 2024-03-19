@@ -84,7 +84,7 @@ function Sidebar({ user, serveur, setIsDeconnected }) {
               </Box>
             )}
           </MenuItem>
-          {/* USER */}
+          {/* USER 
           {!isCollapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignContent="center">
@@ -116,6 +116,7 @@ function Sidebar({ user, serveur, setIsDeconnected }) {
               </Box>
             </Box>
           )}
+          */}
 
           {/* MENU ITEM */}
           <Box justifyContent="center" alignContent="center">

@@ -201,51 +201,51 @@ function Dashboard({
           open={open}
           setOpen={setOpen}
         />
-        {onLoad ? (
-          <></>
-        ) : (
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Box
-              display="flex"
-              justifyContent="space-between"
-              alignItems="center"
-              width={1000}
-            >
-              <InputFileUpload setIsUpload={setIsUpload} />
-              <Button
-                component="label"
-                sx={{
-                  backgroundColor: colors.blueAccent[800],
-                  color: colors.grey[100],
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  padding: "10px 20px",
-                }}
-                onClick={handleImpactRequest}
-                startIcon={<RestartAltRoundedIcon sx={{ mr: "10px" }} />}
-              >
-                Charger le dernier inventaire
-              </Button>
-              <Button
-                component="label"
-                sx={{
-                  backgroundColor: colors.greenAccent[700],
-                  color: colors.grey[100],
-                  fontSize: "14px",
-                  fontWeight: "bold",
-                  padding: "10px 20px",
-                }}
-                startIcon={<DownloadOutlinedIcon sx={{ mr: "10px" }} />}
-                onClick={() => window.open("./Modèle_de_demo.ods", "_blank")}
-                title="Téléchargement d'un modèle de demo"
-              >
-                Modèle de démo
-              </Button>
-            </Box>
-          </Box>
-        )}
+
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Header title="DASHBOARD" subtitle="Bienvenue sur votre Dashboard" />
+          {onLoad ? (
+            <></>
+          ) : (
+            <Box display="flex" justifyContent="center" alignItems="center">
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <InputFileUpload setIsUpload={setIsUpload} />
+                <Button
+                  component="label"
+                  sx={{
+                    backgroundColor: colors.blueAccent[800],
+                    color: colors.grey[100],
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    padding: "10px 20px",
+                  }}
+                  onClick={handleImpactRequest}
+                  startIcon={<RestartAltRoundedIcon sx={{ mr: "10px" }} />}
+                >
+                  Charger le dernier inventaire
+                </Button>
+                <Button
+                  component="label"
+                  sx={{
+                    backgroundColor: colors.greenAccent[700],
+                    color: colors.grey[100],
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    padding: "10px 20px",
+                  }}
+                  startIcon={<DownloadOutlinedIcon sx={{ mr: "10px" }} />}
+                  onClick={() => window.open("./Modèle_de_demo.ods", "_blank")}
+                  title="Téléchargement d'un modèle de demo"
+                >
+                  Modèle de démo
+                </Button>
+              </Box>
+            </Box>
+          )}
         </Box>
         <br />
 
@@ -256,12 +256,12 @@ function Dashboard({
           gridTemplateRows="repeat(12,1fr)"
           gap="15px"
           margin="0 20px 0 20px"
-          height="85%"
+          height="90%"
         >
           {/*ROW 1*/}
           <Box
-            gridColumn="span 3"
-            gridRow="span 5"
+            gridColumn="span 4"
+            gridRow="span 7"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
@@ -294,7 +294,7 @@ function Dashboard({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <Box height="89%">
+              <Box height="80%">
                 <Piechart
                   unite={unite}
                   finDeVie={fin}
@@ -315,8 +315,8 @@ function Dashboard({
             )}
           </Box>
           <Box
-            gridColumn="span 9"
-            gridRow="span 6"
+            gridColumn="span 8"
+            gridRow="span 7"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
@@ -354,7 +354,7 @@ function Dashboard({
                 <CircularProgress fontSize="large" color="success" />
               </Box>
             ) : (
-              <Box height="70%">
+              <Box height="80%">
                 <Barchart
                   isDashboard={true}
                   unite={unite}
@@ -377,7 +377,7 @@ function Dashboard({
           </Box>
           <Box
             gridColumn="span 3"
-            gridRow="span 7"
+            gridRow="span 5"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >
@@ -424,7 +424,7 @@ function Dashboard({
               </Box>
             ) : (
               <Box
-              height="90%"
+                height="90%"
                 display="flex"
                 justifyContent="center"
                 alignItems="center"
@@ -595,7 +595,7 @@ function Dashboard({
           </Box>
           <Box
             gridColumn="span 9"
-            gridRow="span 6"
+            gridRow="span 5"
             backgroundColor={colors.primary[400]}
             borderRadius="20px"
           >

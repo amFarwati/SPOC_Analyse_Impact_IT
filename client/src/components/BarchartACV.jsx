@@ -190,7 +190,7 @@ function BarchartACV({
               type: "patternLines",
               background: "inherit",
               color: "#eed312",
-              rotation: -45,
+              rotation: 0,
               lineWidth: 6,
               spacing: 10,
             },

@@ -113,6 +113,7 @@ function Barchart({
               legend: {
                 text: {
                   fill: colors.grey[100],
+                  fontSize: "15px",
                 },
               },
               ticks: {
@@ -122,7 +123,7 @@ function Barchart({
                 },
                 text: {
                   fill: colors.grey[100],
-                  fontSize: "15px",
+                  fontSize: "12px",
                 },
               },
             },
@@ -176,7 +177,7 @@ function Barchart({
             tickSize: 5,
             tickValues: 3,
             tickPadding: 5,
-            tickRotation: -45,
+            tickRotation: 0,
             legend: "impact",
             legendPosition: "middle",
             legendOffset: -40,

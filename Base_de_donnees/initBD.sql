@@ -1,15 +1,16 @@
 create database if not exists opsian;
 use opsian;
-create user if not exists 'numuser'@'localhost' identified with mysql_native_password by 'spocBDD';
-flush privileges;
+CREATE USER if not exists 'numuser'@'%' IDENTIFIED WITH mysql_native_password BY 'spocBDD';
+ALTER USER 'numuser'@'%' IDENTIFIED WITH mysql_native_password BY 'spocBDD';
+FLUSH PRIVILEGES;
 
-drop table is exists Critere_M;
-drop table is exists EtapeACV_M;
-drop table is exists NomComposant_M;
-drop table is exists Source_M;
-drop table is exists Type_M;
-drop table is exists Composant_M;
-drop table is exists Reference_M;
+drop table if exists Critere_M;
+drop table if exists EtapeACV_M;
+drop table if exists NomComposant_M;
+drop table if exists Source_M;
+drop table if exists Type_M;
+drop table if exists Composant_M;
+drop table if exists Reference_M;
 
 -- opsian.Critere_M definition
 
@@ -65,6 +66,11 @@ CREATE TABLE `Type_M` (
 CREATE TABLE `User_U` (
   `idUser` int unsigned NOT NULL AUTO_INCREMENT,
   `user` varchar(255) DEFAULT NULL,
+  `email_hash` varchar(60) DEFAULT NULL,
+  `password_hash` varchar(60) DEFAULT NULL,
+  `auth_token` varchar(60) DEFAULT NULL,
+  `liste_organisme` json DEFAULT NULL,
+  `image_profile` blob,
   PRIMARY KEY (`idUser`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -99,10 +105,11 @@ CREATE TABLE `Push_U` (
   `idPush` int unsigned NOT NULL AUTO_INCREMENT,
   `idUser` int unsigned DEFAULT NULL,
   `date` timestamp NULL DEFAULT NULL,
+  `inventaire` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`idPush`),
   KEY `fkUser_Push` (`idUser`),
   CONSTRAINT `fkUser_Push` FOREIGN KEY (`idUser`) REFERENCES `User_U` (`idUser`)
-) ENGINE=InnoDB AUTO_INCREMENT=424 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
 -- opsian.Reference_M definition
@@ -2259,3 +2266,39 @@ INSERT INTO opsian.Reference_M (nomReference,idType) VALUES
 	 ('/firewall',14);
 INSERT INTO opsian.Reference_M (nomReference,idType) VALUES
 	 ('/stockage externe',10);
+
+	 INSERT INTO Type_M (type,dureeVie)
+VALUES
+	("personnal-laser-printer-1",8.106475756);
+
+INSERT INTO Composant_M  (idNomComposant, idEtapeACV, idType, idCritere, idSource, valeur)
+VALUES
+    (231,1,42 ,1,3 ,105 ),
+    (231,1,42 ,5,3 ,0.00828 ),
+    (231,1,42 ,4,3 ,0.694 ),
+    (231,1,42 ,3,3 , 632),
+    (231,1,42 ,2,3 , 0.00000463),
+    (231,2,42 ,1,3 ,2.9741846064 ),
+    (231,2,42 ,5,3 , 0.000000105450513696),
+    (231,2,42 ,4,3 , 0.103527954272),
+    (231,2,42 ,3,3 , 0.0060987817104),
+    (231,2,42 ,2,3 , 0.00000054386062208),
+    (231,3,42 ,1,3 , 1.543428),
+    (231,3,42 ,5,3 , 0.0000007285644),
+    (231,3,42 ,4,3 , 0.00887886),
+    (231,3,42 ,3,3 , 39.91338),
+    (231,3,42 ,2,3 , 0.0000003451968),
+    (231,4,42 ,1,3 , 10.2),
+    (231,4,42 ,5,3 , 0.000037),
+    (231,4,42 ,4,3 , 0.108),
+    (231,4,42 ,3,3 , 0.755),
+    (231,4,42 ,2,3 , 0.000000546)
+    ;
+  
+   UPDATE Reference_M
+   SET nomReference = '/serveur impression'
+   WHERE idReference = 1032;
+   
+   INSERT INTO Reference_M (nomReference, idType)
+   VALUES
+   		("/imprimante personnelle",42);

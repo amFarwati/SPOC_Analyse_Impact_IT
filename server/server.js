@@ -30,7 +30,7 @@ const saltRounds = 10;
 
 const OPSIAN_db = mysql.createConnection({
   //user: "root",
-  host: "localhost",
+  host: "mysql-db",
   user: "numuser",
   password: "spocBDD",
   database: "opsian",

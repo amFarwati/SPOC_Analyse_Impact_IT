@@ -33,9 +33,9 @@ const urlServer = `https://opsian.insa-lyon.fr`;
 const saltRounds = 10;
 
 const OPSIAN_db = mysql.createConnection({
-  user: "root",
+  //user: "root",
   host: "localhost",
-  //user: "numuser",
+  user: "numuser",
   password: "spocBDD",
   database: "opsian",
   //database: "SPOC_Analyse_Impact_IT",

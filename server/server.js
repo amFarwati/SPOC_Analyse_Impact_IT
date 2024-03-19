@@ -26,9 +26,8 @@ dayjs.extend(customParseFormat);
 const app = express();
 const port = argv.port;
 
-const urlServer = `http://localhost`;
-//const urlServer = `https://opsian.insa-lyon.fr`;
-
+//const urlServer = `http://localhost`;
+const urlServer = `https://opsian.insa-lyon.fr`;
 
 // Définir le facteur de coût
 const saltRounds = 10;
@@ -756,7 +755,17 @@ function bdRequest(request, data) {
     }
   });
 }
-
+// Middleware pour activer CORS
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 /*// Middleware pour activer CORS
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "https://opsian.insa-lyon.fr");
@@ -773,12 +782,12 @@ app.use(
   cors({
     origin: function (origin, callback) {
       if (origin.startsWith(urlServer)) {
-        callback(null, true)
+        callback(null, true);
       } else {
-        callback(new Error('Not allowed by CORS'))
+        callback(new Error("Not allowed by CORS"));
       }
     },
-    credentials:true
+    credentials: true,
   })
 );
 

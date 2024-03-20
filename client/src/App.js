@@ -10,7 +10,7 @@ import Accueil from "./scenes/Accueil/Acceuil";
 import Profile from "./scenes/Profile/Profile";
 import Inscription from "./scenes/Inscription/Inscription";
 import { useEffect, useState } from "react";
-import './App.css'
+import "./App.css";
 
 function App() {
   const [theme, colorMode] = useMode();

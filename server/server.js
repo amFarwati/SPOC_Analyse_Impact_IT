@@ -34,10 +34,10 @@ const saltRounds = 10;
 const urlServer = "http://localhost:3000";
 
 const OPSIAN_db = mysql.createConnection({
-  user: "root",
-  //host: "mysql-db",
+  //user: "root",
   host: "localhost",
-  //user: "numuser",
+  //host: "localhost",
+  user: "numuser",
   password: "spocBDD",
   database: "opsian",
 });
@@ -256,7 +256,7 @@ function bdRequest(request, data) {
                             // recupére le calcul du cout + compte le nombre d'item encore en services à date du push + nb total
                             new Promise((resolve, reject) => {
                               OPSIAN_db.query(
-                                `SELECT cout, Item_U.quantité
+                                `SELECT cout, Item_U.quantite
                             FROM Type_M
                             JOIN Reference_M  ON Reference_M.idType = Type_M.idType
                             JOIN Item_U ON Item_U.idReference = Reference_M.idReference
@@ -270,7 +270,7 @@ function bdRequest(request, data) {
                                     JSON.parse(row.cout)
                                   )[0];
                                   let quantite = result.map(
-                                    (row) => row.quantité
+                                    (row) => row.quantite
                                   )[0];
 
                                   if (year === dateMax) {
@@ -544,7 +544,7 @@ function bdRequest(request, data) {
 
           if (liste_reference.includes(ref)) {
             OPSIAN_db.query(
-              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference, quantité)
+              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference, quantite)
                 VALUES (
                   '${dateAchat}',
                   (SELECT MAX(push.idPush)
@@ -566,7 +566,7 @@ function bdRequest(request, data) {
             );
           } else {
             OPSIAN_db.query(
-              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference,quantité)
+              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference,quantite)
                 VALUES (
                   '${dateAchat}',
                   (SELECT MAX(push.idPush)
@@ -783,7 +783,7 @@ function bdRequest(request, data) {
           (err, result) => {
             if (err) throw err;
 
-            let res  = JSON.parse(result[0].cout);
+            let res = JSON.parse(result[0].cout);
             resolve(res);
             console.timeEnd("getLastImpact");
           }
@@ -828,7 +828,7 @@ function formatageImpact(result) {
 }
 
 // Middleware pour activer CORS
-/*app.use((req, res, next) => {
+app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
   res.header(
     "Access-Control-Allow-Headers",
@@ -838,7 +838,6 @@ function formatageImpact(result) {
   res.header("Access-Control-Allow-Credentials", "true");
   next();
 });
-*/
 
 app.use(
   cors({
@@ -852,7 +851,6 @@ app.use(
     credentials: true,
   })
 );
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -1037,7 +1035,9 @@ app.get("/getLastImpact/:user/:type/:token", async (req, res) => {
           res.json(result);
           console.log(result);
           console.log(
-            `getLastImpact for ${user} answered in ${(Date.now() - timer) / 1000}s`
+            `getLastImpact for ${user} answered in ${
+              (Date.now() - timer) / 1000
+            }s`
           );
         } else {
           res.send(`No push for this user`);

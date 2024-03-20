@@ -1,0 +1,1 @@
+scp  -i ~/Documents/.ssh/Maxssh MontageBD.sh initBD.sql  numuser@insa-numimpact-01.insa-lyon.fr:Base_de_donnees

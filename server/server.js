@@ -256,7 +256,7 @@ function bdRequest(request, data) {
                             // recupére le calcul du cout + compte le nombre d'item encore en services à date du push + nb total
                             new Promise((resolve, reject) => {
                               OPSIAN_db.query(
-                                `SELECT cout, Item_U.quantité
+                                `SELECT cout, Item_U.quantite
                             FROM Type_M
                             JOIN Reference_M  ON Reference_M.idType = Type_M.idType
                             JOIN Item_U ON Item_U.idReference = Reference_M.idReference
@@ -270,7 +270,7 @@ function bdRequest(request, data) {
                                     JSON.parse(row.cout)
                                   )[0];
                                   let quantite = result.map(
-                                    (row) => row.quantité
+                                    (row) => row.quantite
                                   )[0];
 
                                   if (year === dateMax) {
@@ -544,7 +544,7 @@ function bdRequest(request, data) {
 
           if (liste_reference.includes(ref)) {
             OPSIAN_db.query(
-              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference, quantité)
+              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference, quantite)
                 VALUES (
                   '${dateAchat}',
                   (SELECT MAX(push.idPush)
@@ -566,7 +566,7 @@ function bdRequest(request, data) {
             );
           } else {
             OPSIAN_db.query(
-              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference,quantité)
+              `INSERT INTO Item_U (dateDebut, idPush, idReference, nomReference,quantite)
                 VALUES (
                   '${dateAchat}',
                   (SELECT MAX(push.idPush)

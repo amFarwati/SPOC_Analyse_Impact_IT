@@ -35,7 +35,7 @@ const urlServer = "http://localhost:3000";
 
 const OPSIAN_db = mysql.createConnection({
   //user: "root",
-  host: "localhost",
+  host: "mysql-db",
   //host: "localhost",
   user: "numuser",
   password: "spocBDD",

@@ -23,7 +23,9 @@ fi
 
 # Configuration de MySQL
 echo "Configuration de MySQL en cours..."
-bash ./Base_de_donnees/MontageBD.sh
+cd Base_de_donnees
+bash ./MontageBD.sh
+cd ../
 echo "Configuration de MySQL terminée"
 
 # Installation dépendances server

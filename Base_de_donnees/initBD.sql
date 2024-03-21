@@ -1,7 +1,6 @@
 create database if not exists opsian;
 use opsian;
-CREATE USER if not exists 'numuser'@'%' IDENTIFIED WITH mysql_native_password BY 'spocBDD';
-ALTER USER 'numuser'@'%' IDENTIFIED WITH mysql_native_password BY 'spocBDD';
+CREATE USER if not exists 'numuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'spocBDD';
 FLUSH PRIVILEGES;
 
 drop table if exists Composant_M;

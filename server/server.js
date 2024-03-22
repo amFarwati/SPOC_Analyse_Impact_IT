@@ -55,6 +55,7 @@ const tryConnection = () => {
       console.log(
         "Erreur lors de la connexion à la base de données, nouvelle tentative dans 5 secondes"
       );
+      console.log(err);
       setTimeout(tryConnection, 5000);
     } else {
       console.log("Connecté à la base de données, démarrage du serveur...");

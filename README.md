@@ -22,8 +22,6 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
 
 ## Installation
 
-### En local
-
 Prérequis : avoir une distribution Linux ou un environnement similaire.
 
 1. Installer git et cloner le repository
@@ -49,6 +47,8 @@ git clone https://github.com/amFarwati/SPOC_Analyse_Impact_IT.git
 cd <votre_chemin>/Github/SPOC_Analyse_Impact_IT
 ```
 
+### En local
+
 3. Lancer le script d'installation
 
 ```bash
@@ -59,12 +59,18 @@ L'installation et la mise en place de l'outil risque de prendre quelques minutes
 Pour finir vous pouvez lancer le script de lancement pour démarrer le projet :
 
 ```bash
-./lancement.sh
+./lancement_local.sh
 ```
 
 ### Avec Docker
 
 Prérequis : installer Docker. Vous pouvez trouver comment faire via ce lien : [**Installer Docker**](https://larucheindustrielle.fr/fr/)
+
+3. Lancer le script d'installation
+
+```bash
+./lancement_docker.sh
+```
 
 ## Utilisation
 

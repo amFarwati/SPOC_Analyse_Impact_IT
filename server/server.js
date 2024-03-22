@@ -28,13 +28,14 @@ dayjs.extend(customParseFormat);
 
 const app = express();
 const port = argv.port;
+let OPSIAN_db = null;
 
 // Définir le facteur de coût
 const saltRounds = 10;
 const urlServer = "http://localhost:3000";
 
 const tryConnection = () => {
-  const OPSIAN_db = mysql.createConnection({
+  OPSIAN_db = mysql.createConnection({
     //user: "root",
     host: "localhost",
     //host: "localhost",
@@ -1124,4 +1125,4 @@ app.get("/areCostsComputed", async (req, res) => {
   }
 });
 
-tryConnection();
+tryConnection(OPSIAN_db);

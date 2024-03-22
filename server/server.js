@@ -35,6 +35,7 @@ const saltRounds = 10;
 const urlServer = "http://localhost:3000";
 
 const tryConnection = () => {
+
   OPSIAN_db = mysql.createConnection({
     //user: "root",
     host: "localhost",
@@ -43,6 +44,8 @@ const tryConnection = () => {
     password: "spocBDD",
     database: "opsian",
   });
+
+  console.log(`try to connect to ${database} with ${user} on ${host}`);
 
   OPSIAN_db.connect((err) => {
     if (err) {

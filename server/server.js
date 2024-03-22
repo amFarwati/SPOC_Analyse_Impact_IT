@@ -33,19 +33,32 @@ const port = argv.port;
 const saltRounds = 10;
 const urlServer = "http://localhost:3000";
 
-const OPSIAN_db = mysql.createConnection({
-  //user: "root",
-  host: "localhost",
-  //host: "localhost",
-  user: "numuser",
-  password: "spocBDD",
-  database: "opsian",
-});
+const tryConnection = () => {
+  const OPSIAN_db = mysql.createConnection({
+    //user: "root",
+    host: "localhost",
+    //host: "localhost",
+    user: "numuser",
+    password: "spocBDD",
+    database: "opsian",
+  });
 
-OPSIAN_db.connect(function (err) {
-  if (err) throw err;
-  console.log("Connecté à la base de données MySQL OPSIAN!");
-});
+  OPSIAN_db.connect((err) => {
+    if (err) {
+      console.log(
+        "Erreur lors de la connexion à la base de données, nouvelle tentative dans 5 secondes"
+      );
+      setTimeout(tryConnection, 5000);
+    } else {
+      console.log("Connecté à la base de données, démarrage du serveur...");
+      console.log(`Server try run on port ${port}`);
+
+      app.listen(port, () => {
+        console.log(`Server is running on port ${port}.`);
+      });
+    }
+  });
+};
 
 let dateMin = null;
 let dateMax = null;
@@ -783,7 +796,10 @@ function bdRequest(request, data) {
           (err, result) => {
             if (err) throw err;
 
-            let res  = (result[0]===undefined?"No push for this user":JSON.parse(result[0].cout));
+            let res =
+              result[0] === undefined
+                ? "No push for this user"
+                : JSON.parse(result[0].cout);
 
             resolve(res);
             console.timeEnd("getLastImpact");
@@ -1108,8 +1124,4 @@ app.get("/areCostsComputed", async (req, res) => {
   }
 });
 
-console.log(`Server try run on port ${port}`);
-
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}.`);
-});
+tryConnection();

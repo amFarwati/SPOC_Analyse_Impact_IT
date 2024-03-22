@@ -783,7 +783,8 @@ function bdRequest(request, data) {
           (err, result) => {
             if (err) throw err;
 
-            let res = JSON.parse(result[0].cout);
+            let res  = (result[0]===undefined?"No push for this user":JSON.parse(result[0].cout));
+
             resolve(res);
             console.timeEnd("getLastImpact");
           }

@@ -33,23 +33,23 @@ let OPSIAN_db = null;
 // Définir le facteur de coût
 const saltRounds = 10;
 //const urlServer = `http://localhost`;
-const urlServer = `http://opsian.insa-lyon.fr`;
+const urlServer = `https://opsian.insa-lyon.fr`;
 
 const tryConnection = () => {
   let connection_conf = {
-      //user: "root",
-      host: "localhost",
-      user: "numuser",
-      password: "spocBDD",
-      database: "opsian",
-      //database: "SPOC_Analyse_Impact_IT",
-    };
-  
-    OPSIAN_db = mysql.createConnection(connection_conf);
-  
-    console.log(
-      `try to connect to ${connection_conf.database} with ${connection_conf.user} on ${connection_conf.host}`
-    );
+    //user: "root",
+    host: "localhost",
+    user: "numuser",
+    password: "spocBDD",
+    database: "opsian",
+    //database: "SPOC_Analyse_Impact_IT",
+  };
+
+  OPSIAN_db = mysql.createConnection(connection_conf);
+
+  console.log(
+    `try to connect to ${connection_conf.database} with ${connection_conf.user} on ${connection_conf.host}`
+  );
   OPSIAN_db.connect((err) => {
     if (err) {
       console.log(
@@ -852,20 +852,7 @@ function formatageImpact(result) {
   return annualCost;
 }
 
-// Middleware pour activer CORS
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (origin.startsWith(urlServer)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
+// Ne pas mettre de CORS ici car créer plus de problème que n'en résoud. En local, pourquoi pas.
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

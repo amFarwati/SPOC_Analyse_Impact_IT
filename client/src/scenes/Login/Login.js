@@ -49,24 +49,18 @@ const Login = ({
       .then((res) => {
         console.log(res.data);
 
-        if (res.data === `notInBd`) {;
-
+        if (res.data === `notInBd`) {
           setMsg("Cet email n'est pas enregistré");
           setOpen(true);
-
         } else if (res.data === `rejected`) {
-
           setMsg("Mot de passe incorrect");
           setOpen(true);
-
         } else {
-
           setToken(res.data);
           setLogin(mail);
           setIsDeconnected(false);
           setIsLogged(true);
-
-        } 
+        }
 
         setWaitingRes(false);
       })
@@ -94,11 +88,7 @@ const Login = ({
         alignItems: "center",
       }}
     >
-      <AlertDialog
-        msg={msg}
-        open={open}
-        setOpen={setOpen}
-      />
+      <AlertDialog msg={msg} open={open} setOpen={setOpen} />
       <Card
         style={{
           width: "70%",

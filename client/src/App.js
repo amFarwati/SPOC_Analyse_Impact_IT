@@ -52,7 +52,7 @@ function App() {
   const [token, setToken] = useState("");
   const [isLogged, setIsLogged] = useState(false);
   const [isDeconnected, setIsDeconnected] = useState(false);
-  const baseUrl = `http://opsian.insa-lyon.fr/server`;
+  const baseUrl = `https://opsian.insa-lyon.fr/server`;
   //const baseUrl = `http://localhost:4000`;
   //const baseUrl = `http://opsian.net:4000`;
 

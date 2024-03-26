@@ -13,7 +13,7 @@ const Accueil = () => {
   const theme = useTheme();
 
   return (
-    <Grid container style={{ minHeight: "100vh" }}>
+    <Grid container style={{ minHeight: "80vh" }}>
       <Grid
         item
         width="100%"

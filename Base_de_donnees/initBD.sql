@@ -2,16 +2,20 @@ create database if not exists opsian;
 use opsian;
 CREATE USER if not exists 'numuser'@'%' IDENTIFIED WITH mysql_native_password BY 'spocBDD';
 ALTER USER 'numuser'@'%' IDENTIFIED WITH mysql_native_password BY 'spocBDD';
+grant all privileges on opsian.* to 'numuser'@'%';
+
 FLUSH PRIVILEGES;
 
+drop table if exists Composant_M;
 drop table if exists Critere_M;
 drop table if exists EtapeACV_M;
 drop table if exists NomComposant_M;
 drop table if exists Source_M;
-drop table if exists Type_M;
-drop table if exists Composant_M;
+drop table if exists Item_U;
+drop table if exists Push_U;
+drop table if exists User_U;
 drop table if exists Reference_M;
-
+drop table if exists Type_M;
 -- opsian.Critere_M definition
 
 CREATE TABLE `Critere_M` (
@@ -106,6 +110,7 @@ CREATE TABLE `Push_U` (
   `idUser` int unsigned DEFAULT NULL,
   `date` timestamp NULL DEFAULT NULL,
   `inventaire` tinyint(1) DEFAULT NULL,
+  `cout` json DEFAULT NULL,
   PRIMARY KEY (`idPush`),
   KEY `fkUser_Push` (`idUser`),
   CONSTRAINT `fkUser_Push` FOREIGN KEY (`idUser`) REFERENCES `User_U` (`idUser`)
@@ -133,13 +138,14 @@ CREATE TABLE `Item_U` (
   `dateDebut` date DEFAULT NULL,
   `dateFin` date DEFAULT NULL,
   `idPush` int unsigned DEFAULT NULL,
-  `quantité` int DEFAULT '1',
+  `quantite` int DEFAULT '1',
   PRIMARY KEY (`idItem`),
   KEY `fkPush_Item` (`idPush`),
   KEY `fkReference_Item` (`idReference`),
   CONSTRAINT `fkPush_Item` FOREIGN KEY (`idPush`) REFERENCES `Push_U` (`idPush`),
   CONSTRAINT `fkReference_Item` FOREIGN KEY (`idReference`) REFERENCES `Reference_M` (`idReference`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 
 INSERT INTO opsian.Critere_M (critere,description,unite) VALUES
 	 ('Climate change','Greenhouse gases (GHG) are gaseous components which absorb the infrared radiation emitted by the earth''s surface 1 and thus contribute to the greenhouse effect.','kg CO2 eq'),

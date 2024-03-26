@@ -1,5 +1,5 @@
 echo "Switching to production branch"
-git checkout production
+git checkout main
 
 echo "Building app..."
 npm run build

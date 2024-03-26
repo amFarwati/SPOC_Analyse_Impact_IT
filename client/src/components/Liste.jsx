@@ -83,7 +83,7 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
   }, [boxes]);
 
   return (
-    <Box height="auto">
+    <>
       <Box textAlign="center" marginBottom="16px">
         <Button
           onClick={ajouterBox}
@@ -100,8 +100,7 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        width="100%"
-        height="100%"
+        maxHeight="85%"
         sx={{ overflowY: 'auto',
             }} 
       >
@@ -148,7 +147,7 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
               adapterLocale={"fr"}
             >
               <DatePicker
-                label="Explotation start"
+                label="Date d'achat"
                 format="DD/MM/YYYY"
                 value={dayjs(box.date)}
                 onChange={(date) => handleDateChange(box.id, dayjs(date).format('YYYY-MM-DD'))}
@@ -160,7 +159,7 @@ function MaListe({ typeEquipement,boxes,setBoxes,setBoxesChange }) {
           </Box>
         ))}
       </Box>
-    </Box>
+    </>
   );
 }
 

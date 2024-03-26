@@ -1,4 +1,4 @@
-[Opsian]: http://insa-numimpact-01.insa-lyon.fr/
+[Opsian]: http://opsian.insa-lyon.fr/
 
 # Opsian
 
@@ -9,6 +9,8 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
 - [Opsian](#opsian)
   - [Table des Matières](#table-des-matières)
   - [Installation](#installation)
+    - [En local](#en-local)
+    - [Avec Docker](#avec-docker)
   - [Utilisation](#utilisation)
   - [Contexte](#contexte)
     - [Qui sommes nous ?](#qui-sommes-nous-)
@@ -20,7 +22,7 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
 
 ## Installation
 
-Prérequis : avoir Ubuntu 22.04
+Prérequis : avoir une distribution Linux ou un environnement similaire.
 
 1. Installer git et cloner le repository
 
@@ -45,6 +47,8 @@ git clone https://github.com/amFarwati/SPOC_Analyse_Impact_IT.git
 cd <votre_chemin>/Github/SPOC_Analyse_Impact_IT
 ```
 
+### En local
+
 3. Lancer le script d'installation
 
 ```bash
@@ -55,14 +59,24 @@ L'installation et la mise en place de l'outil risque de prendre quelques minutes
 Pour finir vous pouvez lancer le script de lancement pour démarrer le projet :
 
 ```bash
-./lancement.sh
+./lancement_local.sh
+```
+
+### Avec Docker
+
+Prérequis : installer Docker. Vous pouvez trouver comment faire via ce lien : [**Installer Docker**](https://larucheindustrielle.fr/fr/)
+
+3. Lancer le script d'installation
+
+```bash
+./lancement_docker.sh
 ```
 
 ## Utilisation
 
 Se rendre sur :
 
-> [**http://insa-numimpact-01.insa-lyon.fr/**][Opsian]
+> [**opsian.insa-lyon.fr**][Opsian]
 
 - Choisir à la main ses Items pour calculer leur impact
 

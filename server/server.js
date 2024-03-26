@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from "uuid";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
 import "dayjs/locale/fr.js";
 import { hideBin } from "yargs/helpers";
-import cors from "cors";
 
 console.log("server test opti");
 
@@ -854,29 +853,6 @@ function formatageImpact(result) {
 }
 
 // Middleware pour activer CORS
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:3000");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Credentials", "true");
-  next();
-});
-
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (origin.startsWith(urlServer)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  })
-);
 
 app.use(
   cors({
@@ -894,10 +870,12 @@ app.use(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 //requête setInventory (à check secu multi user)
 app.put("/setInventory/:user/:token", async (req, res) => {
   try {
-    urlResponse = req.url;
     let user = req.params.user;
     let token = decodeURIComponent(decodeURIComponent(req.params.token));
     let accepted = await authCheck(user, token);
@@ -936,8 +914,6 @@ app.put("/setInventory/:user/:token", async (req, res) => {
 app.put("/setUser", async (req, res) => {
   try {
     console.log(`=> setUser for ${req.body.name}`);
-
-    urlResponse = req.url;
 
     let user_name = req.body.name;
     let user_mail = req.body.mail;
@@ -982,7 +958,6 @@ app.put("/setUser", async (req, res) => {
 //requête login (à check secu multi user)
 app.put("/login", async (req, res) => {
   try {
-    urlResponse = req.url;
     let user_mail = req.body.mail;
     let user_password = req.body.password;
 
@@ -1100,7 +1075,6 @@ app.get("/getLastImpact/:user/:type/:token", async (req, res) => {
 //requête getRefList (à check secu multi user)
 app.get("/getRefList/:user/:token", async (req, res) => {
   try {
-    urlResponse = req.url;
     console.log("=> getRefList");
 
     let user = req.params.user;
@@ -1125,7 +1099,6 @@ app.get("/getRefList/:user/:token", async (req, res) => {
 //requête computeCost (fini) /!\ pas d'implémentation dans front, que maintenance admin (wget <url>:<port>/computeCost par exemple)
 app.get("/computeCost", async (req, res) => {
   try {
-    urlResponse = req.url;
     console.log("computeCost");
     await bdRequest("=> computeCost");
     res.send(`BD updates costs `);
@@ -1140,7 +1113,6 @@ app.get("/computeCost", async (req, res) => {
 //requête areCostsComputed (à faire) /!\ pas d'implémentation dans front, que maintenance admin (wget <url>:<port>/areCostsComputed par exemple)
 app.get("/areCostsComputed", async (req, res) => {
   try {
-    urlResponse = req.url;
     console.log("=> areCostsComputed");
     let areCostsComputed = await bdRequest("areCostsComputed");
     console.log(areCostsComputed);

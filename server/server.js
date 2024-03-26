@@ -33,7 +33,7 @@ let OPSIAN_db = null;
 // Définir le facteur de coût
 const saltRounds = 10;
 //const urlServer = `http://localhost`;
-const urlServer = `https://opsian.insa-lyon.fr`;
+const urlServer = `http://opsian.insa-lyon.fr`;
 
 const tryConnection = () => {
   let connection_conf = {

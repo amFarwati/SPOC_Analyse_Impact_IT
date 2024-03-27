@@ -36,9 +36,7 @@ const urlServer = "http://localhost:3000";
 
 const tryConnection = () => {
   let connection_conf = {
-    //user: "root",
-    host: "mysql-db",
-    //host: "mysql-db",
+    host: process.argv[2] || "mysql-db",
     user: "numuser",
     password: "spocBDD",
     database: "opsian",

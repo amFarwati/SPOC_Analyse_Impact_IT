@@ -8,9 +8,7 @@ if ! which gnome-terminal > /dev/null; then
    sudo apt-get install -y gnome-terminal
 fi
 
-sed -i 's/host: "mysql-db"/host: "localhost"/g' ./server.js
-
-gnome-terminal -- bash -c "node server.js ; bash"
+gnome-terminal -- bash -c " node server.js localhost; bash"
 
 echo "Lancement client"
 cd ../client

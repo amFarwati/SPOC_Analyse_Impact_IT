@@ -17,7 +17,7 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
     - [La Ruche Industrielle](#la-ruche-industrielle)
     - [NumEcoEval](#numecoeval)
   - [Ce qui est fait](#ce-qui-est-fait)
-  - [La suite -\>](#la-suite--)
+  - [La suite...](#la-suite)
   - [Liens utiles](#liens-utiles)
 
 ## Installation
@@ -55,7 +55,7 @@ cd <votre_chemin>/Github/SPOC_Analyse_Impact_IT
 ./installation.sh
 ```
 
-L'installation et la mise en place de l'outil risque de prendre quelques minutes.
+L'installation et la mise en place de l'outil risquent de prendre quelques minutes.
 Pour finir vous pouvez lancer le script de lancement pour démarrer le projet :
 
 ```bash
@@ -64,15 +64,23 @@ Pour finir vous pouvez lancer le script de lancement pour démarrer le projet :
 
 ### Avec Docker
 
-Prérequis : installer Docker. Vous pouvez trouver comment faire via ce lien : [**Installer Docker**](https://larucheindustrielle.fr/fr/)
+Prérequis : installer Docker. Vous pouvez trouver comment faire via ce lien : [**Installer Docker**](https://larucheindustrielle.fr/fr/)  
+Cela peut changer en fonction de votre système d'exploitation.
 
-3. Lancer le script d'installation
+3. Lancer le script de démarrage correspondant à docker
 
 ```bash
 ./lancement_docker.sh
 ```
 
+De la même manière, le téléchargement des images et le montage des conteneurs risquent de prendre du temps. Une fois que les conteneurs sont montés, la base de données doit s'initialiser ce qui prend encore du temps.
+Au total tout devrait être opérationnel en 8min.
+
+Vous pourrez accéder à l'outil sur le port 3000 de votre machine.
+
 ## Utilisation
+
+Il faut se connecter au Wi-Fi ou au VPN de l'INSA Lyon pour accéder à l'outil en ligne. Sinon, veuillez procéder à l'installation de l'outil vu à l'étape précédente.
 
 Se rendre sur :
 
@@ -82,7 +90,7 @@ Se rendre sur :
 
 ou
 
-- Importer un fichier de DSI avec ses appareils pour que l'outil le calcul tout seul
+- Importer un fichier .csv avec ses appareils pour que l'outil le calcul tout seul. Des templates sont disponibles dans ./Données_test/Donnees_utilisables
 - Admirer le résultat
 
 ## Contexte
@@ -145,17 +153,19 @@ Objectifs :
 ## Ce qui est fait
 
 - Mise en place d'un front, d'un back et d'une base de donnée
+- Preuve de concept finalisée
 - Déploiement du projet sur une machine virtuelle de l'INSA
-- Possibilité d'accéder à l'outil Opsian : [http://insa-numimpact-01.insa-lyon.fr/][Opsian]  
-  Seulement depuis le Wi-Fi de l'INSA ou depuis le vpn
+- Service de login avec gestion d'utilisateurs
+- Sécurisation du site avec https
+- dockerization du projet
 
-## La suite ->
+## La suite...
 
-- Sécuriser les données utilisateurs/outils avec https
+- Avoir des retours utilisateurs pour modifier l'outil en conséquences
 - Rendre l'outil plus pro pour aller au delà de la Proof Of Concept
 
 ## Liens utiles
 
-- Opsian : [http://insa-numimpact-01.insa-lyon.fr][Opsian]
+- Opsian : [opsian.insa-lyon.fr][Opsian]
 - La Ruche Industrielle : [https://larucheindustrielle.fr/fr](https://larucheindustrielle.fr/fr/)
 - NumEcoEval : [https://ecoresponsable.numerique.gouv.fr/publications/boite-outils/fiches/numecoeval](https://ecoresponsable.numerique.gouv.fr/publications/boite-outils/fiches/numecoeval/)

@@ -19,6 +19,7 @@ function Linechart({
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const iconSize = "40px";
+  let acv_coeff = [];
 
   const handleData = (data) => {
     let annees = Object.keys(data);
@@ -28,18 +29,45 @@ function Linechart({
 
     for (let j = 0; j < criteres.length; j++) {
       let interm = [];
+      acv_coeff[j] = [];
 
       for (let i = 0; i < acv.length; i++) {
+        acv_coeff[j][i] = 100000;
+
+        annees.forEach((annee) => {
+          if (
+            acv_coeff[j][i] >
+            Math.floor(Math.log10(data[annee][acv[i]][criteres[j]]))
+          ) {
+            acv_coeff[j][i] = Math.floor(
+              Math.log10(data[annee][acv[i]][criteres[j]])
+            );
+          }
+        });
+        console.log("acv",acv)
         interm.push({
           id: acv[i],
           data: annees.map((annee) => {
-            return { x: annee, y: data[annee][acv[i]][criteres[j]] };
+            console.log(
+              annee,
+              acv[i],
+              criteres[j],
+              data[annee][acv[i]][criteres[j]],
+              10 ** acv_coeff[j][i],
+              data[annee][acv[i]][criteres[j]] / 10 ** acv_coeff[j][i],
+              parseInt(data[annee][acv[i]][criteres[j]]*100 / 10 ** acv_coeff[j][i])/100
+            );
+            return {
+              x: annee,
+              y: parseInt(data[annee][acv[i]][criteres[j]]*100 / 10 ** acv_coeff[j][i])/100,
+            };
           }),
         });
       }
       res.push(interm);
     }
-    console.log(res);
+
+    console.log("acv_coeff", acv_coeff);
     return res;
   };
 
@@ -56,7 +84,7 @@ function Linechart({
         res = (
           <InfoButton
             title={<AirIcon style={{ fontSize: iconSize }} />}
-            info={`Changement Climatique`}
+            info={`Changement Climatique\n e${acv_coeff[critere][acvMapping(etapeACV)]} kg eq CO2`}
           />
         );
         break;
@@ -64,7 +92,7 @@ function Linechart({
         res = (
           <InfoButton
             title={<MasksIcon style={{ fontSize: iconSize }} />}
-            info={`Particules fines`}
+            info={`Particules fines\n e${acv_coeff[critere][acvMapping(etapeACV)]} incidence maladie`}
           />
         );
         break;
@@ -72,7 +100,7 @@ function Linechart({
         res = (
           <InfoButton
             title={<WifiIcon style={{ fontSize: iconSize }} />}
-            info={`Radiations ionisantes`}
+            info={`Radiations ionisantes\n e${acv_coeff[critere][acvMapping(etapeACV)]} kBq U-235 eq`}
           />
         );
         break;
@@ -80,7 +108,7 @@ function Linechart({
         res = (
           <InfoButton
             title={<WaterIcon style={{ fontSize: iconSize }} />}
-            info={`Acidification`}
+            info={`Acidification\n e${acv_coeff[critere][acvMapping(etapeACV)]} mol H+ eq`}
           />
         );
         break;
@@ -88,7 +116,7 @@ function Linechart({
         res = (
           <InfoButton
             title={<FactoryIcon style={{ fontSize: iconSize }} />}
-            info={`Usage des ressources\n(mineraux et metaux)`}
+            info={`Usage des ressources\n(mineraux et metaux)\n e${acv_coeff[critere][acvMapping(etapeACV)]} kg Sb eq`}
           />
         );
         break;
@@ -96,7 +124,7 @@ function Linechart({
         res = (
           <InfoButton
             title={<AirIcon style={{ fontSize: iconSize }} />}
-            info={`Changement Climatique`}
+            info={`Changement Climatique\n e${acv_coeff[critere][acvMapping(etapeACV)]} kg eq CO2`}
           />
         );
         break;
@@ -127,15 +155,40 @@ function Linechart({
     return res;
   };
 
+  const acvMapping = () => {
+    let res = null;
+
+    switch (etapeACV) {
+      case 0:
+        res = 1;
+        break;
+      case 1:
+        res = 3;
+        break;
+      case 2:
+        res = 2;
+        break;
+      case 3:
+        res = 0;
+        break;
+      default:
+        res = 0;
+        break;
+    }
+    return res;
+  };
+
+  console.log("data", data);
+
   return (
-    <Box Box height="100%" width="95%" >
+    <Box Box height="100%" width="95%">
       <Box display="flex" ml={4} alignItems="center">
         {infoCritere()}
         <Typography variant="h5">{infoACV()}</Typography>
       </Box>
       <Box height="80%">
         <ResponsiveLine
-          data={data.length === 1 ? data : [data[critere][etapeACV]]}
+          data={data.length === 1 ? data : [data[critere][acvMapping(etapeACV)]]}
           margin={{ top: 20, right: 50, bottom: 30, left: 60 }}
           xScale={{ type: "point" }}
           yScale={{
@@ -158,6 +211,7 @@ function Linechart({
           axisLeft={{
             tickSize: 5,
             tickPadding: 5,
+            tickValues: 5,
             tickRotation: 0,
           }}
           tooltip={(tooltip) => {

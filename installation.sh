@@ -3,22 +3,25 @@ echo "Installation en cours"
 # Mise à jour des paquets
 sudo apt update 
 
+#On vide les logs d'installation.
+> installation.log
+
 # Installation de Node.js et npm
 if ! command -v node &> /dev/null
 then
-    echo "Node.js n'est pas installé. Installation en cours..."
+    echo "Node.js n'est pas installé. Installation en cours..." | tee -a installation.log
     sudo apt install -y nodejs npm
 else
-    echo "Node.js est déjà installé."
+    echo "Node.js est déjà installé." | tee -a installation.log
 fi
 
 # Installation de MySQL
 if ! command -v mysql &> /dev/null
 then
-    echo "MySQL n'est pas installé. Installation en cours..."
+    echo "MySQL n'est pas installé. Installation en cours..." | tee -a installation.log
     sudo apt install -y mysql-server
 else
-    echo "MySQL est déjà installé."
+    echo "MySQL est déjà installé." | tee -a installation.log
 fi
 
 # Configuration de MySQL

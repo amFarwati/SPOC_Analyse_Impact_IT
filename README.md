@@ -1,4 +1,4 @@
-[Opsian]: http://opsian.insa-lyon.fr/
+[Opsian]: https://opsian.insa-lyon.fr/
 
 # Opsian
 
@@ -9,8 +9,10 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
 - [Opsian](#opsian)
   - [Table des Matières](#table-des-matières)
   - [Installation](#installation)
-    - [En local](#en-local)
-    - [Avec Docker](#avec-docker)
+    - [Sous Linux](#sous-linux)
+      - [En local](#en-local)
+      - [Avec Docker](#avec-docker)
+    - [Sous un autre système d'exploitation (OS)](#sous-un-autre-système-dexploitation-os)
   - [Utilisation](#utilisation)
   - [Contexte](#contexte)
     - [Qui sommes nous ?](#qui-sommes-nous-)
@@ -21,6 +23,8 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
   - [Liens utiles](#liens-utiles)
 
 ## Installation
+
+### Sous Linux
 
 Prérequis : avoir une distribution Linux ou un environnement similaire.
 
@@ -47,7 +51,7 @@ git clone https://github.com/amFarwati/SPOC_Analyse_Impact_IT.git
 cd <votre_chemin>/Github/SPOC_Analyse_Impact_IT
 ```
 
-### En local
+#### En local
 
 3. Lancer le script d'installation
 
@@ -62,9 +66,9 @@ Pour finir vous pouvez lancer le script de lancement pour démarrer le projet :
 ./lancement_local.sh
 ```
 
-### Avec Docker
+#### Avec Docker
 
-Prérequis : installer Docker. Vous pouvez trouver comment faire via ce lien : [**Installer Docker**](https://larucheindustrielle.fr/fr/)  
+Prérequis : installer Docker. Vous pouvez trouver comment faire via ce lien : [**Installer Docker**](https://docs.docker.com/get-docker/)  
 Cela peut changer en fonction de votre système d'exploitation.
 
 3. Lancer le script de démarrage correspondant à docker
@@ -74,6 +78,30 @@ Cela peut changer en fonction de votre système d'exploitation.
 ```
 
 De la même manière, le téléchargement des images et le montage des conteneurs risquent de prendre du temps. Une fois que les conteneurs sont montés, la base de données doit s'initialiser ce qui prend encore du temps.
+Au total tout devrait être opérationnel en 8min.
+
+Vous pourrez accéder à l'outil sur le port 3000 de votre machine.
+
+### Sous un autre système d'exploitation (OS)
+
+Si vous savez comment modifier le code ci-dessus pour les installations en fonction de votre OS, nous vous invitons à le faire, sinon, pour pouvoir télécharger et utiliser OPSIAN depuis un OS différent de Linux, il vous faudra passer par plusieurs étapes :
+
+1. Installer git
+2. cloner le repository du projet :
+
+```bash
+git clone https://github.com/amFarwati/SPOC_Analyse_Impact_IT.git
+```
+
+3. Installer Docker via ce lien : [**Installer Docker**](https://docs.docker.com/get-docker/)
+4. Lancer votre terminal et vous déplacer dans le dossier "SPOC_ANALYSE_IMPACT_IT" pour ensuite lancer la commande suivante :
+
+```bash
+docker compose up -d --build
+#si cette commande ne marche pas, essayez avec 'docker-compose' à la place de 'docker compose'.
+```
+
+Le téléchargement des images et le montage des conteneurs risquent de prendre du temps. Une fois que les conteneurs sont montés, la base de données doit s'initialiser ce qui prend encore du temps.
 Au total tout devrait être opérationnel en 8min.
 
 Vous pourrez accéder à l'outil sur le port 3000 de votre machine.
@@ -166,6 +194,6 @@ Objectifs :
 
 ## Liens utiles
 
-- Opsian : [opsian.insa-lyon.fr][Opsian]
+- Opsian : [opsian.insa-lyon.fr][Opsian] (accessible depuis le WI-Fi ou le VPN INSA)
 - La Ruche Industrielle : [https://larucheindustrielle.fr/fr](https://larucheindustrielle.fr/fr/)
 - NumEcoEval : [https://ecoresponsable.numerique.gouv.fr/publications/boite-outils/fiches/numecoeval](https://ecoresponsable.numerique.gouv.fr/publications/boite-outils/fiches/numecoeval/)

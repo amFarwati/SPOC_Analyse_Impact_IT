@@ -25,7 +25,7 @@ fi
 if ! command -v mysql &> /dev/null
 then
     echo -e "${RED}MySQL n'est pas installé. Installation en cours...${NC}" | tee -a installation.log
-    sudo apt install -y mysql-server
+    sudo apt-get install -y mysql-server
 else
     echo -e "${GREEN}MySQL est déjà installé.${NC}" | tee -a installation.log
 fi

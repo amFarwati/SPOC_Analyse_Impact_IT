@@ -19,7 +19,15 @@ then
     echo -e "${GREEN}Node.js est installé. Voulez-vous le désinstaller ? (y/n)${NC}"
     read answer
     if [[ "$answer" =~ ^[Yy]$ ]]; then
-        sudo apt purge -y nodejs npm
+        # Arrêter tous les processus Node.js en cours d'exécution
+        pkill -f node
+
+        # Désinstaller Node.js et npm
+        sudo apt-get purge -y nodejs npm
+
+        # Supprimer les fichiers de configuration et de données
+        sudo rm -rf /usr/local/lib/node_modules
+        sudo rm -rf ~/.npm
     fi
 else
     echo -e "${RED}Node.js n'est pas installé.${NC}"
@@ -28,7 +36,7 @@ fi
 # Désinstallation de MySQL
 if command -v mysql &> /dev/null
 then
-    # Vérifier si Node.js était déjà installé
+    # Vérifier si MySQL était déjà installé
     last_line=$(tail -n 1 installation.log | head -n 1)
     if [[ $last_line == *"MySQL est déjà installé."* ]]; then
         echo -e "${RED}Attention : MySQL était déjà installé avant l'installation du projet.${NC}"
@@ -36,7 +44,14 @@ then
     echo -e "${GREEN}MySQL est installé. Voulez-vous le désinstaller ? (y/n)${NC}"
     read answer
     if [[ "$answer" =~ ^[Yy]$ ]]; then
-        sudo apt purge -y mysql-server
+        # Arrêter le service MySQL
+        sudo systemctl stop mysql
+
+        # Désinstaller les paquets MySQL
+        sudo apt-get purge mysql-server mysql-client mysql-common mysql-server-core-* mysql-client-core-*
+
+        # Supprimer les fichiers de configuration et de données
+        sudo rm -rf /etc/mysql /var/lib/mysql
     else 
         # Suppression de la base de données
         echo -e "${GREEN}Voulez-vous supprimer la base de données opsian ? (y/n)${NC}"
@@ -69,7 +84,14 @@ then
     echo -e "${GREEN}git est installé. Voulez-vous le désinstaller ? (y/n)${NC}"
     read answer
     if [[ "$answer" =~ ^[Yy]$ ]]; then
-        sudo apt purge -y git
+        # Arrêter tous les processus Git en cours d'exécution
+        pkill -f git
+
+        # Désinstaller Git
+        sudo apt-get purge -y git
+
+        # Supprimer les fichiers de configuration et de données
+        sudo rm -rf ~/.gitconfig
     fi
 else
     echo -e "${RED}git n'est pas installé.${NC}"

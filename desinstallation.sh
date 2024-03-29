@@ -1,6 +1,3 @@
-# Copie du script de désinstallation dans le dossier parent
-cp desinstallation.sh ../
-
 echo "Désinstallation en cours"
 
 sudo apt update
@@ -48,6 +45,7 @@ else
 fi
 
 # Suppression du projet cloné
+cd ../
 if [ -d "SPOC_Analyse_Impact_IT" ]; then
     echo "Le projet cloné existe. Voulez-vous le supprimer ? (y/n)"
     read answer

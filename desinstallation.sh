@@ -15,7 +15,7 @@ then
     fi
     echo "Node.js est installé. Voulez-vous le désinstaller ? (y/n)"
     read answer
-    if [[ "$answer" =~ ^[Yy]es?$ ]]; then
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
         sudo apt purge -y nodejs npm
     fi
 else
@@ -32,7 +32,7 @@ then
     fi
     echo "MySQL est installé. Voulez-vous le désinstaller ? (y/n)"
     read answer
-    if [[ "$answer" =~ ^[Yy]es?$ ]]; then
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
         sudo apt purge -y mysql-server
 
 
@@ -40,7 +40,7 @@ then
         # Suppression de la base de données
         echo "Voulez-vous supprimer la base de données opsian ? (y/n)"
         read answer
-        if [[ "$answer" =~ ^[Yy]es?$ ]]; then
+        if [[ "$answer" =~ ^[Yy]$ ]]; then
             sudo mysql -u root -e "DROP DATABASE IF EXISTS opsian;"
         fi
     fi
@@ -53,7 +53,7 @@ cd ../
 if [ -d "SPOC_Analyse_Impact_IT" ]; then
     echo "Le projet cloné existe. Voulez-vous le supprimer ? (y/n)"
     read answer
-    if [[ "$answer" =~ ^[Yy]es?$ ]]; then
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
         rm -rf SPOC_Analyse_Impact_IT
     fi
 else
@@ -65,7 +65,7 @@ if command -v git &> /dev/null
 then
     echo "git est installé. Voulez-vous le désinstaller ? (y/n)"
     read answer
-    if [[ "$answer" =~ ^[Yy]es?$ ]]; then
+    if [[ "$answer" =~ ^[Yy]$ ]]; then
         sudo apt purge -y git
     fi
 else
@@ -76,4 +76,4 @@ sudo apt autoremove -y
 sudo apt autoclean -y
 
 echo "Désinstallation terminée"
-echo "Merci d'avoir utilise Opsian."
+echo "Merci d'avoir utilisé Opsian."

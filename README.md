@@ -12,6 +12,7 @@ Opsian, pour _OPen Source Impact ANalyzer_, est une solution d'analyse d'impact 
     - [Sous Linux](#sous-linux)
       - [En local](#en-local)
       - [Avec Docker](#avec-docker)
+      - [Désinstallation](#désinstallation)
     - [Sous un autre système d'exploitation (OS)](#sous-un-autre-système-dexploitation-os)
   - [Utilisation](#utilisation)
   - [Contexte](#contexte)
@@ -81,6 +82,14 @@ De la même manière, le téléchargement des images et le montage des conteneur
 Au total tout devrait être opérationnel en 8min.
 
 Vous pourrez accéder à l'outil sur le port 3000 de votre machine.
+
+#### Désinstallation
+
+Si vous voulez vous séparer d'OPSIAN et désinstaller tout le projet, lancez le programme de désinstallation et suivez les instructions :
+
+```bash
+./desinstallation.sh
+```
 
 ### Sous un autre système d'exploitation (OS)
 

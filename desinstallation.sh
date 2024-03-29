@@ -79,13 +79,13 @@ fi
 # Suppression du projet cloné
 cd ../
 if [ -d "SPOC_Analyse_Impact_IT" ]; then
-    echo -e "${GREEN}Le projet cloné existe. Voulez-vous le supprimer ? (y/n)${NC}"
+    echo -e "${GREEN}Supprimer le projet SPOC_ANALYSE_IMPACT_IT ? (Opsian) (y/n)${NC}"
     read answer
     if [[ "$answer" =~ ^[Yy]$ ]]; then
         rm -rf SPOC_Analyse_Impact_IT
     fi
 else
-    echo -e "${RED}Le projet cloné n'existe pas.${NC}"
+    echo -e "${RED}Le projet n'existe pas.${NC}"
 fi
 
 # Désinstallation de git

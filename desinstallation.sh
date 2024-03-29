@@ -1,5 +1,9 @@
 echo "Désinstallation en cours"
 
+# Définir les codes de couleur
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 sudo apt update
 # Désinstallation de Node.js et npm
 if command -v node &> /dev/null
@@ -7,7 +11,7 @@ then
     # Vérifier si Node.js était déjà installé
     last_line=$(tail -n 2 installation.log | head -n 1)
     if [[ $last_line == *"Node.js est déjà installé."* ]]; then
-        echo "Attention : Node.js était déjà installé avant l'installation du projet."
+        echo -e "${RED}Attention : Node.js était déjà installé avant l'installation du projet.${NC}"
     fi
     echo "Node.js est installé. Voulez-vous le désinstaller ? (y/n)"
     read answer
@@ -22,9 +26,9 @@ fi
 if command -v mysql &> /dev/null
 then
     # Vérifier si Node.js était déjà installé
-    last_line=$(tail -n 2 installation.log | head -n 1)
+    last_line=$(tail -n 1 installation.log | head -n 1)
     if [[ $last_line == *"MySQL est déjà installé."* ]]; then
-        echo "Attention : MySQL était déjà installé avant l'installation du projet."
+        echo -e "${RED}Attention : MySQL était déjà installé avant l'installation du projet.${NC}"
     fi
     echo "MySQL est installé. Voulez-vous le désinstaller ? (y/n)"
     read answer

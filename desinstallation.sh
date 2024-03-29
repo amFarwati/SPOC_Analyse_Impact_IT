@@ -43,7 +43,7 @@ then
         read answer
         if [[ "$answer" =~ ^[Yy]$ ]]; then
             sudo mysql -u numuser -pspocBDD -e "DROP DATABASE IF EXISTS opsian;"
-            echo -e "${GREEN}La base de données opsian a été supprimée.${NC}, il est recommandé de supprimer l'utilisateur numuser :"
+            echo -e "${GREEN}La base de données opsian a été supprimée.${NC}, il est recommandé de supprimer l'utilisateur numuser, veuillez saisir votre mot de passe root :"
             sudo mysql -u root -p -e "DROP USER numuser;"
         fi
     fi

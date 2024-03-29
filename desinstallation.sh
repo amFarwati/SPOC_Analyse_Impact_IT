@@ -1,10 +1,13 @@
-echo "Désinstallation en cours"
-
 # Définir les codes de couleur
 RED='\033[0;31m'
+GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
+
+echo -e "${GREEN}Désinstallation en cours${NC}"
+
 sudo apt update
+
 # Désinstallation de Node.js et npm
 if command -v node &> /dev/null
 then
@@ -13,13 +16,13 @@ then
     if [[ $last_line == *"Node.js est déjà installé."* ]]; then
         echo -e "${RED}Attention : Node.js était déjà installé avant l'installation du projet.${NC}"
     fi
-    echo "Node.js est installé. Voulez-vous le désinstaller ? (y/n)"
+    echo -e "${GREEN}Node.js est installé. Voulez-vous le désinstaller ? (y/n)${NC}"
     read answer
     if [[ "$answer" =~ ^[Yy]$ ]]; then
         sudo apt purge -y nodejs npm
     fi
 else
-    echo "Node.js n'est pas installé."
+    echo -e "${RED}Node.js n'est pas installé.${NC}"
 fi
 
 # Désinstallation de MySQL
@@ -30,53 +33,50 @@ then
     if [[ $last_line == *"MySQL est déjà installé."* ]]; then
         echo -e "${RED}Attention : MySQL était déjà installé avant l'installation du projet.${NC}"
     fi
-    echo "MySQL est installé. Voulez-vous le désinstaller ? (y/n)"
+    echo -e "${GREEN}MySQL est installé. Voulez-vous le désinstaller ? (y/n)${NC}"
     read answer
     if [[ "$answer" =~ ^[Yy]$ ]]; then
         sudo apt purge -y mysql-server
-
-
     else 
         # Suppression de la base de données
-        echo "Voulez-vous supprimer la base de données opsian ? (y/n)"
+        echo -e "${GREEN}Voulez-vous supprimer la base de données opsian ? (y/n)${NC}"
         read answer
         if [[ "$answer" =~ ^[Yy]$ ]]; then
             sudo mysql -u numuser -pspocBDD -e "DROP DATABASE IF EXISTS opsian;"
-            echo "La base de données opsian a été supprimée... Suppression de l'utilisateur numuser."
-            sudo mysql -u root -p -e "DROP USER IF EXISTS 'numuser'@'localhost';"
-
+            echo -e "${GREEN}La base de données opsian a été supprimée.${NC}, il est recommandé de supprimer l'utilisateur numuser :"
+            sudo mysql -u root -p -e "DROP USER numuser;"
         fi
     fi
 else
-    echo "MySQL n'est pas installé."
+    echo -e "${RED}MySQL n'est pas installé.${NC}"
 fi
 
 # Suppression du projet cloné
 cd ../
 if [ -d "SPOC_Analyse_Impact_IT" ]; then
-    echo "Le projet cloné existe. Voulez-vous le supprimer ? (y/n)"
+    echo -e "${GREEN}Le projet cloné existe. Voulez-vous le supprimer ? (y/n)${NC}"
     read answer
     if [[ "$answer" =~ ^[Yy]$ ]]; then
         rm -rf SPOC_Analyse_Impact_IT
     fi
 else
-    echo "Le projet cloné n'existe pas."
+    echo -e "${RED}Le projet cloné n'existe pas.${NC}"
 fi
 
 # Désinstallation de git
 if command -v git &> /dev/null
 then
-    echo "git est installé. Voulez-vous le désinstaller ? (y/n)"
+    echo -e "${GREEN}git est installé. Voulez-vous le désinstaller ? (y/n)${NC}"
     read answer
     if [[ "$answer" =~ ^[Yy]$ ]]; then
         sudo apt purge -y git
     fi
 else
-    echo "git n'est pas installé."
+    echo -e "${RED}git n'est pas installé.${NC}"
 fi
 
 sudo apt autoremove -y
 sudo apt autoclean -y
 
-echo "Désinstallation terminée"
-echo "Merci d'avoir utilisé Opsian."
+echo -e "${GREEN}Désinstallation terminée${NC}"
+echo -e "${GREEN}Merci d'avoir utilisé Opsian.${NC}"

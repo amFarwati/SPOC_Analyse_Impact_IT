@@ -1,3 +1,6 @@
+# Copie du script de désinstallation dans le dossier parent
+cp desinstallation.sh ../
+
 echo "Désinstallation en cours"
 
 sudo apt update
@@ -58,7 +61,7 @@ fi
 # Désinstallation de git
 if command -v git &> /dev/null
 then
-    echo "Node.jgit est installé. Voulez-vous le désinstaller ? (y/n)"
+    echo "git est installé. Voulez-vous le désinstaller ? (y/n)"
     read answer
     if [[ "$answer" =~ ^[Yy]es?$ ]]; then
         sudo apt purge -y git

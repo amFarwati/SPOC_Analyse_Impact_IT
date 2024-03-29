@@ -76,3 +76,4 @@ sudo apt autoremove -y
 sudo apt autoclean -y
 
 echo "Désinstallation terminée"
+echo "Merci d'avoir utilise Opsian."
